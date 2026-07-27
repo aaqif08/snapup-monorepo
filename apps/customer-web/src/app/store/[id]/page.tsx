@@ -20,9 +20,10 @@ export default function StoreConfirmPage({ params }: { params: Promise<{ id: str
   }
 
   const handleConfirm = () => {
-    // In production: POST /carts/guest (or attach to the authenticated user's cart)
-    // scoped to store.id, then route into the scanner.
-    router.push('/scan');
+    // Routes to the SDPA entry gate rather than straight to the scanner: picking a store
+    // from a list is a statement of intent, not proof of presence. The scanner is
+    // unreachable until the entrance QR and the store network both check out.
+    router.push('/enter');
   };
 
   return (
