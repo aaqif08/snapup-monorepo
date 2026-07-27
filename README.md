@@ -37,8 +37,13 @@ pass (npm workspaces).
 
 **Run the customer app** (http://localhost:3000):
 ```bash
-npm run dev:customer
+SNAPUP_PRESENCE_DEV_BYPASS=1 npm run dev:customer
 ```
+
+The bypass flag is needed locally. The customer app now refuses database access unless the
+request comes from a registered store network (see "Secure gateway" below), and a request
+from your laptop has no meaningful public IP, so without it every lookup is denied. The
+flag is ignored in production builds.
 
 **Run the admin dashboard** (http://localhost:3001):
 ```bash
@@ -49,6 +54,36 @@ npm run dev:admin
 ```bash
 npm run dev
 ```
+
+## Secure gateway (`apps/customer-web/src/server`)
+
+Implements the four requirements from *CTO Requirement's Solution [Detailed Report]*.
+**Full write-up, including one deviation from the report that needs the CTO's sign-off:
+[`docs/cto-requirements-implementation.md`](docs/cto-requirements-implementation.md).**
+
+The short version:
+
+- **The product catalogue is no longer in the browser bundle.** It used to be
+  `MOCK_PRODUCT_DB` in `src/lib/mockData.ts`, imported by the scanner page, which meant
+  anyone could read the whole table from devtools. It now lives in `src/server/products/`
+  behind `import 'server-only'` — a build-time guarantee that it cannot be pulled back
+  into client code.
+- **Database access requires two proven presence factors**: a signed, 120-second entrance
+  QR, *and* a request whose server-observed egress IP falls inside the store's registered
+  network. Either alone is refused.
+- **The report specifies SSID checking for factor 2. Browsers cannot read the SSID**, so
+  that is implemented as server-side egress IP verification instead — which is stronger,
+  because the customer's device never gets a say. This changes what the report promises
+  and is written up in full in the doc above.
+- **Sessions die when the customer leaves.** The egress IP is signed into the session
+  token, so leaving the store network breaks the binding and every API call is refused.
+  No session store, no cleanup job — which is what makes it work on serverless.
+
+Anything a customer receives passes through `toPublicProduct()`, which allowlists six
+fields and withholds cost price, margin, supplier, stock, SKU and purchase history.
+
+Environment variables (`SNAPUP_QR_SECRET` and `SNAPUP_SESSION_SECRET` are **required in
+production** and fail closed) are documented in the doc above.
 
 ## Admin dashboard (`apps/admin-web`)
 
