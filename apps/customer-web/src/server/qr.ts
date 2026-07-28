@@ -42,7 +42,7 @@ export type QrValidation =
   | { valid: true; payload: QrPayload }
   | { valid: false; reason: 'malformed' | 'bad_signature' | 'expired' | 'unknown_version' | 'unknown_store' };
 
-export function validateEntryQr(token: string): QrValidation {
+export async function validateEntryQr(token: string): Promise<QrValidation> {
   const result = verifyPayload<QrPayload>(token, QR_SIGNING_SECRET);
   if (!result.valid) return { valid: false, reason: result.reason };
 
@@ -55,7 +55,10 @@ export function validateEntryQr(token: string): QrValidation {
     return { valid: false, reason: 'expired' };
   }
 
-  if (!payload.sid || !getStore(payload.sid)) return { valid: false, reason: 'unknown_store' };
+  // An inactive store is treated as unknown here: a store that has been switched off must
+  // not mint new sessions, and the customer gains nothing from the distinction.
+  const store = payload.sid ? await getStore(payload.sid) : null;
+  if (!store || !store.isActive) return { valid: false, reason: 'unknown_store' };
 
   return { valid: true, payload };
 }

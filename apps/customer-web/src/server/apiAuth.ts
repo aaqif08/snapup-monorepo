@@ -38,9 +38,9 @@ function errorResponse(status: number, code: string, message: string, extra?: He
  * Gate for every product endpoint: an active, presence-validated session is required
  * before the database is touched at all.
  */
-export function guardProductRequest(request: NextRequest): GuardResult {
+export async function guardProductRequest(request: NextRequest): Promise<GuardResult> {
   const token = extractBearerToken(request);
-  const validation = validateSession(request, token);
+  const validation = await validateSession(request, token);
 
   if (!validation.valid) {
     return {

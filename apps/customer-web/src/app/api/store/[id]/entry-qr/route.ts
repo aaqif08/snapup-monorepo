@@ -20,8 +20,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
 
-  const store = getStore(id);
-  if (!store) {
+  const store = await getStore(id);
+  if (!store || !store.isActive) {
     return NextResponse.json(
       { error: { code: 'unknown_store', message: 'Store not found.' } },
       { status: 404, headers: { 'cache-control': 'no-store' } }

@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 /** Ends a shopping session explicitly (customer taps "finish", or checkout completes). */
 export async function POST(request: NextRequest) {
-  const validation = validateSession(request, extractBearerToken(request));
+  const validation = await validateSession(request, extractBearerToken(request));
 
   // An already-invalid token is still "ended" as far as the caller is concerned, so this
   // reports success either way rather than making the client handle a pointless error.

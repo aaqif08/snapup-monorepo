@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
  * so skipping or blocking the heartbeat grants no extra access.
  */
 export async function POST(request: NextRequest) {
-  const validation = validateSession(request, extractBearerToken(request));
+  const validation = await validateSession(request, extractBearerToken(request));
 
   if (!validation.valid) {
     return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const store = getStore(validation.payload.sid);
+  const store = await getStore(validation.payload.sid);
 
   return NextResponse.json(
     {

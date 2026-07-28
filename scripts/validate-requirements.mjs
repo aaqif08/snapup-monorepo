@@ -45,6 +45,7 @@ const APP_DIR = path.join(REPO_ROOT, 'apps', 'customer-web');
 const QR_SECRET = 'validation-harness-qr-secret-do-not-deploy';
 const SESSION_SECRET = 'validation-harness-session-secret-do-not-deploy';
 const ATTACKER_SECRET = 'a-secret-the-attacker-guessed-wrong';
+const ADMIN_TOKEN = 'validation-harness-admin-token-do-not-deploy';
 
 /** Registered egress IPs from src/server/stores.ts. */
 const STORE_1 = { id: 'store_1', ip: '198.51.100.24' };
@@ -629,6 +630,273 @@ async function validateRequirement4(state) {
 }
 
 // ---------------------------------------------------------------------------
+// Store directory and device location
+// ---------------------------------------------------------------------------
+
+/** Seeded store coordinates, from src/server/stores/seed.ts. */
+const HSR_LAYOUT = { lat: 12.9082, lng: 77.6476 }; // store_1 sits here
+const JAYANAGAR = { lat: 12.925, lng: 77.5838 }; // store_5 sits here
+
+async function validateStoreDirectory(state) {
+  section('Store directory — device location');
+
+  await check('R5.1', 'Directory works without location (customer declined)', async () => {
+    const response = await api('/api/stores/nearby', { ip: STORE_1.ip });
+    expectStatus(response, 200);
+    expect(response.json.located === false, 'located should be false with no coordinates');
+    expect(response.json.stores.length > 0, 'no stores returned');
+    const withDistance = response.json.stores.filter((s) => s.distanceKm !== undefined);
+    expect(
+      withDistance.length === 0,
+      `distances invented for ${withDistance.length} stores despite no coordinates`
+    );
+    return `${response.json.stores.length} stores, no distances`;
+  });
+
+  await check('R5.2', 'Coordinates produce real distances, nearest first', async () => {
+    const response = await api(
+      `/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`,
+      { ip: STORE_1.ip }
+    );
+    expectStatus(response, 200);
+    expect(response.json.located === true, 'located should be true');
+
+    const stores = response.json.stores;
+    expect(stores.length > 1, 'need at least two stores to check ordering');
+    expect(stores.every((s) => typeof s.distanceKm === 'number'), 'a store is missing distanceKm');
+
+    for (let i = 1; i < stores.length; i += 1) {
+      expect(
+        stores[i].distanceKm >= stores[i - 1].distanceKm,
+        `out of order: ${stores[i - 1].distanceKm} then ${stores[i].distanceKm}`
+      );
+    }
+
+    expect(stores[0].id === 'store_1', `expected store_1 nearest to HSR Layout, got ${stores[0].id}`);
+    expect(stores[0].distanceKm < 0.5, `store_1 should be ~0km away, got ${stores[0].distanceKm}`);
+    return `nearest ${stores[0].name} at ${stores[0].distanceKm}km`;
+  });
+
+  await check('R5.3', 'Ordering actually tracks the device position', async () => {
+    // Same catalogue, different vantage point: if distance were faked or cached, the
+    // nearest store would not change.
+    const response = await api(
+      `/api/stores/nearby?lat=${JAYANAGAR.lat}&lng=${JAYANAGAR.lng}`,
+      { ip: STORE_1.ip }
+    );
+    expectStatus(response, 200);
+    const nearest = response.json.stores[0];
+    expect(nearest.id === 'store_5', `expected store_5 nearest to Jayanagar, got ${nearest.id}`);
+    return `from Jayanagar: ${nearest.name} at ${nearest.distanceKm}km`;
+  });
+
+  await check('R5.4', 'Radius filters the directory', async () => {
+    const wide = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}&radius_km=100`, {
+      ip: STORE_1.ip,
+    });
+    const tight = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}&radius_km=2`, {
+      ip: STORE_1.ip,
+    });
+    expectStatus(wide, 200);
+    expectStatus(tight, 200);
+    expect(
+      tight.json.stores.length < wide.json.stores.length,
+      `radius had no effect: ${tight.json.stores.length} vs ${wide.json.stores.length}`
+    );
+    return `2km -> ${tight.json.stores.length}, 100km -> ${wide.json.stores.length}`;
+  });
+
+  await check('R5.5', 'Malformed coordinates are rejected', async () => {
+    const cases = ['?lat=91&lng=77', '?lat=12.9&lng=999', '?lat=abc&lng=77', '?lat=12.9'];
+    for (const query of cases) {
+      const response = await api(`/api/stores/nearby${query}`, { ip: STORE_1.ip });
+      expectStatus(response, 400);
+      expectErrorCode(response, 'invalid_coordinates');
+    }
+    return `${cases.length} malformed inputs -> 400`;
+  });
+
+  await check('R5.6', 'Directory never leaks a store network range', async () => {
+    const response = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`, {
+      ip: STORE_1.ip,
+    });
+    // The registered CIDRs are exactly what an attacker needs in order to know which
+    // network to appear to originate from.
+    const leaks = ['authorizedEgressCidrs', 'authorized_egress_cidrs', '198.51.100.', '203.0.113.', '/32'];
+    const found = leaks.filter((needle) => response.text.includes(needle));
+    expect(found.length === 0, `directory leaked: ${found.join(', ')}`);
+    return 'no CIDR data in the public directory';
+  });
+
+  await check('R5.7', 'Directory is private-cached, never shared', async () => {
+    const response = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`, {
+      ip: STORE_1.ip,
+    });
+    const cacheControl = response.headers.get('cache-control') ?? '';
+    expect(cacheControl.includes('private'), `expected private, got "${cacheControl}"`);
+    expect(!cacheControl.includes('public'), `must not be public: "${cacheControl}"`);
+    return cacheControl;
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Admin store registry
+// ---------------------------------------------------------------------------
+
+async function validateAdminRegistry(state) {
+  section('Admin store registry');
+
+  await check('R6.1', 'Registry write API rejects anonymous callers', async () => {
+    const response = await api('/api/admin/stores', { ip: STORE_1.ip });
+    expectStatus(response, 401);
+    expectErrorCode(response, 'missing_token');
+    return '401 missing_token';
+  });
+
+  await check('R6.2', 'Registry write API rejects a wrong token', async () => {
+    const response = await api('/api/admin/stores', {
+      ip: STORE_1.ip,
+      token: 'not-the-admin-token',
+    });
+    expectStatus(response, 403);
+    expectErrorCode(response, 'invalid_token');
+    return '403 invalid_token';
+  });
+
+  await check('R6.3', 'Admin can register a new store', async () => {
+    const response = await api('/api/admin/stores', {
+      method: 'POST',
+      ip: STORE_1.ip,
+      token: ADMIN_TOKEN,
+      body: {
+        name: 'Harness Test Mart',
+        address: 'Whitefield, Bangalore',
+        latitude: 12.9698,
+        longitude: 77.75,
+        authorizedEgressCidrs: ['192.0.2.77/32'],
+        advertisedSsid: 'Harness-Guest',
+        isActive: true,
+        isOpen: true,
+      },
+    });
+    expectStatus(response, 201);
+    state.createdStoreId = response.json.store.id;
+    return `created ${state.createdStoreId}`;
+  });
+
+  await check('R6.4', 'A newly registered store reaches customers immediately', async () => {
+    const response = await api('/api/stores/nearby?lat=12.9698&lng=77.75', { ip: STORE_1.ip });
+    expectStatus(response, 200);
+    const found = response.json.stores.find((store) => store.id === state.createdStoreId);
+    expect(Boolean(found), 'the new store is absent from the customer directory');
+    expect(found.id === response.json.stores[0].id, 'new store should be nearest to its own coordinates');
+    return `${found.name} at ${found.distanceKm}km, no redeploy`;
+  });
+
+  await check('R6.5', 'A store registered by an admin can grant sessions', async () => {
+    const qr = await fetchEntryQr(state.createdStoreId);
+    const response = await api('/api/session/start', {
+      method: 'POST',
+      ip: '192.0.2.77',
+      body: { qr_token: qr.qr_token },
+    });
+    expectStatus(response, 201);
+    return `201 for a store that did not exist at boot`;
+  });
+
+  await check('R6.6', 'Malformed network ranges are refused', async () => {
+    const response = await api('/api/admin/stores', {
+      method: 'POST',
+      ip: STORE_1.ip,
+      token: ADMIN_TOKEN,
+      body: {
+        name: 'Bad CIDR Mart',
+        address: 'Nowhere',
+        latitude: 12.9,
+        longitude: 77.6,
+        authorizedEgressCidrs: ['10.0.0.1', '999.1.1.1/32'],
+        advertisedSsid: 'Bad-Guest',
+      },
+    });
+    expectStatus(response, 400);
+    expectErrorCode(response, 'invalid_store');
+    return '400 invalid_store';
+  });
+
+  await check('R6.7', 'A store with no network fails closed, with a warning', async () => {
+    const created = await api('/api/admin/stores', {
+      method: 'POST',
+      ip: STORE_1.ip,
+      token: ADMIN_TOKEN,
+      body: {
+        name: 'Unregistered Network Mart',
+        address: 'Electronic City, Bangalore',
+        latitude: 12.8452,
+        longitude: 77.6602,
+        authorizedEgressCidrs: [],
+        advertisedSsid: 'Unregistered-Guest',
+      },
+    });
+    expectStatus(created, 201);
+    expect(created.json.warnings.length > 0, 'no warning raised for a store with no network');
+
+    // The important half: it must refuse everyone rather than admitting everyone.
+    const qr = await fetchEntryQr(created.json.store.id);
+    const session = await api('/api/session/start', {
+      method: 'POST',
+      ip: '198.51.100.99',
+      body: { qr_token: qr.qr_token },
+    });
+    expectStatus(session, 403);
+    expectErrorCode(session, 'presence_not_verified');
+    return 'warned on create, 403 presence_not_verified for customers';
+  });
+
+  await check('R6.8', 'Deactivating a store withdraws it everywhere', async () => {
+    const patched = await api(`/api/admin/stores/${state.createdStoreId}`, {
+      method: 'PATCH',
+      ip: STORE_1.ip,
+      token: ADMIN_TOKEN,
+      body: { isActive: false },
+    });
+    expectStatus(patched, 200);
+
+    const directory = await api('/api/stores/nearby?lat=12.9698&lng=77.75', { ip: STORE_1.ip });
+    const stillListed = directory.json.stores.some((store) => store.id === state.createdStoreId);
+    expect(!stillListed, 'deactivated store still appears in the customer directory');
+
+    // And it can no longer mint sessions: the entrance QR endpoint stops serving it.
+    const qr = await api(`/api/store/${state.createdStoreId}/entry-qr`, { ip: STORE_1.ip });
+    expectStatus(qr, 404);
+    return 'hidden from directory, entry QR 404';
+  });
+
+  await check('R6.9', 'Admin view shows network ranges the customer view withholds', async () => {
+    const response = await api('/api/admin/stores', { ip: STORE_1.ip, token: ADMIN_TOKEN });
+    expectStatus(response, 200);
+    const store1 = response.json.stores.find((store) => store.id === 'store_1');
+    expect(Boolean(store1), 'store_1 missing from the admin listing');
+    expect(
+      Array.isArray(store1.authorized_egress_cidrs) && store1.authorized_egress_cidrs.length > 0,
+      'admin listing is missing the network ranges it exists to manage'
+    );
+    return `store_1 -> ${store1.authorized_egress_cidrs.join(', ')}`;
+  });
+
+  await check('R6.10', 'Unknown store id cannot be patched', async () => {
+    const response = await api('/api/admin/stores/store_does_not_exist', {
+      method: 'PATCH',
+      ip: STORE_1.ip,
+      token: ADMIN_TOKEN,
+      body: { isOpen: false },
+    });
+    expectStatus(response, 404);
+    expectErrorCode(response, 'store_not_found');
+    return '404 store_not_found';
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Server lifecycle
 // ---------------------------------------------------------------------------
 
@@ -681,6 +949,7 @@ async function main() {
     NODE_ENV: 'production',
     SNAPUP_QR_SECRET: QR_SECRET,
     SNAPUP_SESSION_SECRET: SESSION_SECRET,
+    SNAPUP_ADMIN_API_TOKEN: ADMIN_TOKEN,
     SNAPUP_TRUSTED_PROXY_HOPS: '1',
     // Deliberately absent: SNAPUP_PRESENCE_DEV_BYPASS. The real presence check must run.
   };
@@ -719,6 +988,8 @@ async function main() {
     await validateRequirement2(state);
     await validateRequirement3(state);
     await validateRequirement4(state);
+    await validateStoreDirectory(state);
+    await validateAdminRegistry(state);
   } finally {
     stopServer(server);
   }

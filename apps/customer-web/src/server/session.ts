@@ -79,7 +79,10 @@ export type SessionValidation =
  * heartbeat — a heartbeat alone would leave a window in which a customer who has left
  * the store can still read the database.
  */
-export function validateSession(request: NextRequest, token: string | null): SessionValidation {
+export async function validateSession(
+  request: NextRequest,
+  token: string | null
+): Promise<SessionValidation> {
   if (!token) return { valid: false, reason: 'missing_token' };
 
   const result = verifyPayload<SessionPayload>(token, SESSION_SIGNING_SECRET);
@@ -95,8 +98,11 @@ export function validateSession(request: NextRequest, token: string | null): Ses
 
   if (revokedSessions.has(payload.sub)) return { valid: false, reason: 'revoked' };
 
-  const store = getStore(payload.sid);
-  if (!store) return { valid: false, reason: 'unknown_store' };
+  // Re-read on every request rather than trusting the store state captured at sign-in, so
+  // deactivating a store or correcting its network range takes effect on sessions already
+  // in flight instead of waiting up to 30 minutes for them to expire.
+  const store = await getStore(payload.sid);
+  if (!store || !store.isActive) return { valid: false, reason: 'unknown_store' };
 
   if (!PRESENCE_DEV_BYPASS) {
     const currentIp = getEgressIp(request);

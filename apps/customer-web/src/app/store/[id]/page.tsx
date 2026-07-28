@@ -1,23 +1,37 @@
 'use client';
 
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { use } from 'react';
-import { MOCK_RECOMMENDED_STORES, MOCK_STORES } from '@/lib/mockData';
+import { fetchNearbyStores, type NearbyStore } from '@/lib/api';
 
 export default function StoreConfirmPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
 
-  const store = [...MOCK_STORES, ...MOCK_RECOMMENDED_STORES].find((s) => s.id === id);
+  const [store, setStore] = useState<NearbyStore | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!store) {
-    return (
-      <div className="mx-auto max-w-md px-6 py-16 text-center">
-        <p className="text-lg font-extrabold text-ink">Store not found</p>
-        <p className="mt-2 text-sm text-muted">This store may no longer be available.</p>
-      </div>
-    );
-  }
+  // Resolved from the directory API rather than a client-side constant, so a store the
+  // admin added minutes ago is reachable here without a redeploy.
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchNearbyStores()
+      .then((result) => {
+        if (cancelled) return;
+        setStore(result.stores.find((candidate) => candidate.id === id) ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setStore(null);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const handleConfirm = () => {
     // Routes to the SDPA entry gate rather than straight to the scanner: picking a store
@@ -25,6 +39,29 @@ export default function StoreConfirmPage({ params }: { params: Promise<{ id: str
     // unreachable until the entrance QR and the store network both check out.
     router.push('/enter');
   };
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
+        <div className="h-64 animate-pulse rounded-3xl border border-border bg-surface" />
+      </div>
+    );
+  }
+
+  if (!store) {
+    return (
+      <div className="mx-auto max-w-md px-6 py-16 text-center">
+        <p className="text-lg font-extrabold text-ink">Store not found</p>
+        <p className="mt-2 text-sm text-muted">This store may no longer be available.</p>
+        <button
+          onClick={() => router.push('/')}
+          className="mt-6 rounded-2xl bg-primary px-5 py-3 text-sm font-extrabold text-white"
+        >
+          Browse stores
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-md px-4 py-10 sm:px-6">
@@ -46,6 +83,23 @@ export default function StoreConfirmPage({ params }: { params: Promise<{ id: str
           </p>
           <p className="mb-1 text-lg font-extrabold text-ink">{store.name}</p>
           <p className="text-sm text-muted">{store.address}</p>
+          {store.distanceKm !== undefined && (
+            <p className="mt-2 text-xs font-bold text-primary">
+              {store.distanceKm.toFixed(1)} km from you
+            </p>
+          )}
+        </div>
+
+        {/* The customer has to be on this network for the next step to succeed, so name it
+            here rather than letting them discover it as a failure at the entry gate. */}
+        <div className="mb-6 rounded-2xl border border-border bg-bg p-4 text-left">
+          <p className="mb-1 text-[11px] font-extrabold uppercase tracking-wide text-muted">
+            Before you scan
+          </p>
+          <p className="text-sm leading-relaxed text-ink">
+            Connect to the <span className="font-extrabold">{store.ssid}</span> Wi-Fi inside the
+            store. SnapUp verifies both the entrance code and the store network.
+          </p>
         </div>
 
         <button

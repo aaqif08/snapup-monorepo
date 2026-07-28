@@ -23,7 +23,7 @@ function parsePositiveInt(raw: string | null, fallback: number, max: number): nu
 export async function GET(request: NextRequest) {
   const startedAt = performance.now();
 
-  const guard = guardProductRequest(request);
+  const guard = await guardProductRequest(request);
   if (!guard.ok) return guard.response;
 
   const params = request.nextUrl.searchParams;

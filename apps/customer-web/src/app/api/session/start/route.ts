@@ -43,13 +43,15 @@ export async function POST(request: NextRequest) {
   }
 
   // ---- Presence factor 1: signed entrance QR ----
-  const qr = validateEntryQr(body.qr_token);
+  const qr = await validateEntryQr(body.qr_token);
   if (!qr.valid) {
     return fail(401, `qr_${qr.reason}`, qrFailureMessage(qr.reason));
   }
 
-  const store = getStore(qr.payload.sid);
-  if (!store) return fail(401, 'qr_unknown_store', 'This entrance code is not recognised.');
+  const store = await getStore(qr.payload.sid);
+  if (!store || !store.isActive) {
+    return fail(401, 'qr_unknown_store', 'This entrance code is not recognised.');
+  }
 
   // ---- Presence factor 2: store network ----
   const presence = verifyNetworkPresence(request, store);

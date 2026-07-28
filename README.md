@@ -40,6 +40,12 @@ pass (npm workspaces).
 SNAPUP_PRESENCE_DEV_BYPASS=1 npm run dev:customer
 ```
 
+On Windows PowerShell, which has no inline `VAR=x cmd` prefix, that is two statements:
+```powershell
+$env:SNAPUP_PRESENCE_DEV_BYPASS = "1"
+npm run dev:customer
+```
+
 The bypass flag is needed locally. The customer app now refuses database access unless the
 request comes from a registered store network (see "Secure gateway" below), and a request
 from your laptop has no meaningful public IP, so without it every lookup is denied. The
@@ -48,6 +54,16 @@ flag is ignored in production builds.
 **Run the admin dashboard** (http://localhost:3001):
 ```bash
 npm run dev:admin
+```
+
+The admin console's **Stores** page writes to the customer app's store registry, so run
+both together if you want to add a store and see it appear for customers. It reaches the
+registry at `SNAPUP_API_BASE` (default `http://localhost:3000`).
+
+**Validate the security requirements** — builds, starts a production server, runs 48 cases
+over real HTTP, exits non-zero on failure:
+```bash
+npm run validate
 ```
 
 **Run both at once** (via Turborepo):
@@ -81,6 +97,26 @@ The short version:
 
 Anything a customer receives passes through `toPublicProduct()`, which allowlists six
 fields and withholds cost price, margin, supplier, stock, SKU and purchase history.
+
+## Stores and device location (`apps/customer-web/src/server/stores`)
+
+One registry holds each store's **location and its network registration together**, because
+they answer the two halves of the same question: where the shop appears in the customer's
+list, and whether anyone standing in it can actually shop.
+
+- **Distances are real and computed server-side** (`geo.ts`, haversine). They used to be
+  hardcoded constants in `mockData.ts`, so every customer was told a store was 1.2 km away
+  regardless of where they were.
+- **Location is requested, never assumed.** `useDeviceLocation.ts` checks the Permissions
+  API first, so a customer who granted access is not re-prompted and one who declined is
+  not nagged. Declining is a supported state: the directory still works, unordered and
+  without distances, rather than inventing one.
+- **Admins add stores at runtime** from the console's Stores page — no redeploy. A store
+  saved without its Wi-Fi gateway IP is flagged on save and **refuses every customer**
+  until it is filled in, rather than admitting everyone.
+- **The admin token never reaches a browser.** `apps/admin-web` proxies through its own
+  server routes. Write access to the registry is effectively the ability to authorise a
+  network, so that credential is kept server-side.
 
 Environment variables (`SNAPUP_QR_SECRET` and `SNAPUP_SESSION_SECRET` are **required in
 production** and fail closed) are documented in the doc above.

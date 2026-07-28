@@ -8,6 +8,7 @@ import { useAdminAuthStore } from '@/store/useAdminAuthStore';
 
 const NAV_LINKS = [
   { href: '/', label: 'Dashboard', icon: '📊' },
+  { href: '/stores', label: 'Stores', icon: '🏪' },
   { href: '/products', label: 'Products', icon: '📦' },
   { href: '/staff', label: 'Staff', icon: '👥' },
   { href: '/security', label: 'Security', icon: '🛡️' },

@@ -28,6 +28,18 @@ export const SESSION_SIGNING_SECRET = requireSecret(
 );
 
 /**
+ * Shared secret the admin console presents when writing to the store registry.
+ *
+ * Held only by the admin app's *server*, never shipped to its browser bundle — a token in
+ * client JavaScript is a token anyone can read and replay, which would make the whole
+ * write API public.
+ */
+export const ADMIN_API_TOKEN = requireSecret(
+  'SNAPUP_ADMIN_API_TOKEN',
+  'dev-only-admin-token-never-use-in-production'
+);
+
+/**
  * Entrance QR codes are short-lived so a photographed QR is useless within minutes.
  * This is the first half of the SDPA replay defence; the egress-IP check is the second.
  */

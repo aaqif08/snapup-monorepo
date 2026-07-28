@@ -74,6 +74,58 @@ async function authedFetch(path: string, init?: RequestInit): Promise<Response> 
 }
 
 // ---------------------------------------------------------------------------
+// Store directory
+// ---------------------------------------------------------------------------
+
+export interface NearbyStore {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  ssid: string;
+  isOpen: boolean;
+  /** Absent when the customer has not shared their location. */
+  distanceKm?: number;
+}
+
+export interface NearbyStoresResult {
+  stores: NearbyStore[];
+  /** False when the list is unordered because no coordinates were supplied. */
+  located: boolean;
+}
+
+/**
+ * Fetches the store directory, ordered by real distance when coordinates are given.
+ *
+ * Distance is computed server-side. The device's coordinates go up and the ordering comes
+ * back, rather than the client being handed every store's position to sort locally —
+ * which also means the response never carries stores outside the requested radius.
+ */
+export async function fetchNearbyStores(
+  coords?: { latitude: number; longitude: number },
+  radiusKm?: number
+): Promise<NearbyStoresResult> {
+  const params = new URLSearchParams();
+  if (coords) {
+    params.set('lat', String(coords.latitude));
+    params.set('lng', String(coords.longitude));
+    if (radiusKm !== undefined) params.set('radius_km', String(radiusKm));
+  }
+
+  const query = params.toString();
+  const response = await fetch(`/api/stores/nearby${query ? `?${query}` : ''}`);
+
+  if (!response.ok) {
+    const error = await parseError(response);
+    throw new GatewayError(error.code, error.message, response.status);
+  }
+
+  const body = await response.json();
+  return { stores: body.stores as NearbyStore[], located: Boolean(body.located) };
+}
+
+// ---------------------------------------------------------------------------
 // Session lifecycle (Requirement 1)
 // ---------------------------------------------------------------------------
 

@@ -15,7 +15,7 @@ const BARCODE_PATTERN = /^\d{6,14}$/;
 export async function GET(request: NextRequest, context: { params: Promise<{ barcode: string }> }) {
   const startedAt = performance.now();
 
-  const guard = guardProductRequest(request);
+  const guard = await guardProductRequest(request);
   if (!guard.ok) return guard.response;
 
   const { barcode } = await context.params;
