@@ -10,8 +10,8 @@ import { confirmPayment, createOrder, GatewayError, type ServerOrder } from '@/l
 import { attemptUpiRedirect, buildUpiLink, isLikelyMobileDevice } from '@/lib/upi';
 
 const PAYMENT_ROWS = [
-  { label: 'BHIM UPI', bg: 'bg-[#E8F5E9]', icon: '🟩', app: 'bhim' as const },
-  { label: 'GPay UPI', bg: 'bg-[#E3F2FD]', icon: '🟦', app: 'gpay' as const },
+  { label: 'BHIM UPI', bg: 'bg-success/15', icon: '🟩', app: 'bhim' as const },
+  { label: 'GPay UPI', bg: 'bg-primary/15', icon: '🟦', app: 'gpay' as const },
 ];
 
 const UPI_GRID: Array<{ label: string; app: 'gpay' | 'phonepe' | 'paytm' | 'bhim' }> = [
@@ -153,7 +153,7 @@ export default function CheckoutPage() {
   // ---- Exit screen ----
   if (exit && order) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-[#FAF7F2] p-6 text-center">
+      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-bg p-6 text-center">
         <h1 className="mb-2 text-2xl font-extrabold text-primary">
           {exit.verified ? 'Payment Recorded' : 'Almost Done'}
         </h1>
@@ -166,7 +166,9 @@ export default function CheckoutPage() {
               // at the gate.
               'Show this code at the exit. A member of staff will confirm your payment against the store’s own records before you leave.'}
         </p>
-        <div className="mb-5 rounded-3xl bg-white p-5 shadow-lg">
+        {/* Stays white in both themes — a QR is dark modules on a light quiet zone, and
+            inverting it stops scanners reading it. */}
+        <div className="mb-5 rounded-3xl bg-white p-5 shadow-pop">
           <QRCodeSVG value={exit.token} size={220} />
         </div>
         <p className="mb-1 text-base font-bold text-ink">
@@ -177,7 +179,7 @@ export default function CheckoutPage() {
         </p>
         <button
           onClick={handleReset}
-          className="rounded-xl bg-red-100 px-6 py-3 text-sm font-extrabold text-red-500"
+          className="rounded-xl bg-danger/10 px-6 py-3 text-sm font-extrabold text-danger transition-colors duration-200 hover:bg-danger/20"
         >
           Close &amp; Start New Cart
         </button>
@@ -188,25 +190,29 @@ export default function CheckoutPage() {
   // ---- Desktop / app-not-installed QR fallback ----
   if (pendingUpiQr && order) {
     return (
-      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-[#FAF7F2] p-6 text-center">
+      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-bg p-6 text-center">
         <h1 className="mb-2 text-2xl font-extrabold text-ink">Scan to Pay</h1>
         <p className="mb-2 max-w-sm text-sm leading-relaxed text-muted">
           Open any UPI app on your phone and scan this code to pay ₹{(order.total / 100).toFixed(2)}{' '}
           to {order.payment.payee_name}.
         </p>
         <p className="mb-8 text-xs text-muted">Ref {order.payment.transaction_ref}</p>
-        <div className="mb-6 rounded-3xl bg-white p-5 shadow-lg">
+        {/* White in both themes for the same reason as the exit code: it has to scan. */}
+        <div className="mb-6 rounded-3xl bg-white p-5 shadow-pop">
           <QRCodeSVG value={pendingUpiQr} size={220} />
         </div>
-        {error && <p className="mb-3 max-w-sm text-xs font-bold text-red-500">{error}</p>}
+        {error && <p className="mb-3 max-w-sm text-xs font-bold text-danger">{error}</p>}
         <button
           onClick={() => void handlePaymentConfirmation('upi_attested')}
           disabled={isBusy}
-          className="mb-3 rounded-xl bg-primary px-6 py-3 text-sm font-extrabold text-white hover:opacity-90 disabled:opacity-50"
+          className="mb-3 rounded-xl bg-primary px-6 py-3 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99] disabled:opacity-50"
         >
           {isBusy ? 'Recording…' : "I've Completed the Payment"}
         </button>
-        <button onClick={() => setPendingUpiQr(null)} className="text-sm font-bold text-muted">
+        <button
+          onClick={() => setPendingUpiQr(null)}
+          className="rounded-lg px-3 py-2 text-sm font-bold text-muted transition-colors duration-200 hover:text-ink"
+        >
           Back to payment options
         </button>
       </div>
@@ -220,7 +226,7 @@ export default function CheckoutPage() {
     <div className="mx-auto min-h-[calc(100vh-64px)] max-w-2xl bg-bg pb-10">
       <DiscountBanner />
 
-      <div className="sticky top-16 z-10 mt-4 flex items-center justify-between bg-surface px-5 py-4 shadow-sm">
+      <div className="sticky top-16 z-10 mt-4 flex items-center justify-between border-y border-border bg-surface/90 px-5 py-4 shadow-card backdrop-blur-md">
         <span className="text-sm font-semibold text-ink">
           To Pay: <span className="font-extrabold text-primary">₹{displayTotal.toFixed(2)}</span>
           {!order && <span className="ml-2 text-xs font-medium text-muted">(estimate)</span>}
@@ -230,32 +236,32 @@ export default function CheckoutPage() {
             </span>
           )}
         </span>
-        <span className="text-sm font-bold text-red-500">View Bill</span>
+        <span className="text-sm font-bold text-primary">View Bill</span>
       </div>
 
       {/* The server declines to apply a discount it cannot verify. Saying why beats a
           silently different total at the moment the customer is about to pay. */}
       {discountReason === 'identity_unverifiable' && (
-        <div className="mx-5 mt-4 rounded-xl bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-900">
+        <div className="mx-5 mt-4 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-xs font-semibold text-warning">
           The 5% member discount could not be applied — please sign in again before checkout so
           we can confirm your account.
         </div>
       )}
 
       {error && (
-        <div className="mx-5 mt-4 rounded-xl bg-red-50 px-4 py-3 text-xs font-bold text-red-600">
+        <div className="mx-5 mt-4 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-xs font-bold text-danger">
           {error}
         </div>
       )}
 
       {isRedirecting && (
-        <div className="mx-5 mt-4 rounded-xl bg-ink/90 px-4 py-3 text-center text-sm font-bold text-white">
+        <div className="mx-5 mt-4 rounded-xl bg-accent px-4 py-3 text-center text-sm font-bold text-onAccent">
           Opening {isRedirecting}…
         </div>
       )}
 
       {isBusy && !isRedirecting && (
-        <div className="mx-5 mt-4 rounded-xl bg-ink/90 px-4 py-3 text-center text-sm font-bold text-white">
+        <div className="mx-5 mt-4 rounded-xl bg-accent px-4 py-3 text-center text-sm font-bold text-onAccent">
           Confirming your basket…
         </div>
       )}
@@ -269,7 +275,7 @@ export default function CheckoutPage() {
               onClick={() => void handleUpiAppPayment(row.app, row.label)}
               disabled={isBusy}
               className={`flex w-full items-center gap-4 p-4 text-left disabled:opacity-50 ${
-                i !== PAYMENT_ROWS.length - 1 ? 'border-b border-[#F0F0F0]' : ''
+                i !== PAYMENT_ROWS.length - 1 ? 'border-b border-border' : ''
               }`}
             >
               <span className={`flex h-9 w-9 items-center justify-center rounded-full ${row.bg}`}>
@@ -291,7 +297,7 @@ export default function CheckoutPage() {
             disabled={isBusy}
             className="flex w-full items-center gap-4 p-4 text-left disabled:opacity-50"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F3F4F6]">🏛️</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-tint">🏛️</span>
             <div className="flex-1">
               <p className="font-bold text-ink">Pay by any UPI app</p>
               <p className="text-xs text-muted">Use any UPI app on your phone to pay</p>
@@ -307,7 +313,7 @@ export default function CheckoutPage() {
                 disabled={isBusy}
                 className="flex flex-col items-center gap-2 disabled:opacity-50"
               >
-                <span className="h-11 w-11 rounded-xl bg-[#F3F4F6]" />
+                <span className="h-11 w-11 rounded-xl bg-tint" />
                 <span className="text-[11px] font-medium text-ink">{item.label}</span>
               </button>
             ))}
@@ -321,7 +327,7 @@ export default function CheckoutPage() {
             disabled={isBusy}
             className="flex w-full items-center gap-4 p-4 text-left disabled:opacity-50"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFEBEE]">💵</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-danger/10">💵</span>
             <div className="flex-1">
               <p className="font-bold text-ink">Pay through cash in kiosk or the counter</p>
               <p className="text-xs text-muted">Pay using physical cash or card at the exit</p>

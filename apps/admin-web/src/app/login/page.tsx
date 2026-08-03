@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ThemeToggle from '@snapup/ui/ThemeToggle';
 import { useAdminAuthStore } from '@/store/useAdminAuthStore';
 
 export default function AdminLoginPage() {
@@ -30,11 +31,16 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-primary px-6 py-12">
-      <div className="w-full max-w-sm rounded-3xl bg-surface p-8 shadow-xl">
+    <div className="relative flex min-h-screen items-center justify-center bg-primary px-6 py-12">
+      {/* The shell's toggle is behind the auth guard, so sign-in needs its own. */}
+      <div className="absolute right-4 top-4">
+        <ThemeToggle className="border-onPrimary/30 text-onPrimary hover:border-onPrimary hover:text-onPrimary" />
+      </div>
+
+      <div className="w-full max-w-sm animate-scale-in rounded-3xl bg-surface p-8 shadow-pop">
         <div className="mb-6 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-bg">
-            <Image src="/logo-mark.png" alt="SnapUp" width={36} height={36} />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-tint">
+            <Image src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-auto" />
           </div>
           <h1 className="text-xl font-extrabold text-ink">SnapUp Business</h1>
           <p className="mt-1 text-center text-sm text-muted">
@@ -69,7 +75,7 @@ export default function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-accent py-3.5 text-sm font-extrabold text-white transition hover:opacity-90"
+            className="w-full rounded-xl bg-accent py-3.5 text-sm font-extrabold text-onAccent transition duration-200 hover:opacity-90"
           >
             Sign In
           </button>

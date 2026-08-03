@@ -129,7 +129,7 @@ export default function ProductsPage() {
           <select
             value={storeId}
             onChange={(e) => setStoreId(e.target.value)}
-            className="rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-bold text-ink outline-none focus:border-primary"
+            className="rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-bold text-ink outline-none transition-colors duration-200 focus:border-primary"
           >
             {stores.map((store) => (
               <option key={store.id} value={store.id}>
@@ -147,7 +147,7 @@ export default function ProductsPage() {
           <button
             onClick={() => setModal({ mode: 'create' })}
             disabled={!storeId}
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-extrabold text-white hover:opacity-90 disabled:opacity-50"
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-extrabold text-onPrimary hover:opacity-90 disabled:opacity-50"
           >
             + Add Product
           </button>
@@ -161,13 +161,13 @@ export default function ProductsPage() {
       )}
 
       {warnings.length > 0 && (
-        <div className="mb-4 rounded-2xl border border-amber-400/50 bg-amber-50 p-4">
-          <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-amber-700">
+        <div className="mb-4 rounded-2xl border border-warning/40 bg-warning/10 p-4">
+          <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-warning">
             Saved with warnings
           </p>
           <ul className="list-inside list-disc space-y-1">
             {warnings.map((warning) => (
-              <li key={warning} className="text-sm leading-relaxed text-amber-900">
+              <li key={warning} className="text-sm leading-relaxed text-warning">
                 {warning}
               </li>
             ))}
@@ -190,7 +190,7 @@ export default function ProductsPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by name, barcode, or category"
-          className="mb-5 w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm font-medium text-ink outline-none focus:border-primary"
+          className="mb-5 w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm font-medium text-ink outline-none transition-colors duration-200 focus:border-primary"
         />
       )}
 
@@ -249,7 +249,7 @@ export default function ProductsPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setModal({ mode: 'edit', product })}
-                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-ink hover:border-primary"
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-ink transition-colors duration-200 hover:border-primary"
                   >
                     Edit
                   </button>

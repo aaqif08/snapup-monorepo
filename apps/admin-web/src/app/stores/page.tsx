@@ -66,20 +66,20 @@ export default function StoresPage() {
         </div>
         <button
           onClick={() => setModal({ mode: 'create' })}
-          className="rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-white hover:opacity-90"
+          className="rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-onPrimary hover:opacity-90"
         >
           Add Store
         </button>
       </div>
 
       {warnings.length > 0 && (
-        <div className="mb-4 rounded-2xl border border-amber-400/50 bg-amber-50 p-4">
-          <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-amber-700">
+        <div className="mb-4 rounded-2xl border border-warning/40 bg-warning/10 p-4">
+          <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-warning">
             Saved with warnings
           </p>
           <ul className="list-inside list-disc space-y-1">
             {warnings.map((warning) => (
-              <li key={warning} className="text-sm leading-relaxed text-amber-900">
+              <li key={warning} className="text-sm leading-relaxed text-warning">
                 {warning}
               </li>
             ))}
@@ -185,16 +185,16 @@ function StoreRow({
         <div className="flex gap-2">
           <button
             onClick={onEdit}
-            className="rounded-xl border border-border px-3 py-2 text-xs font-extrabold text-ink hover:border-primary"
+            className="rounded-xl border border-border px-3 py-2 text-xs font-extrabold text-ink transition-colors duration-200 hover:border-primary"
           >
             Edit
           </button>
           <button
             onClick={onToggleActive}
-            className={`rounded-xl px-3 py-2 text-xs font-extrabold ${
+            className={`rounded-xl px-3 py-2 text-xs font-extrabold transition-colors duration-200 ${
               store.is_active
-                ? 'border border-danger/40 text-danger hover:bg-danger/5'
-                : 'bg-primary text-white hover:opacity-90'
+                ? 'border border-danger/40 text-danger hover:bg-danger/10'
+                : 'bg-primary text-onPrimary hover:bg-primaryDark'
             }`}
           >
             {store.is_active ? 'Deactivate' : 'Activate'}

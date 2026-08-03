@@ -91,7 +91,7 @@ export default function DashboardPage() {
           <p className="text-sm font-semibold text-danger">{error}</p>
           <button
             onClick={() => void load()}
-            className="mt-3 rounded-xl bg-danger px-4 py-2 text-xs font-extrabold text-white"
+            className="mt-3 rounded-xl bg-danger px-4 py-2 text-xs font-extrabold text-surface"
           >
             Retry
           </button>
@@ -155,19 +155,19 @@ export default function DashboardPage() {
                 className={`rounded-2xl border p-4 ${
                   severity === 'blocking'
                     ? 'border-danger/40 bg-danger/5'
-                    : 'border-amber-400/50 bg-amber-50'
+                    : 'border-warning/40 bg-warning/10'
                 }`}
               >
                 <p
                   className={`text-sm font-extrabold ${
-                    severity === 'blocking' ? 'text-danger' : 'text-amber-900'
+                    severity === 'blocking' ? 'text-danger' : 'text-warning'
                   }`}
                 >
                   {store.name} <span className="font-mono text-xs font-normal">{store.id}</span>
                 </p>
                 <p
                   className={`mt-0.5 text-xs ${
-                    severity === 'blocking' ? 'text-danger' : 'text-amber-900'
+                    severity === 'blocking' ? 'text-danger' : 'text-warning'
                   }`}
                 >
                   {message}
@@ -238,11 +238,15 @@ function Stat({
   tone?: 'normal' | 'warning';
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div
+      className={`rounded-2xl border bg-surface p-5 shadow-card transition-colors duration-200 ${
+        tone === 'warning' ? 'border-warning/40' : 'border-border'
+      }`}
+    >
       <p className="text-xs font-extrabold uppercase tracking-wide text-muted">{label}</p>
       <p
-        className={`mt-2 text-3xl font-extrabold ${
-          tone === 'warning' ? 'text-amber-600' : 'text-ink'
+        className={`mt-2 text-3xl font-extrabold tabular-nums tracking-tight ${
+          tone === 'warning' ? 'text-warning' : 'text-ink'
         }`}
       >
         {value}

@@ -56,7 +56,7 @@ function LoginForm() {
         </p>
 
         {step === 'phone' ? (
-          <div className="mb-2 flex h-14 items-center rounded-2xl border border-border bg-bg px-4">
+          <div className="mb-2 flex h-14 items-center rounded-2xl border border-border bg-bg px-4 transition-colors duration-200 focus-within:border-primary">
             <span className="mr-3 font-bold text-ink">+91</span>
             <input
               type="tel"
@@ -70,7 +70,7 @@ function LoginForm() {
             />
           </div>
         ) : (
-          <div className="mb-2 flex h-14 items-center rounded-2xl border border-border bg-bg px-4">
+          <div className="mb-2 flex h-14 items-center rounded-2xl border border-border bg-bg px-4 transition-colors duration-200 focus-within:border-primary">
             <input
               type="text"
               inputMode="numeric"
@@ -84,11 +84,11 @@ function LoginForm() {
           </div>
         )}
 
-        {formError && <p className="mb-3 text-sm font-semibold text-red-500">{formError}</p>}
+        {formError && <p className="mb-3 text-sm font-semibold text-danger">{formError}</p>}
 
         <button
           onClick={step === 'phone' ? handleSendOtp : handleVerifyOtp}
-          className="mt-4 h-14 w-full rounded-2xl bg-accent text-base font-extrabold text-white transition hover:opacity-90"
+          className="mt-4 h-14 w-full rounded-2xl bg-accent text-base font-extrabold text-onAccent transition duration-200 hover:opacity-90 active:scale-[0.99]"
         >
           {step === 'phone' ? 'Continue' : 'Verify & Proceed'}
         </button>

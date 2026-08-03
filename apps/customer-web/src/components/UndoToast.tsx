@@ -23,11 +23,17 @@ export default function UndoToast({ itemName, onUndo, onExpire, durationMs = 400
   }, []);
 
   return (
-    <div className="fixed inset-x-4 bottom-24 z-30 flex items-center justify-between gap-3 rounded-2xl bg-ink px-4 py-3 shadow-lg sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2">
-      <p className="text-sm font-semibold text-white">
+    <div
+      role="status"
+      className="fixed inset-x-4 bottom-24 z-30 flex animate-fade-in-up items-center justify-between gap-3 rounded-2xl border border-border bg-accent px-4 py-3 shadow-pop sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2"
+    >
+      <p className="text-sm font-semibold text-onAccent">
         Removed <span className="font-extrabold">{itemName}</span>
       </p>
-      <button onClick={onUndo} className="flex-shrink-0 text-sm font-extrabold text-primary">
+      <button
+        onClick={onUndo}
+        className="flex-shrink-0 rounded-lg px-2 py-1 text-sm font-extrabold text-primary transition-colors duration-200 hover:bg-primary/10"
+      >
         UNDO
       </button>
     </div>

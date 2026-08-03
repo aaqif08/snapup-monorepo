@@ -74,8 +74,8 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-black/40 sm:items-center">
-      <div className="my-8 w-full max-w-md rounded-t-3xl bg-surface p-6 sm:rounded-3xl">
+    <div className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-black/50 backdrop-blur-sm sm:items-center">
+      <div className="my-8 w-full max-w-md animate-fade-in-up rounded-t-3xl border border-border bg-surface p-6 shadow-pop sm:rounded-3xl">
         <h2 className="mb-4 text-lg font-extrabold text-ink">
           {initial ? `Edit ${initial.name}` : 'Add New Store'}
         </h2>
@@ -181,11 +181,11 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
           {/* Money goes straight from the customer to this address. A typo sends it to a
               stranger and SnapUp never sees the transaction, so this warning is not
               boilerplate — it is the only check that exists today. */}
-          <div className="rounded-xl border border-amber-400/50 bg-amber-50 p-3">
-            <p className="text-[11px] font-extrabold uppercase tracking-wide text-amber-900">
+          <div className="rounded-xl border border-warning/40 bg-warning/10 p-3">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-warning">
               Verify before go-live
             </p>
-            <p className="mt-1 text-[11px] leading-relaxed text-amber-900">
+            <p className="mt-1 text-[11px] leading-relaxed text-warning">
               Customers pay this address <strong>directly</strong> — SnapUp does not hold the
               money and cannot reverse a payment sent to the wrong VPA. The format is checked,
               but not the owner. Send a ₹1 test payment and confirm the retailer received it
@@ -212,7 +212,7 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
             <button
               type="submit"
               disabled={isSaving}
-              className="flex-1 rounded-xl bg-primary py-3 text-sm font-extrabold text-white hover:opacity-90 disabled:opacity-50"
+              className="flex-1 rounded-xl bg-primary py-3 text-sm font-extrabold text-onPrimary hover:opacity-90 disabled:opacity-50"
             >
               {isSaving ? 'Saving…' : initial ? 'Save Changes' : 'Add Store'}
             </button>
@@ -224,7 +224,7 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
 }
 
 const inputClass =
-  'w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-primary';
+  'w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm font-semibold text-ink outline-none transition-colors duration-200 focus:border-primary';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

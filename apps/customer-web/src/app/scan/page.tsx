@@ -114,7 +114,9 @@ export default function ScanPage() {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100vh-64px)] flex-col bg-[#000]">
+    // Black regardless of theme: this is the ground behind a live camera feed, not a
+    // surface, so it should not lighten when the app is in light mode.
+    <div className="relative flex min-h-[calc(100vh-64px)] flex-col bg-black">
       {/* Camera viewport */}
       <div className="flex flex-1 items-center justify-center px-6 pb-72 pt-10">
         <div className="h-[280px] w-full max-w-sm">
@@ -131,7 +133,7 @@ export default function ScanPage() {
       )}
 
       {/* Bottom control surface, ported from the original controlSurface styles */}
-      <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] bg-bg px-6 pb-10 pt-4 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
+      <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] border-t border-border bg-bg px-6 pb-10 pt-4 shadow-pop">
         <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-border" />
         <h1 className="mb-2 text-2xl font-extrabold text-ink">Ready to Scan</h1>
         <p className="mb-4 text-base leading-relaxed text-muted">

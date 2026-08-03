@@ -55,7 +55,7 @@ export default function StoreConfirmPage({ params }: { params: Promise<{ id: str
         <p className="mt-2 text-sm text-muted">This store may no longer be available.</p>
         <button
           onClick={() => router.push('/')}
-          className="mt-6 rounded-2xl bg-primary px-5 py-3 text-sm font-extrabold text-white"
+          className="mt-6 rounded-2xl bg-primary px-5 py-3 text-sm font-extrabold text-onPrimary"
         >
           Browse stores
         </button>
@@ -104,7 +104,7 @@ export default function StoreConfirmPage({ params }: { params: Promise<{ id: str
 
         <button
           onClick={handleConfirm}
-          className="mb-3 w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-white transition hover:opacity-90"
+          className="mb-3 w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:opacity-90"
         >
           Confirm &amp; Start Scanning
         </button>

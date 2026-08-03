@@ -134,8 +134,8 @@ export default function ProductFormModal({
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-black/40 sm:items-center">
-      <div className="my-8 w-full max-w-md rounded-t-3xl bg-surface p-6 sm:rounded-3xl">
+    <div className="fixed inset-0 z-40 flex items-end justify-center overflow-y-auto bg-black/50 backdrop-blur-sm sm:items-center">
+      <div className="my-8 w-full max-w-md animate-fade-in-up rounded-t-3xl border border-border bg-surface p-6 shadow-pop sm:rounded-3xl">
         <h2 className="mb-1 text-lg font-extrabold text-ink">
           {initial ? 'Edit Product' : 'Add New Product'}
         </h2>
@@ -162,7 +162,7 @@ export default function ProductFormModal({
               <button
                 type="button"
                 onClick={() => setIsScanning(true)}
-                className="shrink-0 rounded-xl border border-border px-3 py-2.5 text-sm font-extrabold text-primary hover:border-primary"
+                className="shrink-0 rounded-xl border border-border px-3 py-2.5 text-sm font-extrabold text-primary transition-colors duration-200 hover:border-primary"
               >
                 Scan
               </button>
@@ -247,7 +247,7 @@ export default function ProductFormModal({
             <button type="button" onClick={onClose} disabled={isSaving} className="flex-1 rounded-xl border border-border py-3 text-sm font-extrabold text-ink disabled:opacity-50">
               Cancel
             </button>
-            <button type="submit" disabled={isSaving} className="flex-1 rounded-xl bg-primary py-3 text-sm font-extrabold text-white hover:opacity-90 disabled:opacity-50">
+            <button type="submit" disabled={isSaving} className="flex-1 rounded-xl bg-primary py-3 text-sm font-extrabold text-onPrimary hover:opacity-90 disabled:opacity-50">
               {isSaving ? 'Saving…' : initial ? 'Save Changes' : 'Add Product'}
             </button>
           </div>
@@ -258,7 +258,7 @@ export default function ProductFormModal({
 }
 
 const inputClass =
-  'w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm font-semibold text-ink outline-none focus:border-primary';
+  'w-full rounded-xl border border-border bg-bg px-3 py-2.5 text-sm font-semibold text-ink outline-none transition-colors duration-200 focus:border-primary';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

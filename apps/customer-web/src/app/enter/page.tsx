@@ -60,7 +60,7 @@ export default function StoreEntryPage() {
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] bg-bg px-6 pb-10 pt-4 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
+      <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] border-t border-border bg-bg px-6 pb-10 pt-4 shadow-pop">
         <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-border" />
 
         {phase === 'error' ? (
@@ -69,7 +69,7 @@ export default function StoreEntryPage() {
             <p className="mb-6 text-base leading-relaxed text-muted">{error}</p>
             <button
               onClick={retry}
-              className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-white"
+              className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
             >
               Try again
             </button>

@@ -16,7 +16,15 @@ function DistanceLabel({ store }: { store: NearbyStore }) {
 
 function OpenLabel({ isOpen }: { isOpen: boolean }) {
   return (
-    <span className={`text-[10px] font-extrabold ${isOpen ? 'text-primary' : 'text-red-500'}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-extrabold ${
+        isOpen ? 'bg-primary/10 text-primary' : 'bg-danger/10 text-danger'
+      }`}
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${isOpen ? 'bg-primary' : 'bg-danger'}`}
+        aria-hidden
+      />
       {isOpen ? 'OPEN' : 'CLOSED'}
     </span>
   );
@@ -33,9 +41,9 @@ export default function StoreCard({
     return (
       <Link
         href={`/store/${store.id}`}
-        className="flex min-w-[260px] items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition hover:border-primary sm:min-w-0"
+        className="group flex min-w-[260px] items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-card sm:min-w-0"
       >
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-bg text-2xl">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-tint text-2xl transition-colors duration-200 group-hover:bg-primary/15" aria-hidden>
           🏪
         </div>
         <div className="flex-1">
@@ -53,9 +61,9 @@ export default function StoreCard({
   return (
     <Link
       href={`/store/${store.id}`}
-      className="min-w-[240px] flex-shrink-0 rounded-2xl border border-border bg-surface p-4 transition hover:border-primary sm:min-w-0"
+      className="group min-w-[240px] flex-shrink-0 rounded-2xl border border-border bg-surface p-4 transition duration-200 hover:-translate-y-0.5 hover:border-primary hover:shadow-card sm:min-w-0"
     >
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-bg text-2xl">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-tint text-2xl transition-colors duration-200 group-hover:bg-primary/15" aria-hidden>
         🏪
       </div>
       <p className="mb-1 font-extrabold text-ink">{store.name}</p>

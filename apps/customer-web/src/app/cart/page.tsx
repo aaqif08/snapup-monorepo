@@ -79,7 +79,7 @@ export default function CartPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
                 aria-label={`Decrease quantity of ${item.name}`}
               >
                 −
@@ -87,7 +87,7 @@ export default function CartPage() {
               <span className="w-4 text-center text-sm font-bold text-ink">{item.quantity}</span>
               <button
                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink"
+                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
                 aria-label={`Increase quantity of ${item.name}`}
               >
                 +
@@ -99,7 +99,7 @@ export default function CartPage() {
             {/* Always-visible remove control, per spec — not hover-only or gesture-hidden. */}
             <button
               onClick={() => handleRemove(item, index)}
-              className="rounded-lg px-2 py-1.5 text-xs font-bold text-red-500 transition hover:bg-red-50"
+              className="rounded-lg px-2 py-1.5 text-xs font-bold text-danger transition-colors duration-200 hover:bg-danger/10"
               aria-label={`Remove ${item.name}`}
             >
               Remove
@@ -125,14 +125,14 @@ export default function CartPage() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 -mx-4 flex items-center justify-between border-t border-border bg-surface px-6 py-5 sm:-mx-6">
+      <div className="sticky bottom-0 -mx-4 flex items-center justify-between border-t border-border bg-surface/95 px-6 py-5 shadow-pop backdrop-blur-md sm:-mx-6">
         <div>
           <p className="text-xl font-extrabold text-ink">₹{totalBill.toFixed(2)}</p>
           <p className="text-xs font-extrabold text-primary">View Detailed Bill</p>
         </div>
         <button
           onClick={() => router.push('/checkout')}
-          className="rounded-2xl bg-primary px-6 py-3.5 text-sm font-extrabold text-white transition hover:opacity-90"
+          className="rounded-2xl bg-primary px-6 py-3.5 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
         >
           Proceed to Pay
         </button>

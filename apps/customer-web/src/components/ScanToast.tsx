@@ -12,9 +12,12 @@ interface ScanToastProps {
  */
 export default function ScanToast({ productName, priceLabel, onDismiss }: ScanToastProps) {
   return (
-    <div className="toast-enter absolute inset-x-4 top-4 z-30 rounded-2xl bg-white p-4 shadow-lg sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2">
+    <div
+      role="status"
+      className="toast-enter absolute inset-x-4 top-4 z-30 rounded-2xl border border-border bg-surface p-4 shadow-pop sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2"
+    >
       <div className="mb-1 flex items-center gap-2">
-        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] text-white">
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-extrabold text-onPrimary">
           ✓
         </span>
         <p className="text-[11px] font-extrabold uppercase tracking-wide text-primary">Item Captured</p>
@@ -23,7 +26,7 @@ export default function ScanToast({ productName, priceLabel, onDismiss }: ScanTo
       <p className="mb-3 text-sm text-muted">{priceLabel}</p>
       <button
         onClick={onDismiss}
-        className="w-full rounded-xl bg-ink py-2.5 text-sm font-extrabold text-white transition hover:opacity-90"
+        className="w-full rounded-xl bg-accent py-2.5 text-sm font-extrabold text-onAccent transition duration-200 hover:opacity-90 active:scale-[0.99]"
       >
         Continue Scanning
       </button>

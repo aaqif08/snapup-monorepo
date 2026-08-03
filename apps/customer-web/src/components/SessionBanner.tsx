@@ -42,12 +42,18 @@ export default function SessionBanner({ status, onRestart }: SessionBannerProps)
   const copy = COPY[status];
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-6 text-center">
+    <div className="animate-fade-in-up rounded-2xl border border-border bg-surface p-6 text-center shadow-card">
+      <div
+        className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-tint text-2xl"
+        aria-hidden
+      >
+        {status === 'idle' ? '🛒' : status === 'expired' ? '⏱️' : '📶'}
+      </div>
       <h2 className="mb-2 text-xl font-extrabold text-ink">{copy.title}</h2>
       <p className="mb-6 text-sm leading-relaxed text-muted">{copy.body}</p>
       <button
         onClick={onRestart}
-        className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-white"
+        className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
       >
         {copy.cta}
       </button>

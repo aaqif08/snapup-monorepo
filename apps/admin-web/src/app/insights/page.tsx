@@ -107,8 +107,10 @@ export default function InsightsPage() {
             <button
               key={option.key}
               onClick={() => setWindow(option.key)}
-              className={`px-3 py-2 text-xs font-extrabold transition ${
-                window === option.key ? 'bg-primary text-white' : 'text-muted hover:text-ink'
+              className={`px-3 py-2 text-xs font-extrabold transition-colors duration-200 ${
+                window === option.key
+                  ? 'bg-primary text-onPrimary'
+                  : 'text-muted hover:bg-tint hover:text-ink'
               }`}
             >
               {option.label}
@@ -333,7 +335,7 @@ function HourlyChart({ hourly }: { hourly: Array<{ hour: number; scans: number; 
               style={{ height: `${Math.max((scans / peak) * 100, scans > 0 ? 3 : 0)}%` }}
             />
             {/* Hover detail rather than a label on all 24 bars. */}
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[10px] font-bold text-white group-hover:block">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[10px] font-bold text-onAccent group-hover:block">
               {formatHour(hour)} · {scans} scans
             </div>
           </div>
@@ -364,7 +366,7 @@ function DailyChart({ daily }: { daily: Array<{ date: string; revenuePaise: numb
                 height: `${Math.max((day.revenuePaise / peak) * 100, day.revenuePaise > 0 ? 3 : 0)}%`,
               }}
             />
-            <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[10px] font-bold text-white group-hover:block">
+            <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[10px] font-bold text-onAccent group-hover:block">
               {day.date} · {formatRupees(day.revenuePaise)} · {day.ordersPlaced} orders
             </div>
           </div>

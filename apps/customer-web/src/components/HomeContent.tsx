@@ -71,7 +71,8 @@ export default function HomeContent() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search stores by name or area"
-          className="w-full rounded-2xl border border-border bg-surface px-5 py-4 text-base font-medium text-ink shadow-sm outline-none transition focus:border-primary"
+          aria-label="Search stores by name or area"
+          className="w-full rounded-2xl border border-border bg-surface px-5 py-4 text-base font-medium text-ink shadow-card outline-none transition duration-200 placeholder:text-muted focus:border-primary"
         />
       </div>
 
@@ -89,7 +90,7 @@ export default function HomeContent() {
           <p className="mb-3 text-sm text-muted">{loadError}</p>
           <button
             onClick={() => void load()}
-            className="rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-white"
+            className="rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark"
           >
             Try again
           </button>
@@ -184,7 +185,7 @@ function LocationBar({
         {status !== 'unavailable' && (
           <button
             onClick={onRequest}
-            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-white transition hover:opacity-90"
+            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
           >
             {status === 'denied' ? 'Try again' : 'Use my location'}
           </button>

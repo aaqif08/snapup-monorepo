@@ -62,8 +62,8 @@ export default function BarcodeScanModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/60 sm:items-center">
-      <div className="my-8 w-full max-w-md rounded-t-3xl bg-surface p-6 sm:rounded-3xl">
+    <div className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/60 backdrop-blur-sm sm:items-center">
+      <div className="my-8 w-full max-w-md animate-fade-in-up rounded-t-3xl border border-border bg-surface p-6 shadow-pop sm:rounded-3xl">
         <h2 className="text-lg font-extrabold text-ink">{title}</h2>
         <p className="mt-1 text-xs leading-relaxed text-muted">{hint}</p>
 
@@ -77,8 +77,8 @@ export default function BarcodeScanModal({
         </div>
 
         {rejected !== null && (
-          <div className="mt-3 rounded-xl bg-amber-50 px-3 py-2.5">
-            <p className="text-[11px] font-bold leading-relaxed text-amber-900">
+          <div className="mt-3 rounded-xl bg-warning/10 px-3 py-2.5">
+            <p className="text-[11px] font-bold leading-relaxed text-warning">
               Read <span className="font-mono">{rejected.slice(0, 40)}</span>, which is not a
               product barcode. Point the camera at the EAN/UPC barcode — 6 to 14 digits — not
               at a QR code or shelf label.
@@ -99,13 +99,13 @@ export default function BarcodeScanModal({
               }}
               inputMode="numeric"
               placeholder="890123456001"
-              className="w-full rounded-xl border border-border bg-bg px-3 py-2.5 font-mono text-sm font-semibold text-ink outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border bg-bg px-3 py-2.5 font-mono text-sm font-semibold text-ink outline-none transition-colors duration-200 focus:border-primary"
             />
             <button
               type="button"
               onClick={() => accept(manualEntry)}
               disabled={manualEntry.trim().length === 0}
-              className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-white hover:opacity-90 disabled:opacity-40"
+              className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-onPrimary hover:opacity-90 disabled:opacity-40"
             >
               Use
             </button>

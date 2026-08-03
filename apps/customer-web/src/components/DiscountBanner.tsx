@@ -22,15 +22,15 @@ export default function DiscountBanner() {
   if (discountRupees <= 0) return null;
 
   return (
-    <div className="mx-4 mt-4 flex items-start gap-3 rounded-2xl bg-primary/10 p-4 sm:mx-0">
-      <span className="text-xl">🎉</span>
+    <div className="mx-4 mt-4 flex animate-fade-in-up items-start gap-3 rounded-2xl border border-primary/25 bg-primary/10 p-4 sm:mx-0">
+      <span className="text-xl" aria-hidden>🎉</span>
       <div className="flex-1">
         <p className="text-sm font-extrabold text-ink">
           Login &amp; save 5% — ₹{discountRupees.toFixed(2)} off this order
         </p>
         <button
           onClick={() => router.push('/login?redirect=/checkout')}
-          className="mt-1.5 text-sm font-extrabold text-primary underline"
+          className="mt-1.5 rounded-lg text-sm font-extrabold text-primary underline underline-offset-2 transition-opacity duration-200 hover:opacity-80"
         >
           Login &amp; Save
         </button>
@@ -38,7 +38,7 @@ export default function DiscountBanner() {
       <button
         onClick={() => setIsDismissed(true)}
         aria-label="Dismiss discount offer"
-        className="text-muted hover:text-ink"
+        className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-muted transition-colors duration-200 hover:bg-surface hover:text-ink"
       >
         ✕
       </button>
