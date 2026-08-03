@@ -7,11 +7,10 @@ import { useEffect, useState } from 'react';
 import { useAdminAuthStore } from '@/store/useAdminAuthStore';
 
 const NAV_LINKS = [
-  { href: '/', label: 'Dashboard', icon: '📊' },
+  { href: '/', label: 'Overview', icon: '📊' },
+  { href: '/insights', label: 'Insights', icon: '📈' },
   { href: '/stores', label: 'Stores', icon: '🏪' },
   { href: '/products', label: 'Products', icon: '📦' },
-  { href: '/staff', label: 'Staff', icon: '👥' },
-  { href: '/security', label: 'Security', icon: '🛡️' },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {

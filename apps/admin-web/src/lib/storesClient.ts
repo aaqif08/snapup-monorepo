@@ -15,6 +15,9 @@ export interface AdminStore {
   longitude: number;
   authorized_egress_cidrs: string[];
   advertised_ssid: string;
+  /** The shop's own UPI address. Customer payments go here directly, not to SnapUp. */
+  merchant_vpa: string | null;
+  merchant_display_name: string | null;
   is_active: boolean;
   is_open: boolean;
 }
@@ -26,6 +29,8 @@ export interface StoreDraft {
   longitude: number;
   authorizedEgressCidrs: string[];
   advertisedSsid: string;
+  merchantVpa: string | null;
+  merchantDisplayName: string | null;
   isActive: boolean;
   isOpen: boolean;
 }
@@ -95,6 +100,10 @@ function toWire(draft: Partial<StoreDraft>): Record<string, unknown> {
     wire.authorizedEgressCidrs = draft.authorizedEgressCidrs;
   }
   if (draft.advertisedSsid !== undefined) wire.advertisedSsid = draft.advertisedSsid;
+  if (draft.merchantVpa !== undefined) wire.merchantVpa = draft.merchantVpa;
+  if (draft.merchantDisplayName !== undefined) {
+    wire.merchantDisplayName = draft.merchantDisplayName;
+  }
   if (draft.isActive !== undefined) wire.isActive = draft.isActive;
   if (draft.isOpen !== undefined) wire.isOpen = draft.isOpen;
   return wire;

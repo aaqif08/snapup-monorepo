@@ -16,6 +16,10 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
   const [longitude, setLongitude] = useState(initial?.longitude?.toString() ?? '');
   const [ssid, setSsid] = useState(initial?.advertised_ssid ?? '');
   const [cidrs, setCidrs] = useState((initial?.authorized_egress_cidrs ?? []).join('\n'));
+  const [merchantVpa, setMerchantVpa] = useState(initial?.merchant_vpa ?? '');
+  const [merchantDisplayName, setMerchantDisplayName] = useState(
+    initial?.merchant_display_name ?? ''
+  );
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
   const [isOpen, setIsOpen] = useState(initial?.is_open ?? true);
 
@@ -56,6 +60,10 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
           .map((line) => line.trim())
           .filter(Boolean),
         advertisedSsid: ssid.trim(),
+        // Empty means "not supplied yet", which is a legitimate state — the store is still
+        // shoppable, it just cannot take in-app UPI until the retailer provides a VPA.
+        merchantVpa: merchantVpa.trim() || null,
+        merchantDisplayName: merchantDisplayName.trim() || null,
         isActive,
         isOpen,
       });
@@ -147,6 +155,41 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
               store&apos;s own network. Enter the static public IP of the store&apos;s
               customer-Wi-Fi gateway as <span className="font-mono">a.b.c.d/32</span>. Leave
               it empty and every customer at this store will be refused.
+            </p>
+          </div>
+
+          <Field label="Merchant UPI address (VPA)">
+            <input
+              value={merchantVpa}
+              onChange={(e) => setMerchantVpa(e.target.value)}
+              className={`${inputClass} font-mono`}
+              placeholder="shopname@okhdfcbank"
+              autoCapitalize="none"
+              spellCheck={false}
+            />
+          </Field>
+
+          <Field label="Payee name shown in the customer's UPI app">
+            <input
+              value={merchantDisplayName}
+              onChange={(e) => setMerchantDisplayName(e.target.value)}
+              className={inputClass}
+              placeholder="Defaults to the store name"
+            />
+          </Field>
+
+          {/* Money goes straight from the customer to this address. A typo sends it to a
+              stranger and SnapUp never sees the transaction, so this warning is not
+              boilerplate — it is the only check that exists today. */}
+          <div className="rounded-xl border border-amber-400/50 bg-amber-50 p-3">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-amber-900">
+              Verify before go-live
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-amber-900">
+              Customers pay this address <strong>directly</strong> — SnapUp does not hold the
+              money and cannot reverse a payment sent to the wrong VPA. The format is checked,
+              but not the owner. Send a ₹1 test payment and confirm the retailer received it
+              before this store takes real customers.
             </p>
           </div>
 
