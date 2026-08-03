@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ThemeToggle from '@snapup/ui/ThemeToggle';
 import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -24,41 +25,40 @@ export default function NavBar() {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-surface">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          {/* ✅ FIX APPLIED HERE: Added w-auto and h-auto to respect Next.js aspect-ratio rules */}
-          <Image 
-            src="/logo-mark.png" 
-            alt="SnapUp" 
-            width={28} 
-            height={28} 
-            className="w-auto h-auto" 
-            priority 
-          />
-          <span className="text-lg font-extrabold text-ink">SnapUp</span>
+    <header className="sticky top-0 z-20 border-b border-border bg-surface/85 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-2 px-4 sm:px-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-xl px-1 py-1 transition-opacity hover:opacity-80"
+        >
+          <Image src="/logo-mark.png" alt="" width={28} height={28} className="h-7 w-auto" priority />
+          <span className="text-lg font-extrabold tracking-tight text-ink">SnapUp</span>
         </Link>
 
-        <nav className="flex items-center gap-1 sm:gap-2">
+        <nav className="flex items-center gap-1">
           {LINKS.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
-                  isActive ? 'text-primary' : 'text-muted hover:text-ink'
+                aria-current={isActive ? 'page' : undefined}
+                className={`relative rounded-xl px-3 py-2 text-sm font-bold transition-colors duration-200 ${
+                  isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted hover:bg-tint hover:text-ink'
                 }`}
               >
                 {link.label}
                 {link.href === '/cart' && itemCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-extrabold text-white">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-extrabold text-onPrimary shadow-card">
                     {itemCount}
                   </span>
                 )}
               </Link>
             );
           })}
+          <ThemeToggle className="ml-1" />
         </nav>
       </div>
     </header>

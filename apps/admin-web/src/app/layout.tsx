@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { THEME_INIT_SCRIPT } from '@snapup/ui/theme-runtime';
 import './globals.css';
 import AppShell from '@/components/AppShell';
 
@@ -11,12 +12,20 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#00C896',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#00C896' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B1210' },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    // suppressHydrationWarning: the script below sets data-theme before React runs, so
+    // the server's markup and the client's first read of <html> legitimately differ.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
         <AppShell>{children}</AppShell>
       </body>

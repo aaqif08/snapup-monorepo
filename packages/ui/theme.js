@@ -1,23 +1,79 @@
 /**
- * Shared SnapUp brand tokens — same palette used in apps/customer-web.
- * Both apps' tailwind.config.js extend this, so the brand identity (mint
- * #00C896, near-black ink, mint-tint background) stays a single source of
- * truth instead of two configs that can quietly drift apart.
+ * Shared SnapUp brand tokens — the single source of truth for both apps.
+ *
+ * Every colour is defined twice, once per theme, and reaches components as a CSS variable
+ * rather than a literal. That is what lets `bg-surface` mean white in the aisle and
+ * near-black at night without a single component knowing which theme is active.
+ *
+ * Values are stored as "R G B" channel triplets rather than hex so Tailwind's opacity
+ * modifiers keep working — `bg-primary/10` compiles to `rgb(var(--color-primary) / 0.1)`.
  */
-module.exports = {
-  colors: {
-    primary: '#00C896',
-    primaryDark: '#00A87E',
-    accent: '#2D2D2D',
-    bg: '#EAF8F5',
-    surface: '#FFFFFF',
-    ink: '#1C1C1C',
-    muted: '#828A89',
-    border: '#E5EAE9',
-    danger: '#E63946',
-    warning: '#F5A623',
-  },
-  borderRadius: {
-    xl2: '32px',
-  },
+
+/** Light: the original brand palette. Mint, near-black ink, mint-tint wash. */
+const light = {
+  primary: '#00C896',
+  primaryDark: '#00A87E',
+  /** Text/icon colour that sits on a primary fill. */
+  onPrimary: '#FFFFFF',
+  accent: '#2D2D2D',
+  onAccent: '#FFFFFF',
+  bg: '#F4F7F6',
+  surface: '#FFFFFF',
+  /** Subtle raised fill: icon tiles, table headers, hover rows. */
+  tint: '#EAF8F5',
+  ink: '#1C1C1C',
+  /** Darkened from #828A89, which fell below 4.5:1 on white. */
+  muted: '#5F6B68',
+  border: '#E5EAE9',
+  danger: '#D62839',
+  warning: '#B4740A',
+  success: '#00845F',
 };
+
+/**
+ * Dark: not an inversion. Surfaces are warm-neutral greens rather than grey so the mint
+ * still reads as the brand colour, and the mint itself is lifted because #00C896 loses
+ * too much presence against a dark ground.
+ */
+const dark = {
+  primary: '#2ED9AC',
+  primaryDark: '#5CE7C4',
+  /**
+   * Near-black on the brighter mint. White on this mint measures 1.9:1, which is
+   * unreadable; this is roughly 9:1.
+   */
+  onPrimary: '#052019',
+  accent: '#243330',
+  onAccent: '#E9F2EF',
+  bg: '#0B1210',
+  surface: '#141D1B',
+  tint: '#182622',
+  ink: '#E9F2EF',
+  muted: '#9AACA7',
+  border: '#27342F',
+  danger: '#FF7B84',
+  warning: '#FFC15E',
+  success: '#4ADEB0',
+};
+
+/** '#00C896' -> '0 200 150', the form `rgb(... / <alpha-value>)` expects. */
+function channels(hex) {
+  const value = hex.replace('#', '');
+  const expanded = value.length === 3 ? value.split('').map((c) => c + c).join('') : value;
+  const int = parseInt(expanded, 16);
+  return `${(int >> 16) & 255} ${(int >> 8) & 255} ${int & 255}`;
+}
+
+/** Tailwind colour scale: every token resolves through its variable. */
+const colors = Object.fromEntries(
+  Object.keys(light).map((name) => [name, `rgb(var(--color-${name}) / <alpha-value>)`])
+);
+
+/** A `:root` / `[data-theme="dark"]` variable block, consumed by the Tailwind preset. */
+function cssVariables(palette) {
+  return Object.fromEntries(
+    Object.entries(palette).map(([name, hex]) => [`--color-${name}`, channels(hex)])
+  );
+}
+
+module.exports = { palettes: { light, dark }, colors, cssVariables, channels };

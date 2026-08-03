@@ -2,17 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+@layer base {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-bg text-ink antialiased;
+    /* The theme swap is instant on the attribute; easing the colours stops it reading as
+       a flash when someone taps the toggle mid-scroll. */
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* A visible focus ring on keyboard navigation only — mouse and touch users never see
+     it, so nothing looks outlined after a tap. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-bg;
+  }
+
+  ::selection {
+    @apply bg-primary/25 text-ink;
+  }
+
+  /* The scanner and cart lists scroll a lot on mobile; the default bar is jarring against
+     a dark surface. */
+  * {
+    scrollbar-color: rgb(var(--color-border)) transparent;
+  }
 }
 
-body {
-  color: #1c1c1c;
-  background: #f4f7f6;
-}
-
-* {
-  box-sizing: border-box;
+@layer utilities {
+  /* Respects the OS "reduce motion" setting for every animation in the app at once. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
