@@ -63,10 +63,18 @@ project's `package.json`.
 
 ## Run locally
 
+From the monorepo root:
+
 ```bash
 npm install
-npm run dev
+SNAPUP_PRESENCE_DEV_BYPASS=1 npm run dev:customer
 ```
+
+The bypass is needed locally because presence verification checks the request's
+**egress IP** against the store's registered network range, and a loopback request
+has no meaningful public IP. It is read only in development — a production build
+ignores it, so the real check always runs where it matters. See
+`docs/cto-requirements-implementation.md`.
 
 Then open http://localhost:3000. You'll need to allow camera access in your
 browser to test the `/scan` page (use a real phone or a laptop with a webcam —
@@ -79,9 +87,10 @@ desktop testing alone won't tell you much about real-world scan reliability).
   option is chosen (tracked via `hasEnteredApp` in `useAuthStore.ts`).
 - **Guest-first home page** (`/`, after entry) — Swiggy-Dine-In-inspired
   layout: location selector, search bar, nearest stores, recommended
-  stores. Store data is mocked (`src/lib/mockData.ts`) — wire this to
-  `GET /stores/nearby` and `GET /stores/recommended` per the backend
-  architecture doc.
+  stores. Stores come from `GET /api/stores/nearby`, ordered by real
+  distance from the device's coordinates (`src/lib/useDeviceLocation.ts`);
+  declining location permission is a supported state — the directory still
+  lists stores, just unordered and without distances.
 - **Store confirm** (`/store/[id]`) — ported from `StoreScreen.tsx`, now
   driven by route params instead of a hardcoded store.
 - **Scanner** (`/scan`) — rebuilt (not ported) using `getUserMedia` +
@@ -98,22 +107,36 @@ desktop testing alone won't tell you much about real-world scan reliability).
   figure from the real cart subtotal, dismissible for the session.
   Authenticated users see the discount applied directly in the bill
   instead of the banner.
-- **Payment options + QR checkout token** (`/checkout`) — ported from
+- **Payment options + exit QR** (`/checkout`) — ported from
   `PaymentScreen.tsx`, using `qrcode.react` instead of
-  `react-native-qrcode-svg`.
+  `react-native-qrcode-svg`. The basket is priced by the server and the exit
+  token is HMAC-signed server-side; see "Orders and payment" below.
 
 ## Known mocks / things to wire to a real backend
 
-- All product, store, and auth data is mocked client-side. Nothing here
-  calls a real API yet — see `src/lib/mockData.ts` and `useAuthStore.ts`.
-- `generateCheckoutToken()` in `useCartStore.ts` builds the QR payload
-  **client-side**, same as the original app. This is fine for a local
-  demo, but in production the price, weight, and discount in that token
-  must come from a server-side calculation — a client-computed price is
-  tamperable. See the architecture notes from our schema/API discussion.
-  The backend also needs `orders.customer_user_id` made nullable plus a
-  new `orders.guest_session_id` column (mirroring the existing `carts`
-  pattern) so guest orders have somewhere to live.
+- **Auth is still mocked** (`useAuthStore.ts`). Product and store data are
+  no longer: both moved server-side behind real API routes — see
+  `docs/cto-requirements-implementation.md` for the presence-verified
+  product gateway and the admin-managed store registry.
+- Product, store, **order and analytics** records live in **process memory**
+  (`src/server/*/memoryRepository.ts`), so anything created at runtime is
+  lost on the next deploy. The repository interfaces exist so a Postgres
+  implementation swaps in without touching routes, components, or auth code.
+
+  For products and stores this is merely inconvenient — they are seeded
+  identically on every instance. For **orders and analytics it is
+  disqualifying for a pilot**: that state exists nowhere else, serverless
+  instances share no memory, and a redeploy loses a day's trading. Those two
+  repositories are the reason a real database is the next piece of work.
+- **Customer login is still client-side**, so the server cannot verify who a
+  shopper is. It therefore withholds the 5% member discount rather than
+  granting it on a claim anyone can set in devtools; `discount_reason` on the
+  order response tells the UI which case it is in. Wiring real customer auth
+  means populating `verifiedCustomerId` in `orders/pricing.ts` — nothing else
+  in the pricing path changes.
+- The backend still needs `orders.customer_user_id` made nullable plus an
+  `orders.guest_session_id` column (mirroring the existing `carts` pattern)
+  so guest orders have somewhere to live.
 - OTP "verification" in `/login` doesn't call a real SMS/auth backend —
   it accepts any 4-digit code, matching the original `AuthScreen.tsx`'s
   behavior (which also never validated against a backend).
@@ -137,11 +160,15 @@ src/
 │   ├── scan/             # Barcode scanner
 │   ├── cart/             # Cart, with Undo-backed removal
 │   ├── checkout/         # Guest-or-authenticated payment + discount + QR
-│   └── login/            # Login (reached from Landing or checkout)
+│   ├── login/            # Login (reached from Landing or checkout)
+│   └── api/              # Session, products, store directory, admin registry
 ├── components/           # NavBar, LandingChoice, HomeContent, StoreCard,
 │                         # BarcodeScanner, ScanToast, DiscountBanner, UndoToast
+├── server/               # `import 'server-only'` — never reaches the bundle:
+│                         # qr, session, network presence, apiAuth, rateLimit,
+│                         # products/ and stores/ (repository + projections)
 ├── store/                # Zustand: useCartStore, useAuthStore
-└── lib/                  # mockData.ts (stores + product lookup)
+└── lib/                  # api.ts (typed fetch), useDeviceLocation.ts, upi.ts
 ```
 
 ## Branding

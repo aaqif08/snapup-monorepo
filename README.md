@@ -60,7 +60,7 @@ The admin console's **Stores** page writes to the customer app's store registry,
 both together if you want to add a store and see it appear for customers. It reaches the
 registry at `SNAPUP_API_BASE` (default `http://localhost:3000`).
 
-**Validate the security requirements** — builds, starts a production server, runs 48 cases
+**Validate the security requirements** — builds, starts a production server, runs 88 cases
 over real HTTP, exits non-zero on failure:
 ```bash
 npm run validate
