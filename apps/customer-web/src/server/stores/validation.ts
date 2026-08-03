@@ -7,6 +7,17 @@ const MAX_NAME = 120;
 const MAX_ADDRESS = 200;
 const MAX_SSID = 64;
 const MAX_CIDRS = 16;
+const MAX_MERCHANT_NAME = 64;
+
+/**
+ * UPI virtual payment address, `identifier@handle`.
+ *
+ * Format-checked only. There is no way to confirm from here that a VPA is live or that it
+ * belongs to this retailer — that requires a name-resolution call to a PSP. Until that
+ * exists, a typo'd-but-well-formed VPA sends a customer's money to whoever owns it, so
+ * onboarding must verify the address out of band with a small test payment.
+ */
+const VPA_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9.\-_]{1,255}@[a-zA-Z][a-zA-Z0-9]{1,63}$/;
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] };
 
@@ -101,6 +112,33 @@ export function validateStoreDraft(
     errors.push(`advertisedSsid must be at most ${MAX_SSID} characters.`);
   } else {
     draft.advertisedSsid = body.advertisedSsid.trim();
+  }
+
+  // ---- merchant payment details (phase-1 direct-to-merchant model) ----
+  //
+  // Optional on create: a store is often registered before the retailer has supplied its
+  // UPI details, and it should be shoppable in the meantime. `null` is an explicit
+  // "not supplied yet", distinct from an absent key meaning "leave unchanged" on PATCH.
+  if (body.merchantVpa === undefined) {
+    if (!partial) draft.merchantVpa = null;
+  } else if (body.merchantVpa === null || body.merchantVpa === '') {
+    draft.merchantVpa = null;
+  } else if (typeof body.merchantVpa !== 'string' || !VPA_PATTERN.test(body.merchantVpa.trim())) {
+    errors.push('merchantVpa must be a UPI address like shopname@okhdfcbank, or null.');
+  } else {
+    draft.merchantVpa = body.merchantVpa.trim();
+  }
+
+  if (body.merchantDisplayName === undefined) {
+    if (!partial) draft.merchantDisplayName = null;
+  } else if (body.merchantDisplayName === null || body.merchantDisplayName === '') {
+    draft.merchantDisplayName = null;
+  } else if (typeof body.merchantDisplayName !== 'string') {
+    errors.push('merchantDisplayName must be a string or null.');
+  } else if (body.merchantDisplayName.trim().length > MAX_MERCHANT_NAME) {
+    errors.push(`merchantDisplayName must be at most ${MAX_MERCHANT_NAME} characters.`);
+  } else {
+    draft.merchantDisplayName = body.merchantDisplayName.trim();
   }
 
   // ---- flags ----

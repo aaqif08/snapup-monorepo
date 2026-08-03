@@ -282,4 +282,106 @@ export async function searchProducts(
   return { items: body.items, page: body.page, lookupMs: body.lookup_ms ?? 0 };
 }
 
+// ---------------------------------------------------------------------------
+// Orders and payment
+// ---------------------------------------------------------------------------
+
+export interface ServerOrder {
+  id: string;
+  store_id: string;
+  status: 'awaiting_payment' | 'paid' | 'abandoned';
+  lines: Array<{
+    product_id: string;
+    name: string;
+    quantity: number;
+    unit_price: number;
+    line_total: number;
+  }>;
+  subtotal: number;
+  discount: number;
+  platform_fee: number;
+  total: number;
+  expected_weight_grams: number;
+  payment: {
+    payee_vpa: string | null;
+    payee_name: string | null;
+    transaction_ref: string;
+    confirmation: string;
+  };
+  created_at: number;
+}
+
+export interface CreatedOrder {
+  order: ServerOrder;
+  /**
+   * Why the login discount was or was not applied. The server will not grant it on a
+   * client-asserted login, so the UI has to be able to explain a total that differs from
+   * what the cart screen predicted rather than just showing a different number.
+   */
+  discountReason: 'applied' | 'not_authenticated' | 'identity_unverifiable';
+}
+
+/**
+ * Submits the basket for server-side pricing.
+ *
+ * Sends product ids and quantities only. The price, discount, fee, total and expected
+ * weight all come back from the server, which recomputes them from the store's catalogue —
+ * the client's own figures are display-only and are never sent.
+ */
+export async function createOrder(
+  lines: Array<{ productId: string; quantity: number }>,
+  clientClaimsAuthenticated: boolean
+): Promise<CreatedOrder> {
+  const response = await authedFetch('/api/orders', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      lines: lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })),
+      client_claims_authenticated: clientClaimsAuthenticated,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await parseError(response);
+    throw new GatewayError(error.code, error.message, response.status);
+  }
+
+  const body = await response.json();
+  return { order: body.order as ServerOrder, discountReason: body.discount_reason };
+}
+
+export interface PaymentResult {
+  order: ServerOrder;
+  /** Signed by the server over server-computed weight and total. */
+  exitToken: string;
+  /**
+   * False when the only evidence of payment is the customer's own say-so — which is the
+   * normal case while payments go directly to the retailer and no provider confirms them.
+   */
+  paymentVerified: boolean;
+}
+
+export async function confirmPayment(
+  orderId: string,
+  method: 'upi_attested' | 'in_store'
+): Promise<PaymentResult> {
+  const response = await authedFetch(`/api/orders/${encodeURIComponent(orderId)}/payment`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ method }),
+  });
+
+  if (!response.ok) {
+    const error = await parseError(response);
+    throw new GatewayError(error.code, error.message, response.status);
+  }
+
+  const body = await response.json();
+  return {
+    order: body.order as ServerOrder,
+    exitToken: body.exit_token as string,
+    paymentVerified: Boolean(body.payment_verified),
+  };
+}
+
 export { GatewayError };

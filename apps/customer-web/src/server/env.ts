@@ -28,6 +28,19 @@ export const SESSION_SIGNING_SECRET = requireSecret(
 );
 
 /**
+ * Signs the QR the customer shows at the exit gate.
+ *
+ * Separate from the session secret on purpose. The two tokens have different lifetimes,
+ * different audiences (a customer's browser vs. the store's exit terminal) and different
+ * blast radii — rotating the session secret to invalidate live sessions should not
+ * simultaneously invalidate every basket queued at the gate.
+ */
+export const EXIT_TOKEN_SIGNING_SECRET = requireSecret(
+  'SNAPUP_EXIT_TOKEN_SECRET',
+  'dev-only-exit-token-secret-never-use-in-production'
+);
+
+/**
  * Shared secret the admin console presents when writing to the store registry.
  *
  * Held only by the admin app's *server*, never shipped to its browser bundle — a token in
@@ -47,6 +60,12 @@ export const QR_TTL_SECONDS = 120;
 
 /** CTO requirement 1: shopping sessions are capped at 30 minutes. */
 export const SESSION_TTL_SECONDS = 30 * 60;
+
+/**
+ * How long an exit QR stays valid. Long enough to queue at the gate, short enough that a
+ * screenshotted token is not a reusable pass out of the shop.
+ */
+export const EXIT_TOKEN_TTL_SECONDS = 15 * 60;
 
 /**
  * When set, the egress-IP presence check is bypassed and every request is treated as

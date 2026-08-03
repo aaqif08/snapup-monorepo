@@ -12,12 +12,16 @@ import type { InternalProduct } from './types';
  * exposed" test is actually meaningful rather than passing vacuously.
  */
 function product(
-  partial: Omit<InternalProduct, 'store_id' | 'purchase_history' | 'profit_margin_pct'> &
-    Partial<Pick<InternalProduct, 'store_id'>>
+  partial: Omit<
+    InternalProduct,
+    'store_id' | 'purchase_history' | 'profit_margin_pct' | 'is_active'
+  > &
+    Partial<Pick<InternalProduct, 'store_id' | 'is_active'>>
 ): InternalProduct {
   const margin = ((partial.unit_price - partial.cost_price) / partial.unit_price) * 100;
   return {
     store_id: partial.store_id ?? 'store_1',
+    is_active: partial.is_active ?? true,
     profit_margin_pct: Math.round(margin * 10) / 10,
     purchase_history: [
       { date: '2026-05-02', qty: 240, unit_cost: partial.cost_price },

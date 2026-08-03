@@ -18,7 +18,6 @@ interface CartState {
   items: CartItem[];
   totalPrice: number;
   totalExpectedWeight: number;
-  checkoutToken: string | null;
   guestSessionId: string;
   addProduct: (product: Product) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -27,10 +26,18 @@ interface CartState {
    *  exact quantity — used by the cart's "Undo" toast. Distinct from
    *  addProduct, which always adds quantity 1 or increments an existing line. */
   restoreItem: (item: CartItem, atIndex: number) => void;
-  generateCheckoutToken: () => void;
   clearCart: () => void;
 }
 
+/**
+ * Display-only totals.
+ *
+ * These drive the cart and checkout UI so it responds instantly, but they are never what
+ * anyone is charged: at checkout the basket is sent to `POST /api/orders` as product ids
+ * and quantities, and the server re-prices it from the store's catalogue. The exit token
+ * used to be minted here from these numbers, which made both the amount paid and the
+ * expected basket weight editable from devtools; it is now issued and signed server-side.
+ */
 function recalcTotals(items: CartItem[]) {
   const totalPrice = items.reduce((acc, item) => acc + item.unit_price * item.quantity, 0);
   const totalExpectedWeight = items.reduce(
@@ -56,7 +63,6 @@ export const useCartStore = create<CartState>()(
       items: [],
       totalPrice: 0,
       totalExpectedWeight: 0,
-      checkoutToken: null,
       guestSessionId: createGuestSessionId(),
 
       addProduct: (product) => {
@@ -74,7 +80,7 @@ export const useCartStore = create<CartState>()(
           }
 
           const { totalPrice, totalExpectedWeight } = recalcTotals(updatedItems);
-          return { items: updatedItems, totalPrice, totalExpectedWeight, checkoutToken: null };
+          return { items: updatedItems, totalPrice, totalExpectedWeight };
         });
       },
 
@@ -89,7 +95,7 @@ export const useCartStore = create<CartState>()(
             item.id === productId ? { ...item, quantity } : item
           );
           const { totalPrice, totalExpectedWeight } = recalcTotals(updatedItems);
-          return { items: updatedItems, totalPrice, totalExpectedWeight, checkoutToken: null };
+          return { items: updatedItems, totalPrice, totalExpectedWeight };
         });
       },
 
@@ -100,7 +106,7 @@ export const useCartStore = create<CartState>()(
         set((state) => {
           const updatedItems = state.items.filter((item) => item.id !== productId);
           const { totalPrice, totalExpectedWeight } = recalcTotals(updatedItems);
-          return { items: updatedItems, totalPrice, totalExpectedWeight, checkoutToken: null };
+          return { items: updatedItems, totalPrice, totalExpectedWeight };
         });
       },
 
@@ -114,30 +120,11 @@ export const useCartStore = create<CartState>()(
           const insertAt = Math.min(Math.max(atIndex, 0), updatedItems.length);
           updatedItems.splice(insertAt, 0, item);
           const { totalPrice, totalExpectedWeight } = recalcTotals(updatedItems);
-          return { items: updatedItems, totalPrice, totalExpectedWeight, checkoutToken: null };
+          return { items: updatedItems, totalPrice, totalExpectedWeight };
         });
       },
 
-      // NOTE: this client-side token is for local UI/demo flow only. In production
-      // the real checkout token (and the price/weight it encodes) must be issued by
-      // the backend from the server-side cart total — never trust a client-computed
-      // price for an actual payment. See architecture notes.
-      generateCheckoutToken: () => {
-        const { items, totalPrice, totalExpectedWeight } = get();
-        if (items.length === 0) return;
-
-        const tokenPayload = {
-          cart_id: `cart_${Math.random().toString(36).substring(2, 11)}`,
-          item_count: items.reduce((acc, item) => acc + item.quantity, 0),
-          total_price: totalPrice,
-          expected_weight_grams: totalExpectedWeight,
-          timestamp: Date.now(),
-        };
-
-        set({ checkoutToken: JSON.stringify(tokenPayload) });
-      },
-
-      clearCart: () => set({ items: [], totalPrice: 0, totalExpectedWeight: 0, checkoutToken: null }),
+      clearCart: () => set({ items: [], totalPrice: 0, totalExpectedWeight: 0 }),
     }),
     {
       name: 'snapup-cart-storage',

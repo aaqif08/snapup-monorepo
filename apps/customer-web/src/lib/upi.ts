@@ -6,31 +6,48 @@
  * with" picker if multiple UPI apps are installed, or opens the only one
  * directly if just one is present.
  *
- * IMPORTANT — placeholder merchant VPA: `pa` below is set to a placeholder
- * (`snapup.demo@upi`), which does not route to a real bank account. To
- * accept real payments you need an actual merchant VPA, issued by a
- * payment aggregator/PSP you're registered with (Razorpay, Cashfree,
- * PhonePe Business, a bank's UPI merchant API, etc.) — those providers
- * also typically give you a hosted checkout or their own SDK, which is
- * usually a better integration path than hand-building this link, since
- * they handle payment confirmation callbacks, retries, and refunds. This
- * util is correct as a *mechanism* demo; swap REPLACE_WITH_REAL_MERCHANT_VPA
- * before any real transaction depends on it.
+ * PAYEE AND AMOUNT BOTH COME FROM THE SERVER. Neither is a constant here and
+ * neither is computed in the browser:
+ *
+ * - `payeeVpa` is the individual shop's UPI address, read from the store
+ *   registry. Under the phase-1 payment model the customer pays the retailer
+ *   directly and SnapUp settles its service charge separately, so there is no
+ *   single platform-wide merchant address — which is what the previous
+ *   hardcoded `snapup.demo@upi` placeholder wrongly assumed.
+ * - `amountRupees` comes from a server-priced order. It was previously derived
+ *   from the client's own cart total, meaning anyone could edit the amount they
+ *   were about to pay the shop.
+ *
+ * A note on the phase-1 model's limit, since this file is where it bites: money
+ * moving straight to the retailer means no payment provider ever tells SnapUp
+ * the transfer happened. There is no callback to wait for and no way to verify
+ * from here. A PSP with split settlement (Razorpay Route, Cashfree Easy Split,
+ * PhonePe sub-merchant) keeps the same "money lands in the merchant's account"
+ * outcome while adding the server-to-server confirmation this mechanism cannot
+ * provide on its own.
  */
 
-const PLACEHOLDER_MERCHANT_VPA = 'snapup.demo@upi'; // REPLACE_WITH_REAL_MERCHANT_VPA
-const MERCHANT_DISPLAY_NAME = 'SnapUp';
-
 export interface UpiPaymentParams {
+  /** The shop's UPI address, from the store registry. */
+  payeeVpa: string;
+  /** Name the customer sees in their UPI app when confirming. */
+  payeeName: string;
+  /** Server-computed order total, in rupees. */
   amountRupees: number;
   transactionRef: string;
   note?: string;
 }
 
-export function buildUpiLink({ amountRupees, transactionRef, note }: UpiPaymentParams): string {
+export function buildUpiLink({
+  payeeVpa,
+  payeeName,
+  amountRupees,
+  transactionRef,
+  note,
+}: UpiPaymentParams): string {
   const params = new URLSearchParams({
-    pa: PLACEHOLDER_MERCHANT_VPA, // payee address (merchant VPA)
-    pn: MERCHANT_DISPLAY_NAME, // payee name
+    pa: payeeVpa, // payee address (the shop's merchant VPA)
+    pn: payeeName, // payee name
     am: amountRupees.toFixed(2), // amount
     cu: 'INR', // currency
     tr: transactionRef, // transaction reference, for reconciliation

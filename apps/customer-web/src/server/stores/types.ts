@@ -44,6 +44,23 @@ export interface StoreRecord {
    */
   advertisedSsid: string;
 
+  /**
+   * The shop's own UPI merchant address, which customer payments are sent to directly.
+   *
+   * Phase 1 of the payment model: money never touches SnapUp, it goes straight from the
+   * customer to this shop's account, and SnapUp invoices its service charge separately.
+   * That makes the payee a property of the *store*, not a platform-wide constant — which
+   * is what `lib/upi.ts` assumed with its single `PLACEHOLDER_MERCHANT_VPA`.
+   *
+   * Null until the retailer supplies it. A store in that state can still be shopped, but
+   * checkout has nowhere to send money, so the UI must fall back to paying at the counter
+   * rather than presenting a link that silently pays nobody.
+   */
+  merchantVpa: string | null;
+
+  /** Name shown inside the customer's UPI app when confirming payment. */
+  merchantDisplayName: string | null;
+
   /** Whether SnapUp is currently offered here. Inactive stores are hidden and refused. */
   isActive: boolean;
 
@@ -77,6 +94,8 @@ export interface StoreDraft {
   longitude: number;
   authorizedEgressCidrs: string[];
   advertisedSsid: string;
+  merchantVpa: string | null;
+  merchantDisplayName: string | null;
   isActive: boolean;
   isOpen: boolean;
 }

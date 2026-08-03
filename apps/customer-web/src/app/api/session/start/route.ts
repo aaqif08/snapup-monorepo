@@ -4,6 +4,7 @@ import { getEgressIp, verifyNetworkPresence } from '@/server/network';
 import { createSession } from '@/server/session';
 import { getStore } from '@/server/stores';
 import { consumeToken } from '@/server/rateLimit';
+import { recordEvent } from '@/server/analytics';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -66,6 +67,16 @@ export async function POST(request: NextRequest) {
   }
 
   const session = createSession(store.id, presence.egressIp);
+
+  // Footfall. This is the only place a session can be created, so it is the only place
+  // that can count one — and the count is of *verified* entries, since both presence
+  // factors have already passed by the time execution reaches here.
+  recordEvent({
+    storeId: store.id,
+    sessionId: session.sessionId,
+    kind: 'session_started',
+    occurredAt: Date.now(),
+  });
 
   return NextResponse.json(
     {

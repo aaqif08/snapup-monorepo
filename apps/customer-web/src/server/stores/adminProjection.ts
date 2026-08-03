@@ -18,6 +18,8 @@ export function toAdminStore(store: StoreRecord) {
     longitude: store.longitude,
     authorized_egress_cidrs: store.authorizedEgressCidrs,
     advertised_ssid: store.advertisedSsid,
+    merchant_vpa: store.merchantVpa,
+    merchant_display_name: store.merchantDisplayName,
     is_active: store.isActive,
     is_open: store.isOpen,
   };
@@ -45,6 +47,16 @@ export function warningsFor(store: StoreRecord): string[] {
   if (store.isActive && store.authorizedEgressCidrs.some(isDocumentationRange)) {
     warnings.push(
       'This store uses a documentation-only placeholder IP range (RFC 5737). Replace it with the real gateway IP before the store goes live.'
+    );
+  }
+
+  // Under the phase-1 payment model the customer pays this shop directly, so without a VPA
+  // there is no account for the money to go to. Checkout degrades to pay-at-counter rather
+  // than failing, which is survivable — but it is a silent loss of the app's main flow, so
+  // the console has to say it out loud.
+  if (store.merchantVpa === null) {
+    warnings.push(
+      'No merchant UPI address registered. Customers here can only pay at the counter — in-app UPI checkout is unavailable until the retailer supplies their VPA.'
     );
   }
 

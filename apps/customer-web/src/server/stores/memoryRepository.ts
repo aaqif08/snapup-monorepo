@@ -76,6 +76,8 @@ class InMemoryStoreRepository implements StoreRepository {
       longitude: draft.longitude,
       authorizedEgressCidrs: [...draft.authorizedEgressCidrs],
       advertisedSsid: draft.advertisedSsid,
+      merchantVpa: draft.merchantVpa,
+      merchantDisplayName: draft.merchantDisplayName,
       isActive: draft.isActive,
       isOpen: draft.isOpen,
     };

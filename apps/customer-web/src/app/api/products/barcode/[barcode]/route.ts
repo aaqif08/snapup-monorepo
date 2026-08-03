@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { guardProductRequest } from '@/server/apiAuth';
 import { productRepository, toPublicProduct } from '@/server/products';
+import { recordEvent } from '@/server/analytics';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -33,6 +34,17 @@ export async function GET(request: NextRequest, context: { params: Promise<{ bar
   const lookupMs = Math.round((performance.now() - startedAt) * 100) / 100;
 
   if (!product) {
+    // A miss is a catalogue gap, and catalogue gaps cost the shop sales: the customer is
+    // standing in the aisle holding the item and the app cannot sell it to them. Recorded
+    // so the owner gets a ranked list of exactly which barcodes to add.
+    recordEvent({
+      storeId: guard.session.sid,
+      sessionId: guard.session.sub,
+      kind: 'scan_missed',
+      occurredAt: Date.now(),
+      barcode,
+    });
+
     return NextResponse.json(
       {
         error: { code: 'product_not_found', message: 'This item was not found in this store.' },
@@ -41,6 +53,20 @@ export async function GET(request: NextRequest, context: { params: Promise<{ bar
       { status: 404, headers: { 'cache-control': 'no-store', 'server-timing': `lookup;dur=${lookupMs}` } }
     );
   }
+
+  // Aisle traffic, derived rather than declared: a customer who scans this item was
+  // physically standing where it is shelved. `aisle` is the operator-mapped location when
+  // one exists, falling back to category — which in a supermarket is close enough to be
+  // useful ("Dairy", "Beverages") without asking anyone to survey the shop first.
+  recordEvent({
+    storeId: guard.session.sid,
+    sessionId: guard.session.sub,
+    kind: 'product_scanned',
+    occurredAt: Date.now(),
+    productId: product.id,
+    productName: product.name,
+    aisle: product.aisle ?? product.category,
+  });
 
   return NextResponse.json(
     { product: toPublicProduct(product), lookup_ms: lookupMs },
