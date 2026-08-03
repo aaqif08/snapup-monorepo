@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@snapup/ui": "*",
-    "@zxing/library": "^0.21.3",
     "next": "15.5.19",
     "qrcode.react": "^4.2.0",
     "react": "19.0.0",

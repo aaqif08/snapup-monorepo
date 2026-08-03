@@ -2,5 +2,11 @@
   "name": "@snapup/ui",
   "version": "1.0.0",
   "private": true,
-  "main": "theme.js"
+  "main": "theme.js",
+  "dependencies": {
+    "@zxing/library": "^0.21.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
 }

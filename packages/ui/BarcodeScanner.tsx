@@ -2,6 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 
+/**
+ * Camera barcode scanner, shared by both apps.
+ *
+ * Originally lived in customer-web, where a shopper scans items into their basket. The
+ * business console needs the identical capability pointed the other way — a manager
+ * scanning stock into the catalogue — and the tuning below (crop region, decode size, tick
+ * interval) was arrived at against real barcodes, so it is worth having exactly one copy
+ * of rather than two that quietly drift apart.
+ *
+ * Requires a **secure context**: browsers only expose `getUserMedia` over HTTPS or on
+ * localhost. Opening the console from a phone at `http://192.168.x.x:3001` gives no camera
+ * at all, which is why every caller must keep a manual-entry path available.
+ */
 interface BarcodeScannerProps {
   isActive: boolean;
   onScan: (barcode: string) => void;

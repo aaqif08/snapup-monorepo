@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import BarcodeScanner from '@/components/BarcodeScanner';
+import BarcodeScanner from '@snapup/ui/BarcodeScanner';
 import ScanToast from '@/components/ScanToast';
 import SessionBanner from '@/components/SessionBanner';
 import { useCartStore, type Product } from '@/store/useCartStore';
