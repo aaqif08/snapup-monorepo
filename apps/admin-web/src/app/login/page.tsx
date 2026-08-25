@@ -1,91 +1,149 @@
 'use client';
 
-import Image from 'next/image';
-import { useState } from 'react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ThemeToggle from '@snapup/ui/ThemeToggle';
+import AuthShell, { AuthAlert, AuthField, AuthSubmit, authInputClass } from '@/components/AuthShell';
+import PasswordField from '@/components/PasswordField';
+import { AccountError, fetchMe, login } from '@/lib/accountClient';
 import { useAdminAuthStore } from '@/store/useAdminAuthStore';
 
-export default function AdminLoginPage() {
+/**
+ * Console sign-in.
+ *
+ * Sign-up moved to its own page: it has five fields and a rule that needs explaining, and
+ * neither fits in a tab on a card sized for two inputs.
+ *
+ * What this replaced accepted **any** email with **any** six-character password and gave
+ * itself the `manager` role, entirely in the browser. The store registry — including every
+ * branch's authorised network ranges — was editable by anyone who could type an `@`.
+ */
+export default function ConsoleLoginPage() {
   const router = useRouter();
-  const login = useAdminAuthStore((state) => state.login);
+  const setUser = useAdminAuthStore((state) => state.setUser);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [pendingApproval, setPendingApproval] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [durable, setDurable] = useState<boolean | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.includes('@')) {
-      setError('Enter a valid work email.');
-      return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      return;
-    }
+  useEffect(() => {
+    void (async () => {
+      try {
+        const me = await fetchMe();
+        setDurable(me.accounts_durable);
+        if (me.user && me.user.role !== 'customer') {
+          setUser(me.user);
+          router.replace('/');
+        }
+      } catch {
+        setDurable(null);
+      }
+    })();
+  }, [router, setUser]);
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
     setError(null);
-    // In production: POST /auth/login { email, password } -> JWT with role
-    // claim, validated server-side against staff_profiles + RBAC middleware.
-    login(email);
-    router.push('/');
-  };
+    setPendingApproval(false);
+
+    if (!email.trim() || !password) {
+      setError('Enter your email and password.');
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const { user } = await login(email.trim(), password);
+      setUser(user);
+      router.replace('/');
+    } catch (exc) {
+      // Pending approval gets its own treatment. It is the one failure where the useful
+      // action is "go and ask a colleague" rather than "try again", and leaving it inside
+      // the generic message means people retype a correct password until they give up.
+      if (exc instanceof AccountError && exc.code === 'pending_approval') {
+        setPendingApproval(true);
+      } else {
+        setError(exc instanceof AccountError ? exc.message : 'Something went wrong. Try again.');
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-primary px-6 py-12">
-      {/* The shell's toggle is behind the auth guard, so sign-in needs its own. */}
-      <div className="absolute right-4 top-4">
-        <ThemeToggle className="border-onPrimary/30 text-onPrimary hover:border-onPrimary hover:text-onPrimary" />
-      </div>
-
-      <div className="w-full max-w-sm animate-scale-in rounded-3xl bg-surface p-8 shadow-pop">
-        <div className="mb-6 flex flex-col items-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-tint">
-            <Image src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-auto" />
-          </div>
-          <h1 className="text-xl font-extrabold text-ink">SnapUp Business</h1>
-          <p className="mt-1 text-center text-sm text-muted">
-            Sign in to manage your store&apos;s products, staff, and analytics.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <label className="mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-muted">
-            Work Email
-          </label>
+    <AuthShell
+      title="SnapUp Business"
+      subtitle="Sign in to manage products, staff, stores and analytics."
+      footer={
+        <p className="text-center text-xs leading-relaxed text-muted">
+          New here?{' '}
+          <Link href="/signup" className="font-extrabold text-primary hover:underline">
+            Create an account
+          </Link>
+          <br />
+          <span className="text-[11px]">
+            Separate from the SnapUp customer app. You stay signed in until you log out.
+          </span>
+        </p>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <AuthField label="Work email">
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@snapup.in"
-            className="mb-4 w-full rounded-xl border border-border bg-bg px-4 py-3 text-sm font-semibold text-ink outline-none transition focus:border-primary"
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@kurinji.in"
+            autoComplete="email"
+            autoFocus
+            className={authInputClass}
           />
+        </AuthField>
 
-          <label className="mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-muted">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className="mb-4 w-full rounded-xl border border-border bg-bg px-4 py-3 text-sm font-semibold text-ink outline-none transition focus:border-primary"
-          />
+        <PasswordField
+          label="Password"
+          value={password}
+          onChange={setPassword}
+          placeholder="••••••••••"
+          autoComplete="current-password"
+        />
 
-          {error && <p className="mb-4 text-sm font-semibold text-danger">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full rounded-xl bg-accent py-3.5 text-sm font-extrabold text-onAccent transition duration-200 hover:opacity-90"
+        {/* Beneath the field it relates to, where someone who has just failed to sign in is
+            already looking. */}
+        <div className="flex justify-end">
+          <Link
+            href="/forgot-password"
+            className="text-[11px] font-extrabold uppercase tracking-wide text-primary hover:underline"
           >
-            Sign In
-          </button>
-        </form>
+            Forgot password?
+          </Link>
+        </div>
 
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted">
-          Owner/Manager/Staff access only. This is a separate login from the
-          SnapUp customer app.
-        </p>
-      </div>
-    </div>
+        {error && <AuthAlert tone="error">{error}</AuthAlert>}
+
+        {pendingApproval && (
+          <AuthAlert tone="warning">
+            Your account is waiting for an owner to approve it. Ask whoever set up this
+            console to activate you in <strong>Staff management</strong> — your password is
+            fine, there is nothing to retry.
+          </AuthAlert>
+        )}
+
+        {durable === false && (
+          <AuthAlert tone="warning">
+            <strong>No database configured.</strong> Accounts are kept in memory and are lost
+            on restart. Run <code className="font-mono">npm run db:migrate</code> and restart
+            to make them durable.
+          </AuthAlert>
+        )}
+
+        <AuthSubmit busy={busy} busyLabel="Signing in…">
+          Sign in
+        </AuthSubmit>
+      </form>
+    </AuthShell>
   );
 }
