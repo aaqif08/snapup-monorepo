@@ -1,0 +1,3 @@
+store_id,name,address,latitude,longitude,ssid,egress_cidr,merchant_vpa,merchant_display_name,is_active
+store_1,Kurinji Metro Bazaar — Trichy,"60/4 A1C Singaram Nagar, Kattur, Tiruchirappalli",,,KMB-Trichy-Guest,,,Kurinji Metro Bazaar Trichy,true
+store_2,Kurinji Metro Bazaar — Thanjavur East Main,"108, East Main Street, Thanjavur",,,KMB-Thanjavur-Guest,,,Kurinji Metro Bazaar Thanjavur,true

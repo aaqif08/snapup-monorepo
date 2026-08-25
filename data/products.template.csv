@@ -1,0 +1,5 @@
+barcode,name,category,aisle,price_rupees,weight_grams,stock,cost_rupees,supplier,sku,image_url
+8901725110016,Aashirvaad Atta 5kg,Staples,A1,275.00,5000,40,238.00,ITC Ltd,KMB-ATT-5K,
+8901030865278,Amul Gold Full Cream Milk 1L,Dairy,C2,72.00,1030,120,66.00,Amul,KMB-MLK-1L,
+8901719101106,Britannia Good Day Cashew 200g,Snacks,B3,50.00,200,80,41.00,Britannia,KMB-GDC-200,
+8906002110017,Tata Salt 1kg,Staples,A2,28.00,1000,200,24.50,Tata Consumer,KMB-SLT-1K,

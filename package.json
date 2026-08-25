@@ -12,7 +12,9 @@
     "dev:admin": "npm run dev --workspace=@snapup/admin-web",
     "build:customer": "npm run build --workspace=@snapup/customer-web",
     "build:admin": "npm run build --workspace=@snapup/admin-web",
-    "validate": "node scripts/validate-requirements.mjs"
+    "validate": "node scripts/validate-requirements.mjs",
+    "db:migrate": "node scripts/db-migrate.mjs",
+    "db:import": "node scripts/import-csv.mjs"
   },
   "devDependencies": {}
 }
