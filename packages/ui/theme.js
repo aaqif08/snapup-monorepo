@@ -11,23 +11,33 @@
 
 /** Light: the original brand palette. Mint, near-black ink, mint-tint wash. */
 const light = {
-  primary: '#00C896',
-  primaryDark: '#00A87E',
+  primary: '#00C4A7',
+  primaryDark: '#00A88F',
   /** Text/icon colour that sits on a primary fill. */
   onPrimary: '#FFFFFF',
   accent: '#2D2D2D',
   onAccent: '#FFFFFF',
-  bg: '#F4F7F6',
+  /** Near-white page ground; every card sits on it as pure white. */
+  bg: '#F4F5F7',
   surface: '#FFFFFF',
   /** Subtle raised fill: icon tiles, table headers, hover rows. */
-  tint: '#EAF8F5',
-  ink: '#1C1C1C',
-  /** Darkened from #828A89, which fell below 4.5:1 on white. */
-  muted: '#5F6B68',
-  border: '#E5EAE9',
-  danger: '#D62839',
+  tint: '#E6F8F4',
+  ink: '#1C1C1E',
+  /** Darkened from the design's grey, which fell below 4.5:1 on white. */
+  muted: '#6B7280',
+  border: '#ECEDF0',
+  danger: '#E5342A',
   warning: '#B4740A',
   success: '#00845F',
+  /**
+   * The violet used for the location link and the Recent tile.
+   *
+   * A second hue rather than a primary variant, because it marks a different kind of
+   * thing: primary means "act on this", violet means "this is where you are". Using the
+   * brand mint for both would make the location look like a button.
+   */
+  violet: '#6D4AFF',
+  onViolet: '#FFFFFF',
 };
 
 /**
@@ -54,6 +64,9 @@ const dark = {
   danger: '#FF7B84',
   warning: '#FFC15E',
   success: '#4ADEB0',
+  /** Lifted, for the same reason the mint is: #6D4AFF disappears against a dark ground. */
+  violet: '#A78BFA',
+  onViolet: '#1A1033',
 };
 
 /** '#00C896' -> '0 200 150', the form `rgb(... / <alpha-value>)` expects. */

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { THEME_INIT_SCRIPT } from '@snapup/ui/theme-runtime';
 import './globals.css';
-import NavBar from '@/components/NavBar';
+import AppChrome from '@/components/AppChrome';
 
 export const metadata: Metadata = {
   title: 'SnapUp — Scan, Pay & Skip the Line',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 // Colours the browser chrome to match the theme the phone is actually showing.
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#00C896' },
+    { media: '(prefers-color-scheme: light)', color: '#00C4A7' },
     { media: '(prefers-color-scheme: dark)', color: '#0B1210' },
   ],
 };
@@ -30,8 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div className="flex min-h-screen flex-col bg-bg">
-          <NavBar />
-          <main className="flex-1">{children}</main>
+          <AppChrome>{children}</AppChrome>
         </div>
       </body>
     </html>

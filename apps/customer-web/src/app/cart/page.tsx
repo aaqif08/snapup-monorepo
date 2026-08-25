@@ -1,146 +1,255 @@
 'use client';
 
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import ScreenHeader from '@/components/ScreenHeader';
 import UndoToast from '@/components/UndoToast';
 import { useCartStore, type CartItem } from '@/store/useCartStore';
+import { useSessionStore } from '@/store/useSessionStore';
 
 interface PendingRemoval {
   item: CartItem;
   index: number;
 }
 
+/**
+ * My Cart.
+ *
+ * The totals here are **display only**. What anyone pays is priced server-side from the
+ * store's own catalogue when the order is created — these numbers exist so the screen
+ * responds instantly to a tap on the stepper, and nothing downstream trusts them.
+ *
+ * That is why the discount line says "applied at checkout" rather than showing a figure.
+ * The real discount depends on whether the shopper is signed in, and the server decides
+ * that; a number here that the next screen contradicts is worse than no number at all.
+ */
 export default function CartPage() {
   const router = useRouter();
+
+  const [hydrated, setHydrated] = useState(false);
   const { items, totalPrice, removeProduct, updateQuantity, restoreItem } = useCartStore();
+  const storeName = useSessionStore((state) => state.storeName);
+  const hasSession = useSessionStore((state) => Boolean(state.token));
+
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
 
-  const itemTotal = totalPrice / 100;
-  const platformFee = items.length > 0 ? 2.0 : 0.0;
-  const totalBill = itemTotal + platformFee;
+  // Zustand's persist hydrates asynchronously; rendering first would flash the empty
+  // state at anyone returning to a full basket.
+  useEffect(() => {
+    useCartStore.persist.rehydrate();
+    setHydrated(true);
+  }, []);
 
-  const handleRemove = (item: CartItem, index: number) => {
-    removeProduct(item.id);
-    setPendingRemoval({ item, index });
-  };
-
-  const handleUndo = () => {
-    if (!pendingRemoval) return;
-    restoreItem(pendingRemoval.item, pendingRemoval.index);
-    setPendingRemoval(null);
-  };
-
-  const handleToastExpire = () => setPendingRemoval(null);
-
-  if (items.length === 0) {
-    return (
-      <div className="flex min-h-[calc(100vh-64px)] flex-col items-center justify-center bg-bg p-8 text-center">
-        <p className="mb-4 text-5xl">🛒</p>
-        <p className="mb-2 text-lg font-extrabold text-ink">Your cart is empty</p>
-        <p className="max-w-xs text-sm leading-relaxed text-muted">
-          Walk the aisles and scan item barcodes to build your cart here.
-        </p>
-        {pendingRemoval && (
-          <UndoToast
-            itemName={pendingRemoval.item.name}
-            onUndo={handleUndo}
-            onExpire={handleToastExpire}
-          />
-        )}
-      </div>
-    );
+  function remove(productId: string) {
+    const index = items.findIndex((item) => item.id === productId);
+    if (index < 0) return;
+    setPendingRemoval({ item: items[index], index });
+    removeProduct(productId);
   }
 
-  return (
-    <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-2xl flex-col bg-bg px-4 pt-4 sm:px-6">
-      <div className="mb-4 flex items-center gap-3 rounded-2xl border border-border bg-surface p-4">
-        <span className="text-2xl">🏪</span>
-        <div>
-          <p className="text-sm font-extrabold text-ink">Shopping at DMart Supercenter</p>
-          <p className="text-xs text-muted">HSR Layout, Sector 6</p>
-        </div>
-      </div>
+  const count = items.reduce((total, item) => total + item.quantity, 0);
 
-      <h2 className="mb-3 ml-1 text-xs font-extrabold uppercase tracking-wide text-muted">Scanned Items</h2>
-      <div className="mb-6 rounded-2xl border border-border bg-surface px-4">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            className={`flex items-center justify-between gap-4 py-3.5 ${
-              index !== items.length - 1 ? 'border-b border-border' : ''
-            }`}
-          >
-            <div className="flex-1">
-              <p className="font-bold text-ink">{item.name}</p>
-              <p className="mt-1 text-xs text-muted">
-                Weight: {item.expected_weight_grams}g · Qty: {item.quantity}
+  if (!hydrated) return <div className="min-h-[60vh] bg-bg" />;
+
+  return (
+    <div className="mx-auto max-w-lg">
+      <ScreenHeader title="My Cart" icon={<CartMark />} />
+
+      {items.length === 0 ? (
+        <EmptyCart hasSession={hasSession} />
+      ) : (
+        <div className="px-4 pb-4">
+          {/* Which shop this basket belongs to. A cart carried between two shops is the
+              one thing that would silently price everything wrong. */}
+          <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-tint text-primary">
+              <PinIcon />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-ink">{storeName ?? 'Your shop'}</p>
+              <p
+                className={`mt-0.5 inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${
+                  hasSession ? 'bg-primary/10 text-primary' : 'bg-warning/15 text-warning'
+                }`}
+              >
+                {hasSession ? 'Shopping in progress' : 'Session ended'}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
-                aria-label={`Decrease quantity of ${item.name}`}
-              >
-                −
-              </button>
-              <span className="w-4 text-center text-sm font-bold text-ink">{item.quantity}</span>
-              <button
-                onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-border text-sm font-bold text-ink transition-colors duration-200 hover:border-primary hover:text-primary"
-                aria-label={`Increase quantity of ${item.name}`}
-              >
-                +
-              </button>
-            </div>
-            <p className="w-20 text-right font-extrabold text-ink">
-              ₹{((item.unit_price * item.quantity) / 100).toFixed(2)}
-            </p>
-            {/* Always-visible remove control, per spec — not hover-only or gesture-hidden. */}
-            <button
-              onClick={() => handleRemove(item, index)}
-              className="rounded-lg px-2 py-1.5 text-xs font-bold text-danger transition-colors duration-200 hover:bg-danger/10"
-              aria-label={`Remove ${item.name}`}
-            >
-              Remove
-            </button>
           </div>
-        ))}
-      </div>
 
-      <h2 className="mb-3 ml-1 text-xs font-extrabold uppercase tracking-wide text-muted">Bill Summary</h2>
-      <div className="mb-8 rounded-2xl border border-border bg-surface p-4">
-        <div className="mb-2 flex justify-between">
-          <span className="text-sm font-medium text-muted">Item Total</span>
-          <span className="text-sm font-semibold text-ink">₹{itemTotal.toFixed(2)}</span>
-        </div>
-        <div className="mb-2 flex justify-between">
-          <span className="text-sm font-medium text-muted">Platform Fee</span>
-          <span className="text-sm font-semibold text-ink">₹{platformFee.toFixed(2)}</span>
-        </div>
-        <div className="my-2.5 h-px bg-border" />
-        <div className="flex justify-between">
-          <span className="font-extrabold text-ink">Grand Total</span>
-          <span className="text-lg font-extrabold text-ink">₹{totalBill.toFixed(2)}</span>
-        </div>
-      </div>
+          <h2 className="px-1 pb-2 pt-5 text-sm font-extrabold text-ink">Your Items ({count})</h2>
 
-      <div className="sticky bottom-0 -mx-4 flex items-center justify-between border-t border-border bg-surface/95 px-6 py-5 shadow-pop backdrop-blur-md sm:-mx-6">
-        <div>
-          <p className="text-xl font-extrabold text-ink">₹{totalBill.toFixed(2)}</p>
-          <p className="text-xs font-extrabold text-primary">View Detailed Bill</p>
+          <ul className="space-y-2.5">
+            {items.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3"
+              >
+                <div
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-bg text-xl"
+                  aria-hidden
+                >
+                  🛒
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-ink">{item.name}</p>
+                  <p className="mt-0.5 font-mono text-[11px] text-muted">{item.barcode}</p>
+                  <p className="mt-1 text-sm font-extrabold text-ink">
+                    {rupees(item.unit_price * item.quantity)}
+                  </p>
+                </div>
+
+                <Stepper
+                  quantity={item.quantity}
+                  label={item.name}
+                  onDecrease={() =>
+                    item.quantity <= 1
+                      ? remove(item.id)
+                      : updateQuantity(item.id, item.quantity - 1)
+                  }
+                  onIncrease={() => updateQuantity(item.id, item.quantity + 1)}
+                />
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-5 rounded-2xl border border-border bg-surface p-4">
+            <Row label="Subtotal" value={rupees(totalPrice)} />
+            <Row label="Discount" value="Applied at checkout" muted />
+            <div className="my-3 border-t border-dashed border-border" />
+            <div className="flex items-baseline justify-between">
+              <span className="text-base font-extrabold text-ink">Total Amount</span>
+              <span className="text-lg font-extrabold text-ink">{rupees(totalPrice)}</span>
+            </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted">
+              The shop confirms the final price when you check out.
+            </p>
+          </div>
+
+          <button
+            onClick={() => router.push('/checkout')}
+            disabled={!hasSession}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-40"
+          >
+            Proceed to Pay <span aria-hidden>→</span> {rupees(totalPrice)}
+          </button>
+
+          {!hasSession && (
+            <p className="mt-2 text-center text-[12px] font-semibold text-warning">
+              Your shopping session has ended. Scan the entrance code again to check out.
+            </p>
+          )}
         </div>
-        <button
-          onClick={() => router.push('/checkout')}
-          className="rounded-2xl bg-primary px-6 py-3.5 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
-        >
-          Proceed to Pay
-        </button>
-      </div>
+      )}
 
       {pendingRemoval && (
-        <UndoToast itemName={pendingRemoval.item.name} onUndo={handleUndo} onExpire={handleToastExpire} />
+        <UndoToast
+          itemName={pendingRemoval.item.name}
+          onUndo={() => {
+            restoreItem(pendingRemoval.item, pendingRemoval.index);
+            setPendingRemoval(null);
+          }}
+          onExpire={() => setPendingRemoval(null)}
+        />
       )}
     </div>
   );
+}
+
+function EmptyCart({ hasSession }: { hasSession: boolean }) {
+  return (
+    <div className="px-6 py-16 text-center">
+      <div
+        className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-tint text-4xl"
+        aria-hidden
+      >
+        🛒
+      </div>
+      <p className="mt-5 text-base font-extrabold text-ink">Your cart is empty</p>
+      <p className="mx-auto mt-1 max-w-xs text-sm leading-relaxed text-muted">
+        {hasSession
+          ? 'Scan a barcode to add your first item.'
+          : 'Scan the entrance code at a SnapUp shop to start.'}
+      </p>
+      <Link
+        href="/scan"
+        className="mt-6 inline-flex rounded-2xl bg-primary px-6 py-3 text-sm font-extrabold text-onPrimary"
+      >
+        Start scanning
+      </Link>
+    </div>
+  );
+}
+
+function Stepper({
+  quantity,
+  onDecrease,
+  onIncrease,
+  label,
+}: {
+  quantity: number;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  label: string;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-1 rounded-full border border-primary/40 bg-tint p-1">
+      <button
+        onClick={onDecrease}
+        aria-label={`Reduce quantity of ${label}`}
+        className="flex h-7 w-7 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
+          <path d="M6 12h12" />
+        </svg>
+      </button>
+      <span aria-live="polite" className="min-w-[1.25rem] text-center text-sm font-extrabold text-ink">
+        {quantity}
+      </span>
+      <button
+        onClick={onIncrease}
+        aria-label={`Add another ${label}`}
+        className="flex h-7 w-7 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15"
+      >
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
+          <path d="M12 6v12M6 12h12" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function Row({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
+  return (
+    <div className="flex items-baseline justify-between py-1">
+      <span className="text-sm text-muted">{label}</span>
+      <span className={`text-sm font-semibold ${muted ? 'text-muted' : 'text-ink'}`}>{value}</span>
+    </div>
+  );
+}
+
+function CartMark() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2 4h2.2l2.3 11.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.55L21 8H6" />
+      <circle cx="9.5" cy="20" r="1.4" />
+      <circle cx="17.5" cy="20" r="1.4" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </svg>
+  );
+}
+
+/** Paise to a displayed rupee amount. Display only — never used to compute anything. */
+function rupees(paise: number): string {
+  return `₹${(paise / 100).toFixed(2).replace(/\.00$/, '')}`;
 }

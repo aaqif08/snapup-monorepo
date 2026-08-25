@@ -81,8 +81,9 @@ export interface NearbyStore {
   id: string;
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  /** Null until the branch has been surveyed — see the server's PublicStore. */
+  latitude: number | null;
+  longitude: number | null;
   ssid: string;
   isOpen: boolean;
   /** Absent when the customer has not shared their location. */
@@ -352,13 +353,24 @@ export async function createOrder(
 
 export interface PaymentResult {
   order: ServerOrder;
-  /** Signed by the server over server-computed weight and total. */
-  exitToken: string;
+  /**
+   * Signed by the server over the server-computed weight and total.
+   *
+   * **Null when the payment is only attested.** The gate opens on evidence, and a
+   * customer tapping "I've paid" is a claim — issuing a token the terminal is meant to
+   * refuse just moves the argument to the exit, where there is a queue behind it.
+   */
+  exitToken: string | null;
   /**
    * False when the only evidence of payment is the customer's own say-so — which is the
    * normal case while payments go directly to the retailer and no provider confirms them.
    */
   paymentVerified: boolean;
+  /**
+   * The short code the customer shows at the exit desk so staff can check the payment
+   * against the shop's own UPI app. Present whenever verification is still outstanding.
+   */
+  verificationCode: string | null;
 }
 
 export async function confirmPayment(
@@ -379,8 +391,9 @@ export async function confirmPayment(
   const body = await response.json();
   return {
     order: body.order as ServerOrder,
-    exitToken: body.exit_token as string,
+    exitToken: (body.exit_token as string | null) ?? null,
     paymentVerified: Boolean(body.payment_verified),
+    verificationCode: (body.verification_code as string | null) ?? null,
   };
 }
 

@@ -3,40 +3,69 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ThemeToggle from '@snapup/ui/ThemeToggle';
 import { useAdminAuthStore } from '@/store/useAdminAuthStore';
+
+/** Screens reachable without a session, because they are how you come to have one. */
+const PUBLIC_ROUTES = ['/login', '/signup', '/forgot-password', '/reset-password'];
 
 const NAV_LINKS = [
   { href: '/', label: 'Overview', icon: '📊' },
   { href: '/insights', label: 'Insights', icon: '📈' },
   { href: '/stores', label: 'Stores', icon: '🏪' },
   { href: '/products', label: 'Products', icon: '📦' },
+  // No minRole: the exit desk is the one screen a floor-staff account exists to use, and
+  // hiding it from them would leave the role with nothing it can do.
+  { href: '/verify', label: 'Exit desk', icon: '✅' },
+  // Manager-and-above only; filtered below rather than hidden by CSS, so a staff account
+  // is not shown a door it cannot open.
+  { href: '/staff', label: 'Staff', icon: '👥', minRole: 'manager' as const },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [isHydrated, setIsHydrated] = useState(false);
-  const { isAuthenticated, email, logout } = useAdminAuthStore();
+  const { isAuthenticated, isReady, user, hydrate, logout } = useAdminAuthStore();
+
+  // The session lives in an httpOnly cookie, so the only way to know who is signed in is
+  // to ask. Nothing renders until it answers — the previous store read a localStorage
+  // boolean, which is why "logged in" used to be something a visitor could set themselves.
+  useEffect(() => {
+    void hydrate();
+  }, [hydrate]);
+
+  // Route guard: every screen outside PUBLIC_ROUTES requires an authenticated session.
+  //
+  // The list matters as much as the guard. Sign-up and password recovery are reached by
+  // people who by definition have no session, so guarding them redirects the user to a
+  // login page they cannot get past — and a reset link that bounces to /login is a reset
+  // link that does not work.
+  const isPublic = PUBLIC_ROUTES.includes(pathname);
 
   useEffect(() => {
-    useAdminAuthStore.persist.rehydrate();
-    setIsHydrated(true);
-  }, []);
-
-  // Route guard: every screen except /login requires an authenticated session.
-  useEffect(() => {
-    if (isHydrated && !isAuthenticated && pathname !== '/login') {
+    if (isReady && !isAuthenticated && !isPublic) {
       router.replace('/login');
     }
-  }, [isHydrated, isAuthenticated, pathname, router]);
+  }, [isReady, isAuthenticated, isPublic, router]);
 
-  if (!isHydrated) {
+  const email = user?.email ?? null;
+  const role = user?.role ?? null;
+
+  const visibleLinks = NAV_LINKS.filter(
+    (link) => !link.minRole || role === 'owner' || role === 'manager'
+  );
+
+  async function handleLogout() {
+    await logout();
+    router.replace('/login');
+  }
+
+  if (!isReady) {
     return <div className="min-h-screen bg-bg" />;
   }
 
-  if (pathname === '/login' || !isAuthenticated) {
+  if (isPublic || !isAuthenticated) {
     return <main className="min-h-screen bg-bg">{children}</main>;
   }
 
@@ -49,11 +78,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-extrabold text-ink">SnapUp Business</p>
             <p className="truncate text-xs text-muted">{email}</p>
+            {/* The role is what decides which screens exist and which buttons work, so it
+                belongs where it can be seen rather than inferred from what is missing. */}
+            {role && (
+              <span className="mt-1 inline-block rounded-full bg-tint px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-primary">
+                {role}
+              </span>
+            )}
           </div>
           <ThemeToggle />
         </div>
         <nav className="flex-1 px-3 py-4">
-          {NAV_LINKS.map((link) => {
+          {visibleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -79,10 +115,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="border-t border-border p-3">
           <button
-            onClick={() => {
-              logout();
-              router.push('/login');
-            }}
+            onClick={() => void handleLogout()}
             className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-bold text-danger transition-colors duration-200 hover:bg-danger/10"
           >
             Log Out
@@ -100,10 +133,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <button
-              onClick={() => {
-                logout();
-                router.push('/login');
-              }}
+              onClick={() => void handleLogout()}
               className="rounded-xl px-3 py-2 text-xs font-bold text-danger transition-colors duration-200 hover:bg-danger/10"
             >
               Log Out
@@ -115,7 +145,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* Mobile bottom nav */}
         <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
-          {NAV_LINKS.map((link) => {
+          {visibleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { listStaff, type AccountUser } from '@/lib/accountClient';
 import Link from 'next/link';
 import { listStores, type AdminStore } from '@/lib/storesClient';
 import { listProducts } from '@/lib/productsClient';
@@ -31,6 +32,9 @@ function isPlaceholderRange(cidr: string): boolean {
 
 export default function DashboardPage() {
   const [overview, setOverview] = useState<Overview | null>(null);
+  // Loaded separately from the registry overview: staff live in SnapUp's own tables, and
+  // a manager may read them while the registry call is still in flight.
+  const [team, setTeam] = useState<AccountUser[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,6 +75,14 @@ export default function DashboardPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    // Silent on failure: a `staff` role is forbidden from listing the team, and that is
+    // an expected answer rather than an error worth showing on the landing screen.
+    void listStaff()
+      .then((result) => setTeam(result.staff))
+      .catch(() => setTeam(null));
+  }, []);
 
   if (isLoading) {
     return (
@@ -140,7 +152,22 @@ export default function DashboardPage() {
           sub={needsAttention.length === 0 ? 'all configured' : 'see below'}
           tone={needsAttention.length > 0 ? 'warning' : 'normal'}
         />
-        <Stat label="Presence checks" value="Enforced" sub="QR + store network" />
+        {team ? (
+          <Link href="/staff" className="rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary">
+            <Stat
+              label="Team"
+              value={team.filter((member) => member.isActive).length}
+              sub={
+                team.some((member) => !member.isActive)
+                  ? `${team.filter((member) => !member.isActive).length} awaiting approval`
+                  : 'all approved'
+              }
+              tone={team.some((member) => !member.isActive) ? 'warning' : 'normal'}
+            />
+          </Link>
+        ) : (
+          <Stat label="Presence checks" value="Enforced" sub="QR + store network" />
+        )}
       </div>
 
       {needsAttention.length > 0 && (

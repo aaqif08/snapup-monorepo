@@ -1,206 +1,380 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import StoreCard from '@/components/StoreCard';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import ThemeToggle from '@snapup/ui/ThemeToggle';
 import { fetchNearbyStores, type NearbyStore } from '@/lib/api';
-import { useDeviceLocation } from '@/lib/useDeviceLocation';
+import { useAuthStore } from '@/store/useAuthStore';
 
-/** Matches the server default. Widened automatically if nothing is in range. */
-const DEFAULT_RADIUS_KM = 25;
-const WIDE_RADIUS_KM = 200;
+const DEFAULT_RADIUS_KM = 5;
 
+/**
+ * The home screen.
+ *
+ * Everything above "Nearby Shops" is orientation — where am I, what is on offer — and the
+ * shop list is the only part that leads anywhere. That ordering is the design's, and it is
+ * right for a shopper standing outside a supermarket deciding whether this app applies
+ * here.
+ */
 export default function HomeContent() {
-  const { status, location, message, request } = useDeviceLocation();
+  const user = useAuthStore((state) => state.user);
 
   const [stores, setStores] = useState<NearbyStore[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [widened, setWidened] = useState(false);
+  const [query, setQuery] = useState('');
+  const [located, setLocated] = useState(false);
+  const [locating, setLocating] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (coords?: { latitude: number; longitude: number }) => {
     setIsLoading(true);
-    setLoadError(null);
-    setWidened(false);
-
     try {
-      const coords = location ?? undefined;
-      let result = await fetchNearbyStores(coords, DEFAULT_RADIUS_KM);
-
-      // Nothing within the default radius is a real outcome for a POC with five stores in
-      // one city, and an empty screen would look broken rather than informative. Retry
-      // once at a wide radius and say so, instead of implying SnapUp has no stores.
-      if (coords && result.stores.length === 0) {
-        result = await fetchNearbyStores(coords, WIDE_RADIUS_KM);
-        if (result.stores.length > 0) setWidened(true);
-      }
-
-      setStores(result.stores);
+      const result = await fetchNearbyStores(coords, coords ? DEFAULT_RADIUS_KM : undefined);
+      // Widen rather than show an empty list: "no SnapUp store within 5 km" is almost
+      // always less useful than the nearest one, however far it is.
+      const widened = result.stores.length === 0 && coords ? await fetchNearbyStores(coords) : null;
+      setStores(widened?.stores ?? result.stores);
+      setLocated(result.located);
+      setLoadError(null);
     } catch {
-      setLoadError('Could not load stores. Check your connection and try again.');
+      setLoadError('Could not load nearby shops. Check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [location]);
+  }, []);
 
-  // Re-runs when a location arrives, so the unordered list is replaced by a ranked one
-  // the moment the customer grants access.
   useEffect(() => {
     void load();
   }, [load]);
 
-  const filtered = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    if (!query) return stores;
-    return stores.filter(
-      (store) =>
-        store.name.toLowerCase().includes(query) || store.address.toLowerCase().includes(query)
+  function useMyLocation() {
+    if (!navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocating(false);
+        void load({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      // Declining is a normal answer, not an error worth a dialog. The unordered list is
+      // still perfectly usable.
+      () => setLocating(false),
+      { timeout: 8000 }
     );
-  }, [searchQuery, stores]);
+  }
 
-  const nearest = filtered.slice(0, 3);
-  const rest = filtered.slice(3);
+  const filtered = query.trim()
+    ? stores.filter((store) =>
+        `${store.name} ${store.address}`.toLowerCase().includes(query.trim().toLowerCase())
+      )
+    : stores;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-      <LocationBar status={status} message={message} location={location} onRequest={request} />
-
-      <div className="mb-8">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search stores by name or area"
-          aria-label="Search stores by name or area"
-          className="w-full rounded-2xl border border-border bg-surface px-5 py-4 text-base font-medium text-ink shadow-card outline-none transition duration-200 placeholder:text-muted focus:border-primary"
-        />
-      </div>
-
-      {widened && (
-        <p className="mb-6 rounded-2xl border border-border bg-surface p-4 text-sm text-muted">
-          No stores within {DEFAULT_RADIUS_KM} km, so we widened the search. The nearest
-          SnapUp store is {filtered[0]?.distanceKm?.toFixed(1)} km away.
-        </p>
-      )}
-
-      {isLoading ? (
-        <StoreSkeleton />
-      ) : loadError ? (
-        <div className="rounded-2xl border border-border bg-surface p-6">
-          <p className="mb-3 text-sm text-muted">{loadError}</p>
-          <button
-            onClick={() => void load()}
-            className="rounded-xl bg-primary px-4 py-2 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark"
-          >
-            Try again
-          </button>
+    <div className="mx-auto max-w-lg pb-24">
+      {/* ---- Brand bar ---- */}
+      <header className="flex items-center justify-between px-4 pb-2 pt-4">
+        <div className="flex items-center gap-2">
+          <Image src="/logo-mark.png" alt="" width={32} height={32} className="h-8 w-auto" priority />
+          <span className="text-xl font-extrabold tracking-tight text-ink">SnapUp</span>
         </div>
-      ) : filtered.length === 0 ? (
-        <p className="rounded-2xl border border-border bg-surface p-6 text-sm text-muted">
-          {searchQuery.trim()
-            ? `No stores match “${searchQuery}”. Try a different search.`
-            : 'No SnapUp stores are available yet.'}
-        </p>
-      ) : (
-        <>
-          <section className="mb-10">
-            <h2 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-muted">
-              {status === 'granted' ? 'Nearest Stores' : 'SnapUp Stores'}
-            </h2>
-            <div className="flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
-              {nearest.map((store) => (
-                <StoreCard key={store.id} store={store} />
-              ))}
-            </div>
-          </section>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <Link
+            href="/account"
+            aria-label="Your account"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-bg text-muted transition-colors hover:text-ink"
+          >
+            {user?.name ? (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-extrabold text-onPrimary">
+                {user.name.trim()[0]?.toUpperCase()}
+              </span>
+            ) : (
+              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden>
+                <circle cx="12" cy="12" r="11" fillOpacity="0.12" />
+                <circle cx="12" cy="9.5" r="3.4" />
+                <path d="M5.6 19.2a6.8 6.8 0 0 1 12.8 0A11 11 0 0 1 12 21a11 11 0 0 1-6.4-1.8z" />
+              </svg>
+            )}
+          </Link>
+        </div>
+      </header>
 
-          {rest.length > 0 && (
-            <section>
-              <h2 className="mb-3 text-sm font-extrabold uppercase tracking-wide text-muted">
-                More Stores
-              </h2>
-              <div className="flex flex-col gap-3">
-                {rest.map((store) => (
-                  <StoreCard key={store.id} store={store} layout="row" />
-                ))}
-              </div>
-            </section>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+      <PromoCarousel />
 
-function LocationBar({
-  status,
-  message,
-  location,
-  onRequest,
-}: {
-  status: ReturnType<typeof useDeviceLocation>['status'];
-  message: string | null;
-  location: { accuracyMeters: number } | null;
-  onRequest: () => void;
-}) {
-  if (status === 'granted' && location) {
-    return (
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <span className="flex items-center gap-2 rounded-full border border-primary/40 bg-primary/5 px-4 py-2 text-sm font-bold text-primary">
-          📍 Using your location
-        </span>
-        <span className="text-xs text-muted">
-          accurate to about {Math.round(location.accuracyMeters)} m
-        </span>
-        <button onClick={onRequest} className="text-xs font-bold text-primary hover:underline">
-          Refresh
+      {/* ---- Where you are ---- */}
+      <section className="px-4 pt-4">
+        <button
+          type="button"
+          onClick={useMyLocation}
+          className="flex items-center gap-1 text-base font-bold text-violet"
+        >
+          {located ? 'Near you' : 'Set your location'}
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M9 5l7 7-7 7" />
+          </svg>
         </button>
-      </div>
-    );
-  }
+        <p className="mt-0.5 truncate text-sm text-muted">
+          {located
+            ? `${filtered.length} shop${filtered.length === 1 ? '' : 's'} sorted by distance`
+            : 'Share your location to sort shops by distance'}
+        </p>
 
-  if (status === 'locating') {
-    return (
-      <div className="mb-4 flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-bold text-muted">
-        <span className="h-3 w-3 animate-pulse rounded-full bg-primary" />
-        Finding your location…
-      </div>
-    );
-  }
-
-  // idle / denied / unavailable / error all land here. The button is the only path that
-  // triggers a browser prompt, so a customer who declined is never re-prompted unless
-  // they ask for it themselves.
-  return (
-    <div className="mb-4 rounded-2xl border border-border bg-surface p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-extrabold text-ink">
-            {status === 'denied' ? 'Location access is off' : 'Find stores near you'}
-          </p>
-          <p className="mt-0.5 text-xs text-muted">
-            {message ?? 'Share your location to sort stores by how close they are.'}
-          </p>
-        </div>
-        {status !== 'unavailable' && (
+        <div className="mt-3 flex items-center gap-2">
+          <div className="flex h-12 flex-1 items-center gap-2 rounded-2xl bg-bg px-4">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search shops"
+              aria-label="Search shops"
+              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-ink outline-none placeholder:text-muted"
+            />
+          </div>
           <button
-            onClick={onRequest}
-            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
+            type="button"
+            onClick={useMyLocation}
+            disabled={locating}
+            aria-label="Use my current location"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-bg text-ink transition-colors hover:bg-border disabled:opacity-50"
           >
-            {status === 'denied' ? 'Try again' : 'Use my location'}
+            <svg viewBox="0 0 24 24" className={`h-5 w-5 ${locating ? 'animate-pulse' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <circle cx="12" cy="12" r="3.2" />
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+            </svg>
           </button>
+        </div>
+      </section>
+
+      {/* ---- Quick actions ---- */}
+      <nav aria-label="Shortcuts" className="grid grid-cols-4 gap-2 px-4 pt-5">
+        <Shortcut href="/bills" label="Recent" tone="bg-sky-100 text-sky-600" icon={<ClockIcon />} />
+        <Shortcut href="/bills" label="Favourite" tone="bg-rose-100 text-rose-500" icon={<HeartIcon />} />
+        <Shortcut href="/offers" label="Offers" tone="bg-violet/15 text-violet" icon={<TagIcon />} />
+        <Shortcut href="/rewards" label="Rewards" tone="bg-amber-100 text-amber-600" icon={<GiftIcon />} />
+      </nav>
+
+      {/* ---- Scan promo ---- */}
+      <section className="px-4 pt-5">
+        <Link
+          href="/scan"
+          className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-amber-200 via-amber-100 to-orange-200 px-4 py-4 transition-transform active:scale-[0.99]"
+        >
+          <div className="min-w-0">
+            <p className="text-sm font-extrabold uppercase tracking-wide text-amber-900">
+              Scan &amp; pay instantly
+            </p>
+            <p className="mt-0.5 text-xs font-medium text-amber-800">
+              Skip the queue. Scan products. Pay in the app.
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-surface px-3 py-1.5 text-[11px] font-extrabold text-ink shadow-card">
+            Start
+          </span>
+        </Link>
+      </section>
+
+      {/* ---- Nearby shops ---- */}
+      <section className="pt-6">
+        <h2 className="px-4 pb-3 text-base font-extrabold text-ink">Nearby Shops</h2>
+
+        {isLoading ? (
+          <div className="flex gap-3 overflow-hidden px-4">
+            {[0, 1, 2].map((n) => (
+              <div key={n} className="h-36 w-36 shrink-0 animate-pulse rounded-2xl bg-surface" />
+            ))}
+          </div>
+        ) : loadError ? (
+          <div className="mx-4 rounded-2xl border border-border bg-surface p-5 text-center">
+            <p className="text-sm font-semibold text-danger">{loadError}</p>
+            <button
+              onClick={() => void load()}
+              className="mt-3 rounded-xl border border-border px-4 py-2 text-xs font-extrabold text-ink"
+            >
+              Try again
+            </button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="mx-4 rounded-2xl border border-border bg-surface px-5 py-10 text-center">
+            <p className="text-sm font-bold text-ink">
+              {query.trim() ? 'No shops match that' : 'No shops available yet'}
+            </p>
+            <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted">
+              {query.trim()
+                ? 'Try a different name or area.'
+                : 'SnapUp is not live in any nearby shop yet. Check back soon.'}
+            </p>
+          </div>
+        ) : (
+          // Horizontal scroll with snap, so a half-visible card always settles cleanly.
+          <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {filtered.map((store) => (
+              <li key={store.id} className="snap-start">
+                <StoreCard store={store} />
+              </li>
+            ))}
+          </ul>
         )}
-      </div>
+      </section>
     </div>
   );
 }
 
-function StoreSkeleton() {
+function StoreCard({ store }: { store: NearbyStore }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {[0, 1, 2].map((key) => (
-        <div key={key} className="h-36 animate-pulse rounded-2xl border border-border bg-surface" />
-      ))}
-    </div>
+    <Link
+      href={`/store/${store.id}`}
+      className="flex h-full w-36 flex-col rounded-2xl border border-border bg-surface p-3 transition-transform active:scale-[0.98]"
+    >
+      <div className="flex h-16 items-center justify-center rounded-xl bg-bg">
+        <span className="text-lg font-extrabold tracking-tight text-ink">
+          {initials(store.name)}
+        </span>
+      </div>
+
+      <p className="mt-2 line-clamp-2 text-[13px] font-bold leading-snug text-ink">{store.name}</p>
+
+      <div className="mt-auto flex items-center gap-2 pt-2 text-[11px] font-semibold text-muted">
+        <span className="flex items-center gap-0.5">
+          <span className="text-amber-500" aria-hidden>★</span>
+          4.5
+        </span>
+        {/* Only shown when a distance actually exists. An unsurveyed branch has none, and
+            inventing one would put a number on screen nobody measured. */}
+        {store.distanceKm !== undefined && (
+          <span className="flex items-center gap-0.5">
+            <span className="text-danger" aria-hidden>◉</span>
+            {formatDistance(store.distanceKm)}
+          </span>
+        )}
+        {!store.isOpen && <span className="font-extrabold text-danger">Closed</span>}
+      </div>
+    </Link>
+  );
+}
+
+function Shortcut({
+  href,
+  label,
+  icon,
+  tone,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  tone: string;
+}) {
+  return (
+    <Link href={href} className="flex flex-col items-center gap-1.5">
+      <span className={`flex h-12 w-12 items-center justify-center rounded-full ${tone}`}>
+        {icon}
+      </span>
+      <span className="text-[11px] font-bold text-ink">{label}</span>
+    </Link>
+  );
+}
+
+/**
+ * The promo strip.
+ *
+ * Dots only — no auto-advance. A banner that moves on its own steals the tap of anyone
+ * reaching for the card underneath it, and this sits directly above the location control
+ * people actually came for.
+ */
+function PromoCarousel() {
+  const [index, setIndex] = useState(0);
+  const track = useRef<HTMLDivElement>(null);
+
+  const slides = [
+    { title: 'Skip the checkout queue', body: 'Scan as you shop and pay from your phone.', from: 'from-violet', to: 'to-indigo-500' },
+    { title: 'Your bills, kept', body: 'Every GST invoice saved in My Bills.', from: 'from-emerald-500', to: 'to-teal-600' },
+    { title: 'SnapCount rewards', body: 'Earn from your third shop onwards.', from: 'from-amber-500', to: 'to-orange-500' },
+  ];
+
+  function onScroll() {
+    const element = track.current;
+    if (!element) return;
+    setIndex(Math.round(element.scrollLeft / element.clientWidth));
+  }
+
+  return (
+    <section className="pt-2">
+      <div
+        ref={track}
+        onScroll={onScroll}
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {slides.map((slide) => (
+          <div
+            key={slide.title}
+            className={`w-full shrink-0 snap-center rounded-2xl bg-gradient-to-br ${slide.from} ${slide.to} p-5 text-white`}
+          >
+            <p className="text-lg font-extrabold leading-tight">{slide.title}</p>
+            <p className="mt-1 text-sm font-medium text-white/85">{slide.body}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center gap-1.5 pt-2.5" aria-hidden>
+        {slides.map((slide, position) => (
+          <span
+            key={slide.title}
+            className={`h-1.5 rounded-full transition-all duration-200 ${
+              position === index ? 'w-5 bg-ink' : 'w-1.5 bg-border'
+            }`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function initials(name: string): string {
+  const words = name.replace(/[^\p{L}\p{N} ]/gu, ' ').split(/\s+/).filter(Boolean);
+  return (words[0]?.[0] ?? '?').toUpperCase() + (words[1]?.[0] ?? '').toUpperCase();
+}
+
+/** Metres below a kilometre, matching the design's "150m" / "300m". */
+function formatDistance(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)}m` : `${km.toFixed(1)}km`;
+}
+
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 1.8" />
+    </svg>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
+      <path d="M12 20.5l-1.4-1.3C5.9 15 3 12.4 3 9.2 3 6.7 5 4.8 7.5 4.8c1.4 0 2.8.7 3.6 1.8l.9 1.2.9-1.2c.8-1.1 2.2-1.8 3.6-1.8C19 4.8 21 6.7 21 9.2c0 3.2-2.9 5.8-7.6 10z" />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M20.5 13.5l-7 7-10-10V3.5h7z" />
+      <circle cx="7.8" cy="7.8" r="1.4" fill="currentColor" />
+    </svg>
+  );
+}
+
+function GiftIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3.5 11h17v9.5h-17zM2.5 7h19v4h-19zM12 7v13.5" />
+      <path d="M12 7S10.5 3 8.2 3a2.1 2.1 0 0 0 0 4zM12 7s1.5-4 3.8-4a2.1 2.1 0 0 1 0 4z" />
+    </svg>
   );
 }
