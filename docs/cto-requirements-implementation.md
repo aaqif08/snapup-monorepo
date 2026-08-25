@@ -571,6 +571,173 @@ cannot mistake "not measured yet" for "nobody bought anything".
 
 ---
 
+## Durable storage
+
+Each of the four repositories now has three implementations behind its interface, and
+`repository.ts` in each domain holds the one line that chooses between them. No route,
+component, projection, pricing rule or auth check was touched to make any of this work.
+
+| Repository | Retailer's API | Postgres | In memory |
+|---|---|---|---|
+| Stores | `stores/apiRepository.ts` | `stores/postgresRepository.ts` | `stores/memoryRepository.ts` |
+| Products | `products/apiRepository.ts` | `products/postgresRepository.ts` | `products/memoryRepository.ts` |
+| Orders | `orders/apiRepository.ts` | `orders/postgresRepository.ts` | `orders/memoryRepository.ts` |
+| Event log | `analytics/apiRepository.ts` | `analytics/postgresRepository.ts` | `analytics/memoryRepository.ts` |
+
+**The agreed deployment model is the first column.** The supermarket hosts the database,
+only the store owner can reach it, and SnapUp is issued an API key — we are never given a
+connection string and cannot query their data directly. Setting `SNAPUP_STORE_API_BASE` and
+`SNAPUP_STORE_API_KEY` selects it.
+
+This is a stronger security position than it may first appear, and worth putting to the CTO
+in those terms: SnapUp cannot leak a database it cannot reach, the retailer can revoke our
+access without touching their infrastructure, and the catalogue never has a second copy to
+drift out of date — their system stays the authority on price and stock. The Postgres
+implementations remain for the data SnapUp owns in any deployment where it owns any, and as
+the fallback if the arrangement changes.
+
+### What the API model moves outside our control
+
+Each of these was a property the code guaranteed and now has to verify instead. They are
+listed because they are what the first integration run against their API should target.
+
+| Property | Previously | Under the API model |
+|---|---|---|
+| Payment idempotency | Guaranteed — a single `UPDATE` with a `CASE` guard | Depends on their payment endpoint. **R8.13 and R9.13 are the cases to run first**: if it is not idempotent, a double tap of "I've paid" double-counts the owner's takings |
+| Barcode uniqueness | Guaranteed by a unique index | Enforced upstream; their `409` is translated back into `DuplicateBarcodeError`, so the route still answers `409 duplicate_barcode` |
+| Store scoping | A `WHERE store_id = …` we wrote | Re-checked on every response. If their API ignored the parameter we would serve one store's pricing under another store's session, so `findByBarcode`, `search` and the event query all re-filter rather than trust |
+| Order ownership | A `WHERE session_id = …` we wrote | Re-checked in `findForSession`. Too important to delegate: it is the only thing stopping one customer reading another's basket by guessing an id |
+| Availability | Ours | Theirs. Every scan now depends on their uptime |
+
+The re-checking is deliberately redundant. We send the scoping parameters *and* verify the
+answers, because a filter applied by someone else's code is an assumption, not a control.
+
+### Two behaviours worth calling out
+
+**Recording an event never fails a customer's request.** `record()` logs upstream failures
+and swallows them. If the retailer's API has a wobble the right outcome is a gap in the
+analytics, not a shopper who cannot scan a tin of beans — the dashboard is a reporting
+surface, the scanner is the product. `query()` does the opposite and propagates, because a
+dashboard that renders a partial day as though it were complete is exactly the failure the
+read model exists to prevent.
+
+**Writes are never retried.** A timed-out read can be repeated freely; a timed-out write
+cannot, because the request may have been applied and only the response lost. Retrying an
+order creation could book the same basket twice, so writes get one attempt and surface the
+failure. That fails in the safe direction: an order that was not created cannot produce an
+exit token, so nobody walks out on a basket the shop has no record of.
+
+### The store record carries a security control
+
+One thing to settle explicitly rather than by default: `authorizedEgressCidrs` decides which
+networks can be granted a shopping session. Serving the store record from the retailer's API
+means the retailer controls that list. That is defensible — it is their store and their
+network — but **whoever can write that list can authorise sessions**, so it should be an
+agreed decision rather than a consequence of where the field happened to live.
+
+### Caching, and what it costs
+
+`validateSession()` re-reads the store record on every authenticated request to re-check the
+authorized ranges. Against process memory that was free; against a third party's API it
+would be one upstream call per scan, per heartbeat, per order — enough to blow the latency
+budget and burn the retailer's rate limit re-reading a record that changes about once a
+month.
+
+Store records are therefore cached for 15 seconds and products for 5, with explicit
+invalidation on write so an operator's save takes effect immediately. The 15 seconds is
+chosen against the security property it weakens rather than against a hit rate: withdrawing
+a store or correcting its egress range now takes up to that long to affect sessions already
+in flight, where it used to be instant.
+
+### The seam was not quite as clean as claimed
+
+The previous revision of this document said the swap was "one export line". Building it
+showed that was optimistic in two specific ways, both now fixed:
+
+- `DuplicateBarcodeError` was exported *from* `memoryRepository.ts`. The admin route catches
+  it with `instanceof` to return `409 duplicate_barcode`. Had the export simply been
+  repointed, the Postgres repository would have thrown a *different* class with the same
+  name, the `instanceof` check would have quietly stopped matching, and a duplicate barcode
+  would have become a `500` instead of a `409`. It now lives in `products/errors.ts`, owned
+  by neither implementation.
+- `isValidCidr` was also exported from `memoryRepository.ts`, despite having nothing to do
+  with storage — `validation.ts` uses it to reject a malformed range before any write. Now
+  in `stores/cidr.ts`.
+
+Worth recording because it is the general shape of the problem: an interface is only a seam
+if *everything* the callers touch is on the interface side of it. A helper that leaks out of
+one implementation is a dependency on that implementation regardless of what the type
+signatures say.
+
+### Decisions worth the CTO's attention
+
+**The driver is HTTP-based, not a connection pool.** The failure this change exists to fix
+is serverless fan-out. A conventional TCP pool makes that worse: every instance opens its
+own connections and Postgres exhausts its backends long before the traffic is interesting.
+`@neondatabase/serverless` issues each query over HTTP with nothing to keep alive, so an
+instance that serves one request costs one request. The price is no multi-statement session
+state — which is why order creation uses the driver's single-request `transaction()` rather
+than an interactive `BEGIN`.
+
+**An order and its lines are written in one transaction.** Not a stylistic choice: the exit
+token is signed over the server's own figures, so an order row that committed without its
+lines would produce a *validly signed* gate pass for a zero-rupee basket.
+
+**Payment idempotency moved into the statement.** The in-memory version could read-then-write
+safely because it was single-threaded. Against a shared database two taps of "I've paid"
+can land on two instances at once, so the guard is now `COALESCE`/`CASE` inside a single
+`UPDATE` — which also means a retried `customer_attested` arriving after a `psp_webhook` can
+never downgrade a verified payment to a claimed one.
+
+**Barcode uniqueness is enforced by the index, not by a preceding `SELECT`.** A
+check-then-insert leaves a window where two concurrent operator saves both see no conflict.
+The insert now relies on `products_store_barcode_idx` and translates Postgres error `23505`
+back into `DuplicateBarcodeError`, so the route's `409` is preserved without the race.
+
+**The migration seeds nothing.** `npm run db:migrate` creates the schema and stops. Seeding a
+real deployment with the demo catalogue would register stores whose egress CIDRs are RFC 5737
+documentation addresses — every shopper at them would be refused, and the cause would look
+like a bug in presence verification rather than like fixture data. The first store is
+registered through the admin console, with its real gateway IP.
+
+### Every assumption about their API is in one file
+
+`server/storeApi/contract.ts` holds every path and every field name we expect, because their
+specification was not available when this was built. Nothing else in the codebase assumes
+anything about their API. The repositories above it carry the domain rules — pagination
+clamping, store scoping, ownership checks, the projection boundary — and none of those
+change when the upstream contract turns out to differ, so reconciling with their real API is
+a mapping exercise in one file rather than a rewrite.
+
+Four things to check against their spec the moment it arrives, worst failure first:
+
+1. **Store scoping.** We send `store_id` on catalogue reads. If their API instead scopes by
+   the key itself — one key per store — then SnapUp needs a key per store, and the
+   multi-store behaviour R2.7–R2.9 assert needs rethinking.
+2. **Money units.** We use integer paise and assume they do too. If they send rupees as a
+   decimal, every price is wrong by a factor of 100 and the exit token gets signed over the
+   wrong amount.
+3. **Whether the commercial fields come back at all.** `cost_price` feeds the owner's gross
+   profit. If their key withholds it, that metric must render as `—` rather than as zero.
+4. **Timestamp format.** We handle epoch milliseconds and ISO 8601; anything else needs
+   parsing in the mappers, not at the call sites.
+
+### Status of the evidence
+
+**Neither durable path has been executed.** No database and no retailer API were reachable
+from the machine this was written on. What is proven: both apps typecheck, every column the
+Postgres repositories reference exists in the schema (checked mechanically), the migration
+splits into 12 valid statements, and **all 88 validation cases still pass** — which is what
+demonstrates that putting three implementations behind one seam changed no behaviour, since
+those cases run the in-memory path end to end over real HTTP against a production build.
+
+What is not proven is the integration itself. Pointing the harness at their API — with the
+five cases named above run first — is the next step, and until that has happened this
+section should be read as "written and reviewed", not "validated", which is the standard the
+rest of this document is held to.
+
+---
+
 ## Configuration
 
 | Variable | Purpose |
@@ -579,6 +746,10 @@ cannot mistake "not measured yet" for "nobody bought anything".
 | `SNAPUP_SESSION_SECRET` | HMAC secret for session tokens. **Required in production.** |
 | `SNAPUP_EXIT_TOKEN_SECRET` | HMAC secret for the exit-gate QR. **Required in production.** Separate from the session secret so rotating one does not invalidate the other. |
 | `SNAPUP_ADMIN_API_TOKEN` | Credential for the store-registry write API. **Required in production.** Must match on both apps. |
+| `SNAPUP_STORE_API_BASE` | Base URL of the retailer's API. Set together with the key, this is what all four repositories read and write through. |
+| `SNAPUP_STORE_API_KEY` | The key the retailer issues us. **No `NEXT_PUBLIC_` prefix** — a key in the browser bundle is a key every customer can replay against the retailer's systems. |
+| `SNAPUP_STORE_API_TIMEOUT_MS` | Per-attempt budget, default `800`. Sized so a slow upstream degrades inside Requirement 3's 2-second target rather than hanging. |
+| `DATABASE_URL` | Postgres connection string, used only when the store API is not configured. |
 | `SNAPUP_API_BASE` | *(admin-web)* Where the customer app's API lives. Default `http://localhost:3000`. |
 | `SNAPUP_TRUSTED_PROXY_HOPS` | Proxies appending to `x-forwarded-for`. Default `1` (correct for Vercel). |
 | `SNAPUP_PRESENCE_DEV_BYPASS` | `1` skips the egress IP check. Dev only — **ignored in production builds**. |
@@ -616,21 +787,43 @@ Honest gaps, none of which are hidden by the tests above:
    documentation addresses. Real values must be registered before any pilot or every
    customer is denied. The admin console now flags these explicitly on save, so the
    problem is visible rather than latent — but it is still unresolved data.
-5. **Everything is in-memory, and orders and analytics make this disqualifying.** The
-   catalogue and registry were tolerable as seed data; orders and the store event log are
-   not, because that state exists nowhere else. A paid order and a day's trading figures
-   vanish on redeploy, and under serverless fan-out each instance only knows about the
-   events it happened to serve — so the owner's dashboard would show a varying fraction of
-   the truth on every refresh. (Within a single process this is already handled:
-   `server/singleton.ts` pins the repositories to the process, because Next.js bundles each
-   route separately and two routes importing the same module were otherwise getting two
-   separate copies of the state.) It was tolerable when both were seed data; it is not now
-   that all four are written at runtime. A store or product an admin adds today is **gone after the
-   next deploy**, and under serverless fan-out one instance does not know about a record
-   another instance just created. Concretely: demonstrating "watch me add a store live"
-   and then redeploying makes it vanish. **Moving `StoreRepository` and
-   `ProductRepository` to Postgres is the single highest-value next step** — both
-   interfaces exist precisely so that swap touches nothing else.
+5. **Durable storage is built for both models, and neither has been run yet.** All four
+   repositories have implementations against the retailer's API and against Postgres,
+   alongside the in-memory ones. Under the agreed model — the supermarket hosts the
+   database, only the store owner can reach it, SnapUp holds a key — a store an admin
+   registers survives a redeploy, a paid order lands in the retailer's own system where it
+   can be reconciled against the till, and the dashboard aggregates over all events rather
+   than over whichever ones the answering instance happened to serve.
+
+   **What is not proven is the integration.** No retailer API and no database were reachable
+   from the machine this was written on, so both durable paths are typechecked and reviewed
+   but unexecuted. The 88 cases still run against the in-memory path, and they are what
+   demonstrates the refactor changed no behaviour — they are not evidence that the upstream
+   calls work. The honest status is "written, not validated", and it stays that way until
+   the harness is pointed at their API.
+
+   Within a single process the in-memory path is at least coherent: `server/singleton.ts`
+   pins the repositories to the process, because Next.js bundles each route separately and
+   two routes importing the same module were otherwise getting two separate copies of the
+   state. That fixes nothing across processes, which is the whole reason a durable backend
+   exists.
+
+11. **The retailer's API is now a single point of failure for shopping itself.** Presence
+    verification, barcode lookup and checkout all depend on their uptime and their rate
+    limits, where previously they depended only on ours. Caching blunts this for store and
+    product reads, and event recording is explicitly allowed to fail without failing the
+    customer's request — but if their API is down, customers cannot scan. This is inherent
+    to the arrangement rather than a defect in it, and the mitigation is contractual as much
+    as technical: an availability expectation and a rate-limit ceiling should be agreed
+    before a pilot, not discovered during one.
+
+10. **The event log has no retention policy.** The in-memory version capped itself at 50,000
+    events per store and dropped the oldest beyond that. The Postgres table deliberately
+    does not, because silently truncating history is worse than growing: an owner comparing
+    this month against last month would be shown a quietly shortened past. The table
+    therefore grows with trading volume — a few thousand rows a day at pilot scale, which
+    is fine, and which stops being fine at a year of trading across many stores. The fix is
+    rolling events older than a chosen window into daily summaries, which is not built.
 6. **The admin API uses a single shared token.** It authenticates the admin *application*,
    not an individual operator, so registry changes cannot be attributed to a person and
    the credential cannot be rotated per user. Adequate for a POC with one console; a pilot

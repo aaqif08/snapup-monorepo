@@ -6,3 +6,7 @@ out
 *.tsbuildinfo
 next-env.d.ts
 .turbo
+
+# Embedded Postgres data directory (PGlite). Real database contents — accounts, password
+# hashes, orders. Never committed.
+/.data/

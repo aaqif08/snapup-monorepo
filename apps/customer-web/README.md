@@ -118,16 +118,46 @@ desktop testing alone won't tell you much about real-world scan reliability).
   no longer: both moved server-side behind real API routes — see
   `docs/cto-requirements-implementation.md` for the presence-verified
   product gateway and the admin-managed store registry.
-- Product, store, **order and analytics** records live in **process memory**
-  (`src/server/*/memoryRepository.ts`), so anything created at runtime is
-  lost on the next deploy. The repository interfaces exist so a Postgres
-  implementation swaps in without touching routes, components, or auth code.
+- **Storage has three backends behind one interface**, chosen in each domain's
+  `src/server/*/repository.ts`:
 
-  For products and stores this is merely inconvenient — they are seeded
-  identically on every instance. For **orders and analytics it is
-  disqualifying for a pilot**: that state exists nowhere else, serverless
-  instances share no memory, and a redeploy loses a day's trading. Those two
-  repositories are the reason a real database is the next piece of work.
+  1. **The retailer's API** (`SNAPUP_STORE_API_BASE` + `SNAPUP_STORE_API_KEY`)
+     — the agreed model. The supermarket hosts the database, only the store
+     owner can reach it, and SnapUp is issued a key. We hold no copy of their
+     data, so their system stays the authority on price and stock.
+
+     A chain is not necessarily one system, so a branch may carry its own
+     `apiBaseUrl` and `apiKeyRef` and be reached at its own endpoint with its
+     own credential — see `docs/branch-onboarding.md`. `apiKeyRef` is the
+     *name* of an environment variable, never a key: the registry is editable
+     in the console and backed up, so nothing secret may live in it. The store
+     registry itself always uses the platform-wide values, because resolving a
+     branch's endpoint means reading that branch's record.
+  2. **Postgres** (`DATABASE_URL`) — for data SnapUp owns, and the fallback if
+     the arrangement changes. `npm run db:migrate` applies
+     `src/server/db/schema.sql` and seeds nothing, deliberately: the seed
+     registers branches with no network range and no coordinates, so a seeded
+     deployment would stand up stores that refuse every shopper. That is the
+     correct fail-closed behaviour, and `storeReadiness()` names the gap rather
+     than leaving it to be discovered on the shop floor.
+  3. **In memory** — the seeded fallback. Not pilot-safe; kept because it is
+     what makes `npm run validate` runnable with no database and no upstream,
+     and it carries the seed catalogue those 88 cases assert exact prices
+     against.
+
+  Under the API model, `src/server/storeApi/contract.ts` holds **every**
+  assumption about their endpoints and field names, so reconciling with their
+  real spec is a change in one file. Two behaviours there are deliberate:
+  recording an analytics event never fails a customer's request (a gap in the
+  dashboard beats a shopper who cannot scan), and writes are never retried
+  (a timed-out order create may have landed, and retrying could book the
+  basket twice).
+
+  Caveat worth stating plainly: **neither durable path has been executed.**
+  No database and no retailer API were reachable from the machine they were
+  written on. The 88 validation cases prove the in-memory path and the
+  refactor that put all three behind one seam; they do not prove the
+  integration.
 - **Customer login is still client-side**, so the server cannot verify who a
   shopper is. It therefore withholds the 5% member discount rather than
   granting it on a claim anyone can set in devtools; `discount_reason` on the

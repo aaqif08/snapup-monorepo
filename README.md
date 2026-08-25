@@ -71,6 +71,47 @@ npm run validate
 npm run dev
 ```
 
+## The embedded database: one process at a time
+
+The default `DATABASE_URL` (`file:../../.data/snapup`) runs **PGlite** — real PostgreSQL
+compiled to WebAssembly, in-process and persisted to `.data/snapup`. It needs nothing
+installed, which is why the pilot uses it. It has one rule:
+
+> **Exactly one process may hold the data directory. Stop the dev server before running
+> `db:migrate` or `db:import`.**
+
+PGlite does not enforce this itself. Two processes can open the same directory, and
+neither is told. Both write the same write-ahead log, and the directory ends as:
+
+```
+PANIC:  could not locate a valid checkpoint record at 0/1877CB0
+```
+
+That is unrecoverable here — the repair tool is `pg_resetwal`, and PGlite does not ship
+it. The database is simply gone.
+
+So `.data/snapup/snapup.lock` holds the owning PID, and the app, `db-migrate.mjs` and
+`import-csv.mjs` all **take** it rather than merely checking it (`scripts/db-lock.mjs`,
+`apps/customer-web/src/server/db/lock.ts`). A second opener is refused with an error
+naming the process that holds it. A lock whose PID is gone is taken over, so a crash or a
+force-kill does not brick the database.
+
+If a script ever reports the directory is held by a process you know is dead, delete
+`.data/snapup/snapup.lock` and retry.
+
+**Set up the database:**
+```bash
+npm run db:migrate                                        # apply schema.sql
+npm run db:import -- data/products.csv data/stores.csv    # load the catalogue
+```
+
+`db:migrate` is idempotent and safe to re-run; it is how a new column reaches an existing
+database. Products upsert on `(store_id, barcode)`, so re-importing a corrected sheet
+updates prices rather than duplicating rows.
+
+None of this applies to hosted Postgres. Point `DATABASE_URL` at Neon and the lock is not
+taken at all — the limit belongs to the embedded engine, not to the schema.
+
 ## Secure gateway (`apps/customer-web/src/server`)
 
 Implements the four requirements from *CTO Requirement's Solution [Detailed Report]*.
