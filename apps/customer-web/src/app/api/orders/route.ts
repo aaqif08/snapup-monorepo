@@ -5,6 +5,8 @@ import { getStore } from '@/server/stores';
 import { orderRepository, priceOrder, toCustomerOrder } from '@/server/orders';
 import type { OrderDraftLine } from '@/server/orders';
 import { randomNonce } from '@/server/crypto';
+import { readAccount } from '@/server/accounts/session';
+import { generateVerificationCode } from '@/server/orders/verificationCode';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -24,6 +26,11 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   const guard = await guardProductRequest(request);
   if (!guard.ok) return guard.response;
+
+  // The *shopping* session is what authorises this call; the account session only says
+  // whose bill it is. A guest has the former and not the latter, and must still be able
+  // to check out.
+  const account = await readAccount(request);
 
   let body: { lines?: unknown; client_claims_authenticated?: unknown };
   try {
@@ -66,6 +73,15 @@ export async function POST(request: NextRequest) {
     storeId,
     sessionId: guard.session.sub,
     status: 'awaiting_payment',
+    // Attached when the shopper is signed in, so the bill survives the shopping session
+    // and shows up in My Bills on any device they sign in on. Null for a guest checkout,
+    // which is a legitimate outcome rather than a gap.
+    userId: account.ok ? account.user.id : null,
+    // Minted at creation rather than at payment time, so the customer can be shown the
+    // code they will need at the exit while they are still choosing how to pay.
+    verificationCode: generateVerificationCode(),
+    verifiedBy: null,
+    verifiedAt: null,
     lines: priced.order.lines,
     subtotalPaise: priced.order.subtotalPaise,
     discountPaise: priced.order.discountPaise,

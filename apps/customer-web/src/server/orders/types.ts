@@ -17,6 +17,15 @@ import 'server-only';
 export type OrderStatus =
   /** Priced and awaiting money. The only state a fresh order can be created in. */
   | 'awaiting_payment'
+  /**
+   * The customer says they have paid; nobody has checked.
+   *
+   * This state exists because conflating it with `paid` is the difference between a shop
+   * that works and a shop that is being robbed. Under the direct-to-merchant UPI model no
+   * provider tells us anything, so a tap on "I've paid" is a claim. The order waits here
+   * until a member of staff matches it against the shop's own UPI app.
+   */
+  | 'awaiting_verification'
   | 'paid'
   /** Session ended or expired without payment. */
   | 'abandoned';
@@ -60,6 +69,15 @@ export interface OrderRecord {
   storeId: string;
   /** Anonymous shopping session that placed it. */
   sessionId: string;
+
+  /**
+   * The signed-in customer, when there was one.
+   *
+   * Null for a guest checkout, which is a legitimate outcome rather than a gap — the
+   * catalogue is usable without an account. Those bills exist only on the device that
+   * made them, which is the trade a guest is making.
+   */
+  userId: string | null;
   status: OrderStatus;
   lines: OrderLine[];
 
@@ -73,6 +91,19 @@ export interface OrderRecord {
 
   createdAt: number;
   paidAt: number | null;
+
+  /**
+   * Short handle the customer shows at the exit, e.g. `K7F2QM`.
+   *
+   * Typed by staff rather than scanned: a till has a keyboard and reliably has no camera,
+   * and a code read off a customer's phone screen under shop lighting has to survive being
+   * read aloud. The alphabet excludes O/0 and I/1 for the same reason.
+   */
+  verificationCode: string | null;
+
+  /** User id of the staff member who confirmed the payment. Null until verified. */
+  verifiedBy: string | null;
+  verifiedAt: number | null;
 
   payment: {
     /** Merchant VPA money was directed to. Per-store under the phase-1 model. */
@@ -89,10 +120,52 @@ export interface OrderDraftLine {
   quantity: number;
 }
 
+/**
+ * `storeId` on the read methods is **routing information, not an access control input**.
+ *
+ * When each branch hosts its own database there is no single endpoint that can answer
+ * "give me order X" — the id alone does not say which system holds it. Callers already
+ * have the store on the signed session (`SessionPayload.sid`), so passing it costs nothing
+ * and is the only way an order lookup can reach the right branch.
+ *
+ * Optional, because the memory and Postgres repositories hold every store in one place and
+ * have no use for it, and a retailer running one central API does not need it either.
+ * Authorisation still comes from `sessionId`, which is taken from the signed token and
+ * re-checked against the record that comes back.
+ */
 export interface OrderRepository {
   create(order: Omit<OrderRecord, 'id'>): Promise<OrderRecord>;
   findById(id: string): Promise<OrderRecord | null>;
   /** Scoped by session so one customer can never read another's order. */
-  findForSession(sessionId: string, orderId: string): Promise<OrderRecord | null>;
-  markPaid(id: string, confirmation: PaymentConfirmation): Promise<OrderRecord | null>;
+  findForSession(sessionId: string, orderId: string, storeId?: string): Promise<OrderRecord | null>;
+  markPaid(
+    id: string,
+    confirmation: PaymentConfirmation,
+    storeId?: string
+  ): Promise<OrderRecord | null>;
+
+  /**
+   * The order a member of staff is holding a code for.
+   *
+   * Scoped by store: a code typed at Trichy must never resolve an order from Thanjavur.
+   * Codes are short enough to collide across a chain over time, and "it found *an* order"
+   * is not the same as "it found the right one".
+   */
+  findByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null>;
+
+  /**
+   * Records a staff confirmation. Returns null if the order moved on in the meantime.
+   *
+   * `verifiedBy` is a user id rather than a name, so "who opened the gate for an order that
+   * was never paid" stays answerable after that person has left.
+   */
+  markVerified(id: string, verifiedBy: string, at: number): Promise<OrderRecord | null>;
+
+  /**
+   * A signed-in customer's own bills, newest first.
+   *
+   * Scoped by `userId` and nothing else — this is an ownership query, not a routing one,
+   * and the id comes from the signed account cookie rather than from any parameter.
+   */
+  listForUser(userId: string, limit: number): Promise<OrderRecord[]>;
 }

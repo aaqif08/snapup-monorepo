@@ -1,5 +1,5 @@
 import 'server-only';
-import { analyticsRepository } from './memoryRepository';
+import { analyticsRepository } from './repository';
 import type { StoreEvent } from './types';
 
 /**

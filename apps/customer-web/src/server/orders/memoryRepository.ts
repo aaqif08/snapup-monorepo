@@ -1,6 +1,7 @@
 import 'server-only';
 import { randomNonce } from '../crypto';
 import { processSingleton } from '../singleton';
+import { isUpgrade, statusForConfirmation } from './paymentPolicy';
 import type { OrderRecord, OrderRepository, PaymentConfirmation } from './types';
 
 /**
@@ -53,16 +54,60 @@ class InMemoryOrderRepository implements OrderRepository {
     const existing = this.byId.get(id);
     if (!existing) return null;
 
-    // Idempotent: a customer who taps "I've paid" twice, or a PSP that retries its webhook,
-    // must not produce two paid transitions — and a weaker confirmation arriving after a
-    // stronger one must never downgrade what we already know.
-    if (existing.status === 'paid') return { ...existing };
+    // Idempotent, and one-directional. A customer who taps "I've paid" twice, or a PSP that
+    // retries its webhook, must not produce two paid transitions — and a weaker
+    // confirmation arriving after a stronger one must never downgrade what we already know.
+    if (!isUpgrade(existing.payment.confirmation, confirmation)) return { ...existing };
+
+    const status = statusForConfirmation(confirmation);
+    const updated: OrderRecord = {
+      ...existing,
+      status,
+      // Only stamped when the money is actually known to have arrived. An attestation is
+      // not a payment time.
+      paidAt: status === 'paid' ? (existing.paidAt ?? Date.now()) : existing.paidAt,
+      payment: { ...existing.payment, confirmation },
+    };
+    this.byId.set(id, updated);
+    return { ...updated };
+  }
+
+  async findByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null> {
+    for (const order of this.byId.values()) {
+      if (order.storeId !== storeId) continue;
+      if (order.verificationCode !== code) continue;
+      // Only orders still waiting. Resolving a `paid` one would let staff verify the same
+      // basket twice; an `abandoned` one belongs to nobody standing at the gate.
+      if (order.status !== 'awaiting_payment' && order.status !== 'awaiting_verification') {
+        continue;
+      }
+      return { ...order };
+    }
+    return null;
+  }
+
+  async listForUser(userId: string, limit: number): Promise<OrderRecord[]> {
+    return [...this.byId.values()]
+      .filter((order) => order.userId === userId)
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, limit)
+      .map((order) => ({ ...order }));
+  }
+
+  async markVerified(id: string, verifiedBy: string, at: number): Promise<OrderRecord | null> {
+    const existing = this.byId.get(id);
+    if (!existing) return null;
+    if (existing.status !== 'awaiting_payment' && existing.status !== 'awaiting_verification') {
+      return null;
+    }
 
     const updated: OrderRecord = {
       ...existing,
       status: 'paid',
-      paidAt: Date.now(),
-      payment: { ...existing.payment, confirmation },
+      paidAt: existing.paidAt ?? at,
+      verifiedBy,
+      verifiedAt: at,
+      payment: { ...existing.payment, confirmation: 'staff_verified' },
     };
     this.byId.set(id, updated);
     return { ...updated };
@@ -74,7 +119,7 @@ class InMemoryOrderRepository implements OrderRepository {
  * route bundles, so without this the payment route looks up the order in a different,
  * empty map and returns 404. See `server/singleton.ts`.
  */
-export const orderRepository: OrderRepository = processSingleton(
+export const memoryOrderRepository: OrderRepository = processSingleton(
   'orders.repository',
   () => new InMemoryOrderRepository()
 );

@@ -1,6 +1,6 @@
 import 'server-only';
 
-export { orderRepository } from './memoryRepository';
+export { orderRepository } from './repository';
 export {
   priceOrder,
   PLATFORM_FEE_PAISE,

@@ -72,7 +72,7 @@ class InMemoryAnalyticsRepository implements AnalyticsRepository {
  * Process-pinned: the routes that write events and the route that reads them are separate
  * bundles, and without this they each get their own empty log. See `server/singleton.ts`.
  */
-export const analyticsRepository: AnalyticsRepository = processSingleton(
+export const memoryAnalyticsRepository: AnalyticsRepository = processSingleton(
   'analytics.repository',
   () => new InMemoryAnalyticsRepository()
 );

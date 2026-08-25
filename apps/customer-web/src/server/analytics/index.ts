@@ -1,11 +1,11 @@
 import 'server-only';
 
 /**
- * Same seam as products and stores: callers depend on the interface, so the move to
- * Postgres is a swap of the export below. See the warning in `memoryRepository.ts` — this
- * is the one repository whose in-memory implementation is not pilot-safe.
+ * Same seam as products and stores: callers depend on the interface, and `repository.ts`
+ * picks the implementation. See the warning in `memoryRepository.ts` — that one is not
+ * pilot-safe, which is why a pilot must set `DATABASE_URL`.
  */
-export { analyticsRepository } from './memoryRepository';
+export { analyticsRepository } from './repository';
 export { recordEvent } from './record';
 export { aggregate } from './aggregate';
 export type {

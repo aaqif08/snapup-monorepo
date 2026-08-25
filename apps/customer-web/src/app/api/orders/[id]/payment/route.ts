@@ -3,6 +3,7 @@ import { guardProductRequest } from '@/server/apiAuth';
 import { issueExitToken, orderRepository, toCustomerOrder } from '@/server/orders';
 import type { PaymentConfirmation } from '@/server/orders';
 import { recordEvent } from '@/server/analytics';
+import { isVerifiedPayment, mayExit } from '@/server/orders/paymentPolicy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -60,17 +61,27 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   // Scoped to the calling session inside the repository, so an order id guessed or copied
   // from another customer resolves to nothing rather than to their basket.
-  const existing = await orderRepository.findForSession(guard.session.sub, id);
+  //
+  // `session.sid` is passed for routing only: on a chain where each branch hosts its own
+  // database, the order id alone does not say which system holds the record. It comes from
+  // the signed token, so it cannot be pointed at another branch by the caller — and it is
+  // not what authorises the read, which is still `session.sub`.
+  const existing = await orderRepository.findForSession(guard.session.sub, id, guard.session.sid);
   if (!existing) return fail(404, 'order_not_found', 'This order does not exist.');
 
   const alreadyPaid = existing.status === 'paid';
-  const order = await orderRepository.markPaid(id, confirmation);
+  const order = await orderRepository.markPaid(id, confirmation, guard.session.sid);
   if (!order) return fail(404, 'order_not_found', 'This order does not exist.');
 
-  // Revenue counts money, not baskets, so the analytics event fires here rather than at
-  // order creation — an abandoned basket must never appear in the owner's takings. Guarded
-  // on `alreadyPaid` so a double tap or a retried request cannot count the sale twice.
-  if (!alreadyPaid) {
+  // Revenue counts money that is known to have arrived, not baskets and not claims.
+  //
+  // This previously fired for `customer_attested` as well, which put every unpaid basket
+  // where somebody tapped "I've paid" straight into the owner's takings. Under the
+  // direct-to-merchant model that tap is the *only* signal the app gets, so the guard has
+  // to be the confirmation strength rather than the fact that a request arrived.
+  //
+  // For an attested order the event fires later, when staff verify it at the exit.
+  if (!alreadyPaid && isVerifiedPayment(confirmation)) {
     recordEvent({
       storeId: order.storeId,
       sessionId: order.sessionId,
@@ -89,20 +100,28 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     });
   }
 
-  const exit = issueExitToken(order);
+  // The gate opens on evidence, not on a claim. An attested order gets no token at all:
+  // issuing one that the terminal is expected to refuse just moves the argument to the
+  // exit, where there is a queue behind it.
+  const exit = mayExit(order.status, order.payment.confirmation) ? issueExitToken(order) : null;
 
   return NextResponse.json(
     {
       order: toCustomerOrder(order),
-      exit_token: exit.token,
-      exit_token_expires_at: exit.expiresAt,
+      exit_token: exit?.token ?? null,
+      exit_token_expires_at: exit?.expiresAt ?? null,
+      /**
+       * Shown to staff at the exit desk when the payment still needs checking. This is the
+       * customer's half of the verification handshake — they read it out, staff type it.
+       */
+      verification_code: order.verificationCode,
       /**
        * Told to the client plainly so the confirmation screen can set the right
        * expectation — "show this at the exit" versus "staff will check your payment" is a
        * materially different instruction, and guessing wrong at the gate is what makes a
        * queue.
        */
-      payment_verified: confirmation !== 'customer_attested',
+      payment_verified: mayExit(order.status, order.payment.confirmation),
     },
     { status: 200, headers: { 'cache-control': 'no-store' } }
   );
