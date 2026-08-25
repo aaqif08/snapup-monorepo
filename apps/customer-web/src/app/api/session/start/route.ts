@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   // Throttled by source IP: this endpoint is unauthenticated by nature (it is what
   // issues authentication), so it is the natural place to brute-force QR signatures.
   const throttleKey = `session-start:${getEgressIp(request) ?? 'unknown'}`;
-  const limit = consumeToken(throttleKey, 10, 0.5);
+  const limit = await consumeToken(throttleKey, 10, 0.5);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: { code: 'rate_limited', message: 'Too many attempts.' } },

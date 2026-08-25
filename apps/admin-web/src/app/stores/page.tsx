@@ -140,6 +140,7 @@ function StoreRow({
   onToggleActive: () => void;
 }) {
   const hasNoNetwork = store.authorized_egress_cidrs.length === 0;
+  const hasNoCoordinates = store.latitude === null || store.longitude === null;
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-4">
@@ -163,13 +164,23 @@ function StoreRow({
           <p className="text-xs text-muted">{store.address}</p>
 
           <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted">
-            <span>
-              📍 {store.latitude.toFixed(4)}, {store.longitude.toFixed(4)}
+            <span className={hasNoCoordinates ? 'text-warning' : undefined}>
+              📍{' '}
+              {hasNoCoordinates
+                ? 'not surveyed'
+                : `${store.latitude!.toFixed(4)}, ${store.longitude!.toFixed(4)}`}
             </span>
             <span>📶 {store.advertised_ssid}</span>
             <span className="font-mono">
               🔒 {hasNoNetwork ? '— none —' : store.authorized_egress_cidrs.join(', ')}
             </span>
+            {/* Only shown when set. A blank endpoint is the normal case for a chain on one
+                central system, and rendering "— none —" for it would read as a gap. */}
+            {store.api_base_url && (
+              <span className="font-mono" title={store.api_base_url}>
+                🔌 {store.api_key_ref ?? 'platform key'}
+              </span>
+            )}
           </div>
 
           {/* Surfaced on the row, not just after a save: a store in this state is live and
@@ -178,6 +189,16 @@ function StoreRow({
             <p className="mt-2 rounded-lg bg-danger/5 px-2 py-1.5 text-[11px] font-semibold text-danger">
               No authorized network — customers here will be refused until a gateway IP is
               added.
+            </p>
+          )}
+
+          {/* Warning rather than danger: an unsurveyed branch still sells, it is just
+              listed last with no distance. Separating the two severities is what stops the
+              genuinely blocking one above from being tuned out. */}
+          {hasNoCoordinates && store.is_active && (
+            <p className="mt-2 rounded-lg bg-warning/10 px-2 py-1.5 text-[11px] font-semibold text-warning">
+              Not surveyed — this store is listed after every located store and shows no
+              distance to the customer.
             </p>
           )}
         </div>

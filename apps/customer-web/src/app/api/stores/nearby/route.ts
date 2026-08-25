@@ -29,7 +29,7 @@ const MAX_LIMIT = 50;
 export async function GET(request: NextRequest) {
   // Throttled by source IP: unauthenticated, and the natural endpoint to walk if someone
   // wanted to enumerate every location SnapUp operates in.
-  const limit = consumeToken(`stores-nearby:${getEgressIp(request) ?? 'unknown'}`, 60, 2);
+  const limit = await consumeToken(`stores-nearby:${getEgressIp(request) ?? 'unknown'}`, 60, 2);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: { code: 'rate_limited', message: 'Too many requests.' } },

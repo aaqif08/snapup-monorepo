@@ -1,6 +1,6 @@
 import 'server-only';
 import { isValidLatitude, isValidLongitude } from './geo';
-import { isValidCidr } from './memoryRepository';
+import { isValidCidr } from './cidr';
 import type { StoreDraft } from './types';
 
 const MAX_NAME = 120;
@@ -8,6 +8,10 @@ const MAX_ADDRESS = 200;
 const MAX_SSID = 64;
 const MAX_CIDRS = 16;
 const MAX_MERCHANT_NAME = 64;
+const MAX_API_BASE_URL = 300;
+
+/** Environment-variable naming, which is what `apiKeyRef` is. Not a secret's shape. */
+const API_KEY_REF_PATTERN = /^[A-Z][A-Z0-9_]{0,63}$/i;
 
 /**
  * UPI virtual payment address, `identifier@handle`.
@@ -67,18 +71,42 @@ export function validateStoreDraft(
   }
 
   // ---- coordinates ----
-  if (body.latitude === undefined) require('latitude');
-  else if (!isValidLatitude(body.latitude)) {
-    errors.push('latitude must be a number between -90 and 90.');
+  //
+  // Nullable, and null is an accepted value rather than a validation failure. A branch is
+  // frequently registered from a published address days before anyone visits it to take a
+  // reading, and refusing to record it until then just pushes the list into a spreadsheet.
+  // `storeReadiness()` is what reports the gap; validation's job is only to reject a
+  // *malformed* coordinate, never to insist one exists.
+  //
+  // What this must not accept is `0` as a stand-in for "unknown". Null Island is a real
+  // coordinate 600 km off Ghana, and a branch seeded there sorts 2 000 km from every
+  // customer in Tamil Nadu while looking perfectly well-formed.
+  if (body.latitude === undefined) {
+    if (!partial) draft.latitude = null;
+  } else if (body.latitude === null || body.latitude === '') {
+    draft.latitude = null;
+  } else if (!isValidLatitude(body.latitude)) {
+    errors.push('latitude must be a number between -90 and 90, or null if not yet surveyed.');
   } else {
     draft.latitude = body.latitude;
   }
 
-  if (body.longitude === undefined) require('longitude');
-  else if (!isValidLongitude(body.longitude)) {
-    errors.push('longitude must be a number between -180 and 180.');
+  if (body.longitude === undefined) {
+    if (!partial) draft.longitude = null;
+  } else if (body.longitude === null || body.longitude === '') {
+    draft.longitude = null;
+  } else if (!isValidLongitude(body.longitude)) {
+    errors.push('longitude must be a number between -180 and 180, or null if not yet surveyed.');
   } else {
     draft.longitude = body.longitude;
+  }
+
+  // One without the other is always a mistake — a latitude alone cannot be used for
+  // anything, and silently keeping it produces a record that looks half-surveyed forever.
+  const lat = draft.latitude;
+  const lng = draft.longitude;
+  if ((lat === null) !== (lng === null) && lat !== undefined && lng !== undefined) {
+    errors.push('latitude and longitude must be supplied together, or both left null.');
   }
 
   // ---- authorized egress CIDRs ----
@@ -139,6 +167,55 @@ export function validateStoreDraft(
     errors.push(`merchantDisplayName must be at most ${MAX_MERCHANT_NAME} characters.`);
   } else {
     draft.merchantDisplayName = body.merchantDisplayName.trim();
+  }
+
+  // ---- per-branch retail API ----
+  //
+  // `apiBaseUrl` must be absolute and https. A relative URL would resolve against our own
+  // origin and quietly turn a branch lookup into a call to ourselves; plain http would put
+  // the branch's API key on the wire in clear text on every request.
+  if (body.apiBaseUrl === undefined) {
+    if (!partial) draft.apiBaseUrl = null;
+  } else if (body.apiBaseUrl === null || body.apiBaseUrl === '') {
+    draft.apiBaseUrl = null;
+  } else if (typeof body.apiBaseUrl !== 'string') {
+    errors.push('apiBaseUrl must be a string or null.');
+  } else {
+    const trimmed = body.apiBaseUrl.trim();
+    let parsed: URL | null = null;
+    try {
+      parsed = new URL(trimmed);
+    } catch {
+      parsed = null;
+    }
+
+    if (!parsed) {
+      errors.push('apiBaseUrl must be an absolute URL like https://branch.example.com/api.');
+    } else if (parsed.protocol !== 'https:' && parsed.hostname !== 'localhost') {
+      errors.push('apiBaseUrl must use https (localhost is allowed for development).');
+    } else if (trimmed.length > MAX_API_BASE_URL) {
+      errors.push(`apiBaseUrl must be at most ${MAX_API_BASE_URL} characters.`);
+    } else {
+      draft.apiBaseUrl = trimmed;
+    }
+  }
+
+  // `apiKeyRef` is the *name* of an environment variable, never a key. Constrained to the
+  // shape an env var can actually have, which also means a pasted secret — almost always
+  // containing characters outside this set — is rejected rather than written to the store
+  // record and from there into backups and the admin API.
+  if (body.apiKeyRef === undefined) {
+    if (!partial) draft.apiKeyRef = null;
+  } else if (body.apiKeyRef === null || body.apiKeyRef === '') {
+    draft.apiKeyRef = null;
+  } else if (typeof body.apiKeyRef !== 'string') {
+    errors.push('apiKeyRef must be a string or null.');
+  } else if (!API_KEY_REF_PATTERN.test(body.apiKeyRef.trim())) {
+    errors.push(
+      'apiKeyRef must be an environment-variable name like KMB_TRICHY (A–Z, 0–9 and underscore). It is a reference, not the key itself.'
+    );
+  } else {
+    draft.apiKeyRef = body.apiKeyRef.trim().toUpperCase();
   }
 
   // ---- flags ----

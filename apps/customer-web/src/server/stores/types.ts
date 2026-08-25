@@ -16,9 +16,18 @@ export interface StoreRecord {
   name: string;
   address: string;
 
-  /** Decimal degrees, WGS84 — the coordinate system browser geolocation reports in. */
-  latitude: number;
-  longitude: number;
+  /**
+   * Decimal degrees, WGS84 — the coordinate system browser geolocation reports in.
+   *
+   * Null means **not surveyed yet**, and is deliberately distinct from `0, 0`. A branch
+   * whose position is unknown must be excluded from the nearby-store ordering rather
+   * than sorted as though it were in the Gulf of Guinea, and null is the only value that
+   * cannot be mistaken for a real reading. A retailer's published address is not a
+   * coordinate: these have to be surveyed per branch and entered, and until they are,
+   * `storeReadiness()` reports the branch as not deployable.
+   */
+  latitude: number | null;
+  longitude: number | null;
 
   /**
    * Public egress ranges of the store's customer Wi-Fi, in CIDR notation.
@@ -61,6 +70,32 @@ export interface StoreRecord {
   /** Name shown inside the customer's UPI app when confirming payment. */
   merchantDisplayName: string | null;
 
+  /**
+   * Base URL of *this branch's* retail API.
+   *
+   * A chain does not necessarily run one system. Branches are commonly acquired at
+   * different times, run different POS versions, or sit behind their own site-local
+   * server with no central aggregation — so the catalogue endpoint is a property of the
+   * branch, not of the platform.
+   *
+   * Null falls back to the platform-wide `SNAPUP_STORE_API_BASE`, which is what a
+   * single-system retailer configures and what existing deployments already use.
+   */
+  apiBaseUrl: string | null;
+
+  /**
+   * *Name* of the environment variable holding this branch's API key — never the key.
+   *
+   * `apiKeyRef: 'KMB_TRICHY'` resolves to `SNAPUP_STORE_API_KEY_KMB_TRICHY`. The
+   * indirection is the point: store records are edited in the admin console, returned by
+   * the admin API, and on Postgres are sitting in a table that gets backed up and
+   * inspected. A credential in that path is a credential that leaks. The reference is
+   * useless without the deployment environment that resolves it.
+   *
+   * Null falls back to the platform-wide `SNAPUP_STORE_API_KEY`.
+   */
+  apiKeyRef: string | null;
+
   /** Whether SnapUp is currently offered here. Inactive stores are hidden and refused. */
   isActive: boolean;
 
@@ -79,8 +114,9 @@ export interface PublicStore {
   id: string;
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  /** Null while the branch is awaiting survey — the customer sees an address, not a pin. */
+  latitude: number | null;
+  longitude: number | null;
   ssid: string;
   isOpen: boolean;
   /** Great-circle distance from the requesting device, when coordinates were supplied. */
@@ -90,12 +126,14 @@ export interface PublicStore {
 export interface StoreDraft {
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   authorizedEgressCidrs: string[];
   advertisedSsid: string;
   merchantVpa: string | null;
   merchantDisplayName: string | null;
+  apiBaseUrl: string | null;
+  apiKeyRef: string | null;
   isActive: boolean;
   isOpen: boolean;
 }

@@ -2,20 +2,6 @@ import 'server-only';
 import { STORE_SEED } from './seed';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
 
-/** `a.b.c.d/n`, with every octet in range and a prefix length of 0-32. */
-const CIDR_PATTERN = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d{1,2})$/;
-
-export function isValidCidr(value: string): boolean {
-  const match = CIDR_PATTERN.exec(value.trim());
-  if (!match) return false;
-
-  const octets = [match[1], match[2], match[3], match[4]].map(Number);
-  if (octets.some((octet) => octet > 255)) return false;
-
-  const bits = Number(match[5]);
-  return bits >= 0 && bits <= 32;
-}
-
 /**
  * In-memory store registry backing the POC.
  *
@@ -78,6 +64,8 @@ class InMemoryStoreRepository implements StoreRepository {
       advertisedSsid: draft.advertisedSsid,
       merchantVpa: draft.merchantVpa,
       merchantDisplayName: draft.merchantDisplayName,
+      apiBaseUrl: draft.apiBaseUrl,
+      apiKeyRef: draft.apiKeyRef,
       isActive: draft.isActive,
       isOpen: draft.isOpen,
     };
@@ -106,4 +94,4 @@ class InMemoryStoreRepository implements StoreRepository {
   }
 }
 
-export const storeRepository: StoreRepository = new InMemoryStoreRepository(STORE_SEED);
+export const memoryStoreRepository: StoreRepository = new InMemoryStoreRepository(STORE_SEED);

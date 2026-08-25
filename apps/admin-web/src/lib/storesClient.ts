@@ -11,13 +11,18 @@ export interface AdminStore {
   id: string;
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  /** Null until the branch has been surveyed. Not `0` — see the form's help text. */
+  latitude: number | null;
+  longitude: number | null;
   authorized_egress_cidrs: string[];
   advertised_ssid: string;
   /** The shop's own UPI address. Customer payments go here directly, not to SnapUp. */
   merchant_vpa: string | null;
   merchant_display_name: string | null;
+  /** This branch's own retail API. Null means the platform-wide endpoint is used. */
+  api_base_url: string | null;
+  /** The *name* of the environment variable holding this branch's key, never the key. */
+  api_key_ref: string | null;
   is_active: boolean;
   is_open: boolean;
 }
@@ -25,12 +30,14 @@ export interface AdminStore {
 export interface StoreDraft {
   name: string;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   authorizedEgressCidrs: string[];
   advertisedSsid: string;
   merchantVpa: string | null;
   merchantDisplayName: string | null;
+  apiBaseUrl: string | null;
+  apiKeyRef: string | null;
   isActive: boolean;
   isOpen: boolean;
 }
@@ -104,6 +111,8 @@ function toWire(draft: Partial<StoreDraft>): Record<string, unknown> {
   if (draft.merchantDisplayName !== undefined) {
     wire.merchantDisplayName = draft.merchantDisplayName;
   }
+  if (draft.apiBaseUrl !== undefined) wire.apiBaseUrl = draft.apiBaseUrl;
+  if (draft.apiKeyRef !== undefined) wire.apiKeyRef = draft.apiKeyRef;
   if (draft.isActive !== undefined) wire.isActive = draft.isActive;
   if (draft.isOpen !== undefined) wire.isOpen = draft.isOpen;
   return wire;

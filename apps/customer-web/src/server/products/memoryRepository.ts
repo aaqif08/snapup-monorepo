@@ -1,4 +1,6 @@
 import 'server-only';
+import { DuplicateBarcodeError } from './errors';
+import { marginPct } from './margin';
 import { PRODUCT_SEED } from './seed';
 import type { InternalProduct, PageMeta, ProductDraft, ProductRepository } from './types';
 
@@ -183,16 +185,6 @@ class InMemoryProductRepository implements ProductRepository {
   }
 }
 
-export class DuplicateBarcodeError extends Error {
-  constructor(readonly barcode: string, readonly storeId: string) {
-    super(`Barcode ${barcode} is already used by another product in ${storeId}.`);
-    this.name = 'DuplicateBarcodeError';
-  }
-}
-
-function marginPct(unitPrice: number, costPrice: number): number {
-  if (unitPrice <= 0) return 0;
-  return Math.round(((unitPrice - costPrice) / unitPrice) * 1000) / 10;
-}
-
-export const productRepository: ProductRepository = new InMemoryProductRepository(PRODUCT_SEED);
+export const memoryProductRepository: ProductRepository = new InMemoryProductRepository(
+  PRODUCT_SEED
+);

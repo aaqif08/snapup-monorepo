@@ -20,6 +20,8 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
   const [merchantDisplayName, setMerchantDisplayName] = useState(
     initial?.merchant_display_name ?? ''
   );
+  const [apiBaseUrl, setApiBaseUrl] = useState(initial?.api_base_url ?? '');
+  const [apiKeyRef, setApiKeyRef] = useState(initial?.api_key_ref ?? '');
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
   const [isOpen, setIsOpen] = useState(initial?.is_open ?? true);
 
@@ -34,14 +36,44 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
       return;
     }
 
-    const parsedLat = Number(latitude);
-    const parsedLng = Number(longitude);
-    if (!Number.isFinite(parsedLat) || parsedLat < -90 || parsedLat > 90) {
-      setError('Latitude must be a number between -90 and 90.');
+    // Coordinates are optional, and blank means "not surveyed yet" rather than zero.
+    //
+    // A branch is routinely registered from its published address days before anyone
+    // visits it to take a reading. Forcing a number here is what produces a register full
+    // of `0, 0` — a real position off the coast of Ghana that looks like data, sorts every
+    // customer 2 000 km away, and is indistinguishable from a genuine reading afterwards.
+    // Blank is honest and the console flags it until it is filled in.
+    const latBlank = latitude.trim() === '';
+    const lngBlank = longitude.trim() === '';
+
+    if (latBlank !== lngBlank) {
+      setError('Enter both latitude and longitude, or leave both blank until surveyed.');
       return;
     }
-    if (!Number.isFinite(parsedLng) || parsedLng < -180 || parsedLng > 180) {
-      setError('Longitude must be a number between -180 and 180.');
+
+    const parsedLat = latBlank ? null : Number(latitude);
+    const parsedLng = lngBlank ? null : Number(longitude);
+
+    if (parsedLat !== null && (!Number.isFinite(parsedLat) || parsedLat < -90 || parsedLat > 90)) {
+      setError('Latitude must be a number between -90 and 90, or blank.');
+      return;
+    }
+    if (
+      parsedLng !== null &&
+      (!Number.isFinite(parsedLng) || parsedLng < -180 || parsedLng > 180)
+    ) {
+      setError('Longitude must be a number between -180 and 180, or blank.');
+      return;
+    }
+
+    // Catches the most damaging paste in this form: an API key into the reference field.
+    // The server rejects it too, but by then it has crossed the network in a request body
+    // that may well be logged.
+    const keyRef = apiKeyRef.trim().toUpperCase();
+    if (keyRef && !/^[A-Z][A-Z0-9_]{0,63}$/.test(keyRef)) {
+      setError(
+        'The API key reference is the NAME of an environment variable (e.g. KMB_TRICHY), not the key itself.'
+      );
       return;
     }
 
@@ -64,6 +96,10 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
         // shoppable, it just cannot take in-app UPI until the retailer provides a VPA.
         merchantVpa: merchantVpa.trim() || null,
         merchantDisplayName: merchantDisplayName.trim() || null,
+        // Blank means "use the platform-wide endpoint", which is correct for a retailer
+        // running one central system.
+        apiBaseUrl: apiBaseUrl.trim() || null,
+        apiKeyRef: keyRef || null,
         isActive,
         isOpen,
       });
@@ -100,29 +136,31 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Latitude">
+            <Field label="Latitude (optional)">
               <input
                 value={latitude}
                 onChange={(e) => setLatitude(e.target.value)}
                 inputMode="decimal"
                 className={inputClass}
-                placeholder="12.9082"
+                placeholder="10.805500"
               />
             </Field>
-            <Field label="Longitude">
+            <Field label="Longitude (optional)">
               <input
                 value={longitude}
                 onChange={(e) => setLongitude(e.target.value)}
                 inputMode="decimal"
                 className={inputClass}
-                placeholder="77.6476"
+                placeholder="78.686700"
               />
             </Field>
           </div>
 
           <p className="-mt-1 text-[11px] leading-relaxed text-muted">
             Coordinates decide where this store appears in customers&apos; “nearest stores”
-            list. Copy them from the pin in Google Maps.
+            list. Stand at the shop entrance, long-press the pin in Google Maps and copy the
+            two numbers. <strong>Leave both blank if you have not surveyed it yet</strong> —
+            the store still works, it is simply listed last with no distance. Never enter 0.
           </p>
 
           <Field label="Customer Wi-Fi SSID">
@@ -190,6 +228,48 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
               money and cannot reverse a payment sent to the wrong VPA. The format is checked,
               but not the owner. Send a ₹1 test payment and confirm the retailer received it
               before this store takes real customers.
+            </p>
+          </div>
+
+          <Field label="Branch API base URL (optional)">
+            <input
+              value={apiBaseUrl}
+              onChange={(e) => setApiBaseUrl(e.target.value)}
+              className={`${inputClass} font-mono`}
+              placeholder="https://trichy.example.com/api"
+              autoCapitalize="none"
+              spellCheck={false}
+            />
+          </Field>
+
+          <Field label="Branch API key reference (optional)">
+            <input
+              value={apiKeyRef}
+              onChange={(e) => setApiKeyRef(e.target.value)}
+              className={`${inputClass} font-mono uppercase`}
+              placeholder="KMB_TRICHY"
+              autoCapitalize="characters"
+              spellCheck={false}
+            />
+          </Field>
+
+          {/* The distinction between a reference and a key is the one thing an operator is
+              most likely to get wrong here, and getting it wrong writes a live credential
+              into a table that gets backed up. Said plainly, next to the field. */}
+          <div className="rounded-xl border border-border bg-bg p-3">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+              Branches with their own system
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-ink">
+              Leave both blank if the chain runs one central API — this store will use the
+              platform endpoint. Fill them in when this branch has its own server.
+            </p>
+            <p className="mt-2 text-[11px] leading-relaxed text-ink">
+              The reference is the <strong>name of an environment variable</strong>, not the
+              key. <span className="font-mono">KMB_TRICHY</span> means the deployment must
+              set <span className="font-mono">SNAPUP_STORE_API_KEY_KMB_TRICHY</span>. Never
+              paste the key itself here — it would be stored in the registry and appear in
+              every backup.
             </p>
           </div>
 

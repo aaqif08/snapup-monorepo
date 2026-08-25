@@ -20,6 +20,12 @@ export function toAdminStore(store: StoreRecord) {
     advertised_ssid: store.advertisedSsid,
     merchant_vpa: store.merchantVpa,
     merchant_display_name: store.merchantDisplayName,
+    // The endpoint and the *name* of the key variable are both editable here. Neither is a
+    // secret: `api_key_ref` is a reference that is worthless without the deployment
+    // environment that resolves it, which is exactly why the schema stores a reference
+    // rather than a key.
+    api_base_url: store.apiBaseUrl,
+    api_key_ref: store.apiKeyRef,
     is_active: store.isActive,
     is_open: store.isOpen,
   };
@@ -57,6 +63,25 @@ export function warningsFor(store: StoreRecord): string[] {
   if (store.merchantVpa === null) {
     warnings.push(
       'No merchant UPI address registered. Customers here can only pay at the counter — in-app UPI checkout is unavailable until the retailer supplies their VPA.'
+    );
+  }
+
+  // A branch registered from a published address has everything a human needs and none of
+  // what the ordering needs. Without this the branch simply falls to the bottom of the
+  // directory with no distance shown, which reads as a display bug rather than as missing
+  // survey data.
+  if (store.latitude === null || store.longitude === null) {
+    warnings.push(
+      'No surveyed coordinates. This store is listed after every located store and shows no distance. Stand at the entrance, take the reading from Google Maps, and enter it here.'
+    );
+  }
+
+  // The failure this prevents is the confusing one: the branch is reachable, its key is
+  // fine, and every call 404s or returns another branch's catalogue because the endpoint
+  // silently fell back to the platform default.
+  if (store.apiKeyRef !== null && store.apiBaseUrl === null) {
+    warnings.push(
+      'A branch API key reference is set but no branch API base URL is. Calls for this store will go to the platform-wide endpoint. Set both, or neither.'
     );
   }
 

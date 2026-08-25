@@ -13,6 +13,12 @@ import type { PublicStore, StoreRecord } from './types';
  * tests against — the one piece of information that makes a spoofing attempt worth
  * attempting. `advertisedSsid` is deliberately *not* withheld: the customer needs to be
  * told which Wi-Fi to join, and it is printed on the wall of the shop anyway.
+ *
+ * `apiBaseUrl` and `apiKeyRef` are withheld for the same reason as the CIDR list. Neither
+ * is a secret on its own, but together they name the retailer's internal endpoint and the
+ * credential slot that opens it — infrastructure detail a shopper has no use for and an
+ * attacker does. The allowlist above means they were never exposed by default; this note
+ * is here so nobody adds them on the assumption that a URL is harmless.
  */
 export function toPublicStore(store: StoreRecord, distanceKm?: number): PublicStore {
   const projected: PublicStore = {

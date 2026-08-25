@@ -54,7 +54,7 @@ export async function guardProductRequest(request: NextRequest): Promise<GuardRe
   }
 
   // Keyed by session id, so one customer cannot exhaust another customer's budget.
-  const limit = consumeToken(
+  const limit = await consumeToken(
     `products:${validation.payload.sub}`,
     PRODUCT_READ_CAPACITY,
     PRODUCT_READ_REFILL_PER_SECOND
