@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dev:customer": "npm run dev --workspace=@snapup/customer-web",
+    "dev:customer:https": "npm run dev:https --workspace=@snapup/customer-web",
     "dev:admin": "npm run dev --workspace=@snapup/admin-web",
     "build:customer": "npm run build --workspace=@snapup/customer-web",
     "build:admin": "npm run build --workspace=@snapup/admin-web",

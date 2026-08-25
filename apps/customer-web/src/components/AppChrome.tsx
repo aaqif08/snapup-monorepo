@@ -11,7 +11,14 @@ import BottomNav from '@/components/BottomNav';
  * leads them to four empty screens. Everything else gets it, including Scan, where the
  * design keeps the bar visible with the FAB in its active state.
  */
-const BARE_ROUTES = ['/login'];
+/**
+ * Routes that get no bottom navigation.
+ *
+ * `/entrance` is a display bolted to a wall in the shop — customer navigation on it is an
+ * invitation for a passer-by to start pressing things. `/enter` is the entry gate, which
+ * owns the whole viewport and has nowhere to navigate to until a session exists.
+ */
+const BARE_ROUTES = ['/login', '/enter', '/entrance'];
 
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

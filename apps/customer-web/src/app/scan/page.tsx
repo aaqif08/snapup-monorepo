@@ -9,7 +9,13 @@ import ScreenHeader from '@/components/ScreenHeader';
 import SessionTimer, { Pill } from '@/components/SessionTimer';
 import { useCartStore, type Product } from '@/store/useCartStore';
 import { useSessionStore } from '@/store/useSessionStore';
-import { lookupBarcode, sendHeartbeat, GatewayError, type LookupResult } from '@/lib/api';
+import {
+  lookupBarcode,
+  sendHeartbeat,
+  startSession,
+  GatewayError,
+  type LookupResult,
+} from '@/lib/api';
 
 /**
  * How often to re-confirm presence. Trades server load against how quickly a departed
@@ -36,6 +42,10 @@ export default function ScanPage() {
   const [lastTiming, setLastTiming] = useState<LookupResult | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
   const [counterPulse, setCounterPulse] = useState(false);
+  const [entering, setEntering] = useState(false);
+  /** Set when the camera cannot start, so manual entry is offered instead of nothing. */
+  const [cameraFault, setCameraFault] = useState(false);
+  const [manualCode, setManualCode] = useState('');
 
   const addProduct = useCartStore((state) => state.addProduct);
   const cartItems = useCartStore((state) => state.items);
@@ -78,6 +88,35 @@ export default function ScanPage() {
     }
     prevCount.current = itemCount;
   }, [itemCount]);
+
+  /**
+   * First job: turn the shop's entrance code into a session.
+   *
+   * The screen previously told the customer to point their camera at the entrance code
+   * and then rendered no camera — the instruction was real, the means were not, and the
+   * only route to `/enter` was from a store page nothing linked to. Scanning here closes
+   * that loop, and `startSession` writes the session store itself, so a success needs no
+   * navigation: `active` flips and the same viewfinder starts reading products.
+   */
+  const handleEntryScan = useCallback(
+    async (qrToken: string) => {
+      if (entering) return;
+      setEntering(true);
+      setScanError(null);
+
+      try {
+        await startSession(qrToken);
+      } catch (error) {
+        setScanError(
+          error instanceof GatewayError
+            ? error.message
+            : 'Couldn’t verify you’re in the shop. Check you’re on the store Wi-Fi and try again.'
+        );
+        setEntering(false);
+      }
+    },
+    [entering]
+  );
 
   const handleScan = useCallback(
     async (barcode: string) => {
@@ -148,22 +187,30 @@ export default function ScanPage() {
       {/* ---- Viewfinder ---- */}
       <div className="px-4 pt-3">
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-3xl bg-bg">
-          {active ? (
-            <BarcodeScanner isActive={isScanning} onScan={handleScan} />
-          ) : (
-            <div className="flex h-full items-center justify-center px-8 text-center">
-              <p className="text-sm leading-relaxed text-muted">
-                {expired
-                  ? 'Your session has ended. Scan the entrance code in the shop to start a new one.'
-                  : 'Point your camera at the entrance code displayed in the shop.'}
-              </p>
-            </div>
-          )}
+          {/* One camera, two jobs: without a session it reads the entrance code, with one
+              it reads products. Remounted between the two so the decode callback can
+              never be the wrong one for the current state. */}
+          <BarcodeScanner
+            key={active ? 'products' : 'entry'}
+            isActive={active ? isScanning : !entering}
+            onScan={active ? handleScan : handleEntryScan}
+            onError={() => setCameraFault(true)}
+          />
 
           {/* Purely an aiming guide, so hidden from assistive tech — the text above
               already says what to do. */}
           <Brackets dimmed={!active} />
         </div>
+
+        {!active && !cameraFault && (
+          <p className="pt-2.5 text-center text-[13px] leading-relaxed text-muted">
+            {entering
+              ? 'Checking you’re inside the shop…'
+              : expired
+                ? 'Your session ended. Scan the entrance code to start a new one.'
+                : 'Point your camera at the entrance code displayed in the shop, and make sure you’re on the store Wi-Fi.'}
+          </p>
+        )}
 
         <div className="flex items-center justify-end pt-2">
           <Link href="/guidelines" className="flex items-center gap-1.5 text-[13px] font-semibold text-ink">
@@ -212,6 +259,51 @@ export default function ScanPage() {
               </span>
             )}
           </div>
+        )}
+
+        {/* The camera is the fast path, not the only one. `BarcodeScanner` warns that a
+            page served over plain HTTP gets no camera at all, and a shopper halfway round
+            the shop cannot act on that — so when the camera fails, the number printed
+            under every barcode still works. Entry codes are signed tokens, not short
+            strings, so this is offered only for products. */}
+        {cameraFault && active && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const code = manualCode.trim();
+              if (!code) return;
+              setManualCode('');
+              setIsScanning(true);
+              void handleScan(code);
+            }}
+            className="mb-3 rounded-2xl border border-border bg-surface p-4"
+          >
+            <label htmlFor="manual-barcode" className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+              Enter the barcode by hand
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="manual-barcode"
+                value={manualCode}
+                onChange={(event) => setManualCode(event.target.value.replace(/[^0-9]/g, ''))}
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="8901725110016"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-bg px-3 py-2.5 font-mono text-sm text-ink outline-none focus:border-primary"
+              />
+              <button
+                type="submit"
+                disabled={!manualCode.trim()}
+                className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-xs font-extrabold text-onPrimary disabled:opacity-40"
+              >
+                Add
+              </button>
+            </div>
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
+              The digits printed beneath the bars. Any member of staff can also add items
+              for you at the counter.
+            </p>
+          </form>
         )}
 
         {/* Requirement 3 asks for lookup duration to be visible during the pilot, so the
