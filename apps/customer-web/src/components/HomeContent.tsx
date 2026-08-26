@@ -282,19 +282,65 @@ function Shortcut({
 /**
  * The promo strip.
  *
- * Dots only — no auto-advance. A banner that moves on its own steals the tap of anyone
- * reaching for the card underneath it, and this sits directly above the location control
- * people actually came for.
+ * Three supplied posters rather than anything generated here. They are photographic and
+ * carry their own typography, so the job is to present them honestly at phone width and
+ * stay out of the way.
+ *
+ * ## Why `object-contain` and a per-slide background
+ *
+ * The three do not share an aspect ratio — 2.17, 2.60 and 2.27. A carousel needs one
+ * height, so something has to give, and cropping is the wrong thing to give: every poster
+ * puts its headline hard against the left edge and its seal against the right, so a
+ * centre-crop of the widest one eats the "CLEAN HOME, HAPPY HOME" badge. Fitting instead
+ * leaves a thin bar, and the bar is painted in each poster's own background colour —
+ * sampled from the artwork rather than guessed — so it reads as part of the banner.
+ *
+ * ## Auto-advance, and when it stops
+ *
+ * An earlier version of this deliberately did not advance, on the grounds that movement
+ * under a finger steals taps. That reasoning holds for the movement, not for the timer:
+ * three posters were supplied to be seen, and without advancing almost nobody sees the
+ * second or third. So it advances, and stops for good the moment anyone touches it —
+ * a person who has started swiping is steering, and having it lurch under them afterwards
+ * is exactly the behaviour the original note was worried about. It also never starts for
+ * a reader who has asked for reduced motion.
  */
+const BANNERS = [
+  {
+    src: '/banners/smart-shopping.webp',
+    width: 1080,
+    height: 497,
+    // Alt text carries the offer, because that is the content — "promotional banner" tells
+    // a screen-reader user nothing they can act on.
+    alt: 'Smart shopping, more savings. Up to 25% off all grocery items.',
+    background: '#dee4c5',
+    href: '/offers',
+  },
+  {
+    src: '/banners/household-essentials.webp',
+    width: 1080,
+    height: 416,
+    alt: 'Household essentials. Up to 15% off cleaning and home care products.',
+    background: '#f4d87c',
+    href: '/offers',
+  },
+  {
+    src: '/banners/weekend-bonanza.webp',
+    width: 1080,
+    height: 476,
+    alt: 'Weekend bonanza. Up to 30% off snacks and beverages.',
+    background: '#462072',
+    href: '/offers',
+  },
+];
+
+const ADVANCE_MS = 5_000;
+
 function PromoCarousel() {
   const [index, setIndex] = useState(0);
+  /** Set once the reader takes over. Never cleared — control does not go back. */
+  const [steered, setSteered] = useState(false);
   const track = useRef<HTMLDivElement>(null);
-
-  const slides = [
-    { title: 'Skip the checkout queue', body: 'Scan as you shop and pay from your phone.', from: 'from-violet', to: 'to-indigo-500' },
-    { title: 'Your bills, kept', body: 'Every GST invoice saved in My Bills.', from: 'from-emerald-500', to: 'to-teal-600' },
-    { title: 'SnapCount rewards', body: 'Earn from your third shop onwards.', from: 'from-amber-500', to: 'to-orange-500' },
-  ];
 
   function onScroll() {
     const element = track.current;
@@ -302,28 +348,63 @@ function PromoCarousel() {
     setIndex(Math.round(element.scrollLeft / element.clientWidth));
   }
 
+  useEffect(() => {
+    if (steered) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      const element = track.current;
+      if (!element) return;
+
+      // Driven by scrolling the track rather than by state, so the dots below stay derived
+      // from one source — where the track actually is — instead of two that can disagree.
+      const next = (Math.round(element.scrollLeft / element.clientWidth) + 1) % BANNERS.length;
+      element.scrollTo({ left: next * element.clientWidth, behavior: 'smooth' });
+    }, ADVANCE_MS);
+
+    return () => clearInterval(timer);
+  }, [steered]);
+
   return (
-    <section className="pt-2">
+    <section className="pt-2" aria-roledescription="carousel" aria-label="Offers">
       <div
         ref={track}
         onScroll={onScroll}
+        onPointerDown={() => setSteered(true)}
+        onTouchStart={() => setSteered(true)}
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {slides.map((slide) => (
-          <div
-            key={slide.title}
-            className={`w-full shrink-0 snap-center rounded-2xl bg-gradient-to-br ${slide.from} ${slide.to} p-5 text-white`}
+        {BANNERS.map((banner, position) => (
+          <Link
+            key={banner.src}
+            href={banner.href}
+            aria-label={banner.alt}
+            aria-roledescription="slide"
+            className="w-full shrink-0 snap-center overflow-hidden rounded-2xl"
+            style={{ backgroundColor: banner.background }}
           >
-            <p className="text-lg font-extrabold leading-tight">{slide.title}</p>
-            <p className="mt-1 text-sm font-medium text-white/85">{slide.body}</p>
-          </div>
+            <Image
+              src={banner.src}
+              alt={banner.alt}
+              width={banner.width}
+              height={banner.height}
+              // The first is above the fold on every phone; the other two are one swipe
+              // away and must not compete with it for a shop's Wi-Fi.
+              priority={position === 0}
+              loading={position === 0 ? 'eager' : 'lazy'}
+              sizes="(max-width: 640px) 100vw, 512px"
+              className="aspect-[2.35/1] w-full object-contain"
+            />
+          </Link>
         ))}
       </div>
 
       <div className="flex justify-center gap-1.5 pt-2.5" aria-hidden>
-        {slides.map((slide, position) => (
+        {BANNERS.map((banner, position) => (
           <span
-            key={slide.title}
+            key={banner.src}
             className={`h-1.5 rounded-full transition-all duration-200 ${
               position === index ? 'w-5 bg-ink' : 'w-1.5 bg-border'
             }`}
