@@ -30,15 +30,34 @@ interface VerifyLookup {
     transaction_ref: string;
     payee_vpa: string | null;
     created_at: number;
+    /** Summed from the catalogue at order time — not anything the customer's phone set. */
+    expected_weight_grams: number;
+    /** Sent by the server so the figure on screen is the one it judges against. */
+    tolerance_grams: number;
   };
   store: { id: string; name: string };
   customer_claims_paid: boolean;
 }
 
+interface WeightResult {
+  expectedGrams: number;
+  observedGrams: number;
+  differenceGrams: number;
+  toleranceGrams: number;
+  matches: boolean;
+  direction: 'heavier' | 'lighter' | 'exact';
+}
+
 type Screen =
   | { kind: 'entry' }
   | { kind: 'found'; lookup: VerifyLookup }
-  | { kind: 'done'; total: string; by: string | null };
+  /**
+   * The scale disagreed. A separate screen rather than an inline error because the
+   * decision it asks for — let this basket go anyway — is one the member of staff must
+   * take deliberately, and it is recorded against them.
+   */
+  | { kind: 'mismatch'; lookup: VerifyLookup; weight: WeightResult; message: string }
+  | { kind: 'done'; total: string; by: string | null; weight: WeightResult | null; overridden: boolean };
 
 export default function VerifyPage() {
   const user = useAdminAuthStore((state) => state.user);
@@ -47,6 +66,8 @@ export default function VerifyPage() {
   const [screen, setScreen] = useState<Screen>({ kind: 'entry' });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  /** The scale reading, in grams, as typed. Kept as a string so the field can be empty. */
+  const [observed, setObserved] = useState('');
 
   // Owners and managers are not tied to a branch, so they have to say which exit they are
   // standing at. A staff account carries its own store and never sees this.
@@ -98,21 +119,62 @@ export default function VerifyPage() {
     }
   }
 
-  async function confirm(lookupResult: VerifyLookup) {
+  /**
+   * Confirm the basket and, when a reading was taken, the weight.
+   *
+   * `override` is passed only from the mismatch screen. The server judges the comparison
+   * either way — this screen shows it, it does not decide it — so a first tap can never
+   * wave through a basket that is a kilo heavy.
+   */
+  async function confirm(lookupResult: VerifyLookup, override = false) {
     setBusy(true);
     setError(null);
+
+    const reading = observed.trim();
+    const payload: { observed_weight_grams?: number; override?: boolean } = {};
+    if (reading !== '') {
+      payload.observed_weight_grams = Number(reading);
+      if (override) payload.override = true;
+    }
+
     try {
       const response = await fetch(
         `/api/verify/${encodeURIComponent(lookupResult.order.code)}${storeQuery()}`,
-        { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }
+        {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
       );
       const body = await response.json();
+
+      // 409 with a weight is not an error to report — it is the scale disagreeing, which
+      // is a normal outcome this screen has a state for.
+      if (response.status === 409 && body?.reason === 'weight_mismatch') {
+        setScreen({
+          kind: 'mismatch',
+          lookup: lookupResult,
+          weight: body.weight as WeightResult,
+          message: body.message ?? 'The basket does not match its expected weight.',
+        });
+        return;
+      }
+
       if (!response.ok) {
         setError(body?.error?.message ?? 'Could not confirm.');
         return;
       }
-      setScreen({ kind: 'done', total: body.total_rupees, by: body.verified_by ?? null });
+
+      setScreen({
+        kind: 'done',
+        total: body.total_rupees,
+        by: body.verified_by ?? null,
+        weight: (body.weight as WeightResult | null) ?? null,
+        overridden: Boolean(body.weight_overridden),
+      });
       setCode('');
+      setObserved('');
     } catch {
       setError('Could not reach SnapUp. The payment was NOT confirmed.');
     } finally {
@@ -123,6 +185,7 @@ export default function VerifyPage() {
   function reset() {
     setScreen({ kind: 'entry' });
     setCode('');
+    setObserved('');
     setError(null);
   }
 
@@ -242,6 +305,49 @@ export default function VerifyPage() {
             </ul>
           </div>
 
+          {/* The scale step. Optional by design: a branch without a scale leaves it blank
+              and the payment check stands on its own, which is why the button below does
+              not require it. */}
+          <div className="border-t border-border p-4">
+            <label
+              htmlFor="observed-weight"
+              className="text-[11px] font-extrabold uppercase tracking-wide text-muted"
+            >
+              Weight on the scale
+            </label>
+            <div className="mt-2 flex items-center gap-3">
+              <div className="relative flex-1">
+                <input
+                  id="observed-weight"
+                  value={observed}
+                  onChange={(event) => setObserved(event.target.value.replace(/[^0-9]/g, ''))}
+                  inputMode="numeric"
+                  autoComplete="off"
+                  placeholder="grams"
+                  className="w-full rounded-xl border border-border bg-bg px-3 py-3 pr-10 font-mono text-lg tabular-nums text-ink outline-none focus:border-primary"
+                />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted">
+                  g
+                </span>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+                  Should be
+                </p>
+                <p className="font-mono text-lg font-extrabold tabular-nums text-ink">
+                  {screen.lookup.order.expected_weight_grams} g
+                </p>
+                <p className="text-[11px] font-semibold text-muted">
+                  ± {screen.lookup.order.tolerance_grams} g
+                </p>
+              </div>
+            </div>
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
+              Ask the customer to put every item on the scale. Leave blank if this exit has
+              no scale.
+            </p>
+          </div>
+
           <div className="flex gap-3 border-t border-border p-4">
             <button
               onClick={reset}
@@ -261,6 +367,50 @@ export default function VerifyPage() {
         </div>
       )}
 
+      {screen.kind === 'mismatch' && (
+        <div className="rounded-3xl border border-danger/40 bg-danger/5 p-6">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-danger">
+            Weight does not match
+          </p>
+          <p className="mt-2 text-lg font-extrabold leading-snug text-ink">{screen.message}</p>
+
+          <div className="mt-5 grid grid-cols-3 gap-3 text-center">
+            <Reading label="Expected" value={`${screen.weight.expectedGrams} g`} />
+            <Reading label="On the scale" value={`${screen.weight.observedGrams} g`} />
+            <Reading
+              label="Difference"
+              value={`${screen.weight.differenceGrams > 0 ? '+' : ''}${screen.weight.differenceGrams} g`}
+              tone="danger"
+            />
+          </div>
+
+          <p className="mt-4 text-[13px] leading-relaxed text-muted">
+            Allowed difference is ± {screen.weight.toleranceGrams} g. Check for an item that
+            was not scanned, or one left in the trolley. If the basket is genuinely correct
+            you can let it through — that decision is recorded against your account.
+          </p>
+
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => {
+                setScreen({ kind: 'found', lookup: screen.lookup });
+              }}
+              disabled={busy}
+              className="flex-[2] rounded-xl bg-primary py-3.5 text-sm font-extrabold text-onPrimary disabled:opacity-50"
+            >
+              Re-weigh the basket
+            </button>
+            <button
+              onClick={() => void confirm(screen.lookup, true)}
+              disabled={busy}
+              className="flex-1 rounded-xl border border-danger/50 py-3.5 text-sm font-extrabold text-danger disabled:opacity-50"
+            >
+              {busy ? 'Approving…' : 'Approve anyway'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {screen.kind === 'done' && (
         <div className="rounded-3xl border border-primary/40 bg-primary/5 p-8 text-center">
           <p className="text-5xl" aria-hidden>
@@ -270,6 +420,20 @@ export default function VerifyPage() {
           <p className="mt-1 text-sm text-muted">
             Recorded against {screen.by ?? 'your account'}. The customer can leave.
           </p>
+
+          {screen.weight && (
+            <p
+              className={`mt-4 inline-block rounded-xl px-3 py-1.5 text-[12px] font-bold ${
+                screen.overridden ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'
+              }`}
+            >
+              {screen.overridden ? 'Weight overridden: ' : 'Weight matched: '}
+              {screen.weight.observedGrams} g against {screen.weight.expectedGrams} g
+              {screen.overridden
+                ? ` (${screen.weight.differenceGrams > 0 ? '+' : ''}${screen.weight.differenceGrams} g)`
+                : ''}
+            </p>
+          )}
           <button
             onClick={reset}
             className="mt-6 w-full rounded-xl bg-accent py-3.5 text-sm font-extrabold text-onAccent transition hover:opacity-90"
@@ -278,6 +442,30 @@ export default function VerifyPage() {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+/** One figure in the mismatch comparison. */
+function Reading({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone?: 'danger';
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-surface p-3">
+      <p className="text-[10px] font-extrabold uppercase tracking-wide text-muted">{label}</p>
+      <p
+        className={`mt-1 font-mono text-base font-extrabold tabular-nums ${
+          tone === 'danger' ? 'text-danger' : 'text-ink'
+        }`}
+      >
+        {value}
+      </p>
     </div>
   );
 }

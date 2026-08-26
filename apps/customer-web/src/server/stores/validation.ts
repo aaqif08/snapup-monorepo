@@ -218,6 +218,30 @@ export function validateStoreDraft(
     draft.apiKeyRef = body.apiKeyRef.trim().toUpperCase();
   }
 
+  // `apiKey` is the credential itself, typed into the console. Unlike every other field
+  // here it is write-only: it is sealed on the way in and there is no field it can be read
+  // back out of.
+  //
+  // The three states are meaningful and must stay distinct. `undefined` means the form did
+  // not include the field, and the stored key is left alone — collapsing that into "clear
+  // it" would wipe a branch's credential every time somebody toggled its opening hours.
+  if (body.apiKey === undefined) {
+    // Deliberately not defaulted on create either: absent means absent, and
+    // `credentialFieldsFor` already reads that as "no key".
+  } else if (body.apiKey === null || body.apiKey === '') {
+    draft.apiKey = null;
+  } else if (typeof body.apiKey !== 'string') {
+    errors.push('apiKey must be a string or null.');
+  } else if (body.apiKey.trim().length < 8) {
+    // Not a strength rule — it catches the paste that grabbed a few stray characters, and
+    // a placeholder like "TODO" that would otherwise sit there looking configured.
+    errors.push('apiKey looks too short to be a real credential (minimum 8 characters).');
+  } else if (body.apiKey.trim().length > 512) {
+    errors.push('apiKey is longer than 512 characters. That is not a key; check the paste.');
+  } else {
+    draft.apiKey = body.apiKey.trim();
+  }
+
   // ---- flags ----
   for (const flag of ['isActive', 'isOpen'] as const) {
     if (body[flag] === undefined) {

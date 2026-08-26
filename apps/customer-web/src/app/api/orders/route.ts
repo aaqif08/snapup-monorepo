@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { NO_WEIGHT_CHECK } from '@/server/orders/types';
 import { guardProductRequest } from '@/server/apiAuth';
 import { productRepository } from '@/server/products';
 import { getStore } from '@/server/stores';
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
     verificationCode: generateVerificationCode(),
     verifiedBy: null,
     verifiedAt: null,
+    ...NO_WEIGHT_CHECK,
     lines: priced.order.lines,
     subtotalPaise: priced.order.subtotalPaise,
     discountPaise: priced.order.discountPaise,

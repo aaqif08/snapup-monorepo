@@ -1,6 +1,8 @@
 import 'server-only';
 import type { InternalProduct, ProductDraft } from '../products/types';
+import { NO_STORED_API_KEY } from '../stores/types';
 import type { StoreDraft, StoreRecord } from '../stores/types';
+import { NO_WEIGHT_CHECK } from '../orders/types';
 import type { OrderRecord, PaymentConfirmation } from '../orders/types';
 import type { StoreEvent } from '../analytics/types';
 
@@ -170,6 +172,9 @@ function epochMs(value: number | string | null | undefined): number {
 
 export function toStoreRecord(dto: StoreDto): StoreRecord {
   return {
+    // The retailer's own registry has no SnapUp console credential in it; a key pasted
+    // here lives in SnapUp's store table, not theirs.
+    ...NO_STORED_API_KEY,
     id: dto.id,
     name: dto.name,
     address: dto.address,
@@ -225,6 +230,8 @@ export function toInternalProduct(dto: ProductDto): InternalProduct {
 
 export function toOrderRecord(dto: OrderDto): OrderRecord {
   return {
+    // The retailer's order book has no SnapUp weight check in it.
+    ...NO_WEIGHT_CHECK,
     id: dto.id,
     storeId: dto.store_id,
     sessionId: dto.session_id,

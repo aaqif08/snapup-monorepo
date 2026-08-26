@@ -1,4 +1,5 @@
 import 'server-only';
+import { open as openCredential } from '../stores/credentials';
 import { STORE_API_BASE, STORE_API_KEY } from './config';
 import type { StoreRecord } from '../stores/types';
 
@@ -68,21 +69,28 @@ export function platformConnection(): StoreApiConnection | null {
  * its own database is a cross-tenant call, not a convenience.
  */
 export function connectionForStore(
-  store: Pick<StoreRecord, 'id' | 'apiBaseUrl' | 'apiKeyRef'>
+  store: Pick<StoreRecord, 'id' | 'apiBaseUrl' | 'apiKeyRef' | 'apiKeySealed'>
 ): StoreApiConnection | null {
   const platform = platformConnection();
 
-  // Neither overridden: this retailer runs one system.
-  if (!store.apiBaseUrl && !store.apiKeyRef) return platform;
+  // Nothing overridden: this retailer runs one system.
+  if (!store.apiBaseUrl && !store.apiKeyRef && !store.apiKeySealed) return platform;
 
   const baseUrl =
     store.apiBaseUrl ??
     (store.apiKeyRef ? process.env[baseEnvName(store.apiKeyRef)] : undefined) ??
     platform?.baseUrl;
 
-  const key = store.apiKeyRef
-    ? (process.env[keyEnvName(store.apiKeyRef)] ?? '')
-    : (platform?.key ?? '');
+  // Precedence: a key pasted into the console, then the environment variable it names,
+  // then the platform key.
+  //
+  // The pasted key wins deliberately. Someone who typed a credential into this branch's
+  // settings meant that credential, and silently preferring an environment variable they
+  // cannot see from the console would make the screen lie about which key is in use —
+  // the hardest class of misconfiguration to diagnose, because everything looks right.
+  const key =
+    openCredential(store.apiKeySealed) ??
+    (store.apiKeyRef ? (process.env[keyEnvName(store.apiKeyRef)] ?? '') : (platform?.key ?? ''));
 
   if (!baseUrl || key.length === 0) return null;
 

@@ -107,6 +107,19 @@ class ApiOrderRepository implements OrderRepository {
     return [];
   }
 
+  /**
+   * Not supported against a retailer order book: their schema has no column for a
+   * SnapUp scale reading. Silently dropping it would be worse than refusing — staff
+   * would see an approval that recorded nothing, and an override nobody can attribute
+   * is the one outcome the audit column exists to prevent.
+   */
+  async recordWeightCheck(): Promise<void> {
+    throw new Error(
+      'The exit weight check requires SnapUp-owned orders. Leave SNAPUP_STORE_API_BASE ' +
+        'unset so orders live in the SnapUp database.'
+    );
+  }
+
   async markVerified(): Promise<OrderRecord | null> {
     throw new Error(
       'Staff payment verification requires SnapUp-owned orders. See findByVerificationCode.'

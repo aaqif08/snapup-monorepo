@@ -105,6 +105,24 @@ export interface OrderRecord {
   verifiedBy: string | null;
   verifiedAt: number | null;
 
+  /**
+   * What the scale at the exit actually read, in grams. Null when no reading was taken
+   * — a branch without a scale is a legitimate configuration, and the payment check
+   * stands on its own.
+   */
+  observedWeightGrams: number | null;
+  weightCheckedBy: string | null;
+  weightCheckedAt: number | null;
+  /**
+   * Set when the reading disagreed with the basket and staff approved anyway.
+   *
+   * Non-null is the audit trail: it names who decided a mismatched basket could leave.
+   * Baskets disagree for innocent reasons often enough that blocking outright would
+   * strand paying customers, so the override exists — and is attributable, which is
+   * what keeps it from being the same thing as no check at all.
+   */
+  weightOverrideBy: string | null;
+
   payment: {
     /** Merchant VPA money was directed to. Per-store under the phase-1 model. */
     payeeVpa: string | null;
@@ -168,4 +186,33 @@ export interface OrderRepository {
    * and the id comes from the signed account cookie rather than from any parameter.
    */
   listForUser(userId: string, limit: number): Promise<OrderRecord[]>;
+
+  /**
+   * Writes the scale reading taken at the exit.
+   *
+   * Separate from `markVerified` because the two answer different questions — did the
+   * money arrive, and does the basket match — and a branch may do one without the
+   * other. Keeping them apart means a shop with no scale is a missing row rather than
+   * a special case threaded through the payment path.
+   */
+  recordWeightCheck(input: {
+    orderId: string;
+    observedGrams: number;
+    checkedBy: string;
+    at: number;
+    overrodeBy: string | null;
+  }): Promise<void>;
 }
+
+/**
+ * The weight-check fields of an order nobody has weighed yet.
+ *
+ * Every order starts here — the scale reading happens at the exit, long after the record
+ * is created — so this is spread at creation rather than repeated at each call site.
+ */
+export const NO_WEIGHT_CHECK = {
+  observedWeightGrams: null,
+  weightCheckedBy: null,
+  weightCheckedAt: null,
+  weightOverrideBy: null,
+} as const;

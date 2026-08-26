@@ -411,3 +411,42 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS user_id text REFERENCES users (id);
 
 CREATE INDEX IF NOT EXISTS orders_user_created_idx
   ON orders (user_id, created_at DESC) WHERE user_id IS NOT NULL;
+
+-- ---------------------------------------------------------------------------
+-- Branch credentials: a key that can be pasted but never read back
+-- ---------------------------------------------------------------------------
+--
+-- `api_key_ref` names an environment variable and is the right answer for a deployment
+-- somebody operates with a terminal. It is the wrong answer for a pilot, where the person
+-- running the shop cannot edit the hosting environment — so the console needs a field they
+-- can paste a key into.
+--
+-- What is stored is the ciphertext, never the key. `api_key_masked` and
+-- `api_key_fingerprint` are what the console renders: together they answer "is a key set"
+-- and "is it still the one I pasted" without the secret leaving the server. See
+-- `stores/credentials.ts` for the format and its limits.
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS api_key_sealed      text;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS api_key_masked      text;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS api_key_fingerprint text;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS api_key_set_at      bigint;
+
+-- ---------------------------------------------------------------------------
+-- Orders: the weight check at the exit
+-- ---------------------------------------------------------------------------
+--
+-- The basket's expected weight is already computed from the catalogue at order time. This
+-- records what the scale at the exit actually read, so the two can be compared by a member
+-- of staff before the customer leaves.
+--
+-- `weight_override_by` is the column that matters. A basket can disagree with its expected
+-- weight for entirely innocent reasons — packaged goods vary from their printed weight,
+-- scales drift, produce is weighed at a counter — and a check that strands a paying
+-- customer at the gate with no recourse is worse than one that can be overridden. So staff
+-- may approve a mismatch, and doing so writes down who did it and by how much. That record
+-- is the whole safeguard: an override nobody can attribute is indistinguishable from no
+-- check at all.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS observed_weight_grams integer;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_checked_by     text REFERENCES users (id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_checked_at     bigint;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_override_by    text REFERENCES users (id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS exit_approved_at      bigint;

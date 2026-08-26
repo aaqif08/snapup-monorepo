@@ -46,6 +46,20 @@ function toOrder(row: OrderRow): OrderRecord {
     status: row.status as OrderRecord['status'],
     lines: ((row.lines as LineRow[] | null) ?? []).map(toLine),
 
+    // Nullable throughout: an order is created long before anyone weighs it, and a
+    // branch with no scale never will. `Number(null)` is 0, which would read as a
+    // basket weighed at nothing, so each is checked rather than coerced.
+    observedWeightGrams:
+      row.observed_weight_grams === null || row.observed_weight_grams === undefined
+        ? null
+        : Number(row.observed_weight_grams),
+    weightCheckedBy: (row.weight_checked_by as string | null) ?? null,
+    weightCheckedAt:
+      row.weight_checked_at === null || row.weight_checked_at === undefined
+        ? null
+        : Number(row.weight_checked_at),
+    weightOverrideBy: (row.weight_override_by as string | null) ?? null,
+
     subtotalPaise: Number(row.subtotal_paise),
     discountPaise: Number(row.discount_paise),
     platformFeePaise: Number(row.platform_fee_paise),
@@ -234,6 +248,29 @@ class PostgresOrderRepository implements OrderRepository {
 
     if (rows.length === 0) return null;
     return this.findById(id);
+  }
+
+  async recordWeightCheck(input: {
+    orderId: string;
+    observedGrams: number;
+    checkedBy: string;
+    at: number;
+    overrodeBy: string | null;
+  }): Promise<void> {
+    const sql = db();
+    // Unconditional on status. By the time this runs the order has already been
+    // verified in the same request, and refusing to write the reading because the row
+    // moved on would lose the audit trail precisely when it is most wanted.
+    await sql(
+      `UPDATE orders
+          SET observed_weight_grams = $2,
+              weight_checked_by     = $3,
+              weight_checked_at     = $4,
+              weight_override_by    = $5,
+              exit_approved_at      = $4
+        WHERE id = $1`,
+      [input.orderId, input.observedGrams, input.checkedBy, input.at, input.overrodeBy]
+    );
   }
 
   async markPaid(id: string, confirmation: PaymentConfirmation): Promise<OrderRecord | null> {

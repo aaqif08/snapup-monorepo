@@ -26,6 +26,15 @@ export function toAdminStore(store: StoreRecord) {
     // rather than a key.
     api_base_url: store.apiBaseUrl,
     api_key_ref: store.apiKeyRef,
+
+    // The pasted key, in the only two forms that may leave the server. `apiKeySealed`
+    // is deliberately absent: it is ciphertext, but ciphertext that travels to a
+    // browser is ciphertext someone can work on offline, and there is no reason for it
+    // to be there. The console needs to know a key exists and whether it changed —
+    // that is what these two answer.
+    api_key_masked: store.apiKeyMasked,
+    api_key_fingerprint: store.apiKeyFingerprint,
+    api_key_set_at: store.apiKeySetAt,
     is_active: store.isActive,
     is_open: store.isOpen,
   };
@@ -79,6 +88,14 @@ export function warningsFor(store: StoreRecord): string[] {
   // The failure this prevents is the confusing one: the branch is reachable, its key is
   // fine, and every call 404s or returns another branch's catalogue because the endpoint
   // silently fell back to the platform default.
+  if (store.apiBaseUrl !== null && store.apiKeyRef === null && store.apiKeySealed === null) {
+    warnings.push(
+      'A branch API endpoint is set but no key is. Calls for this store will be made ' +
+        'with the platform-wide key, and will fail if this branch expects its own. Paste ' +
+        'the key into Branch API key, or clear the endpoint.'
+    );
+  }
+
   if (store.apiKeyRef !== null && store.apiBaseUrl === null) {
     warnings.push(
       'A branch API key reference is set but no branch API base URL is. Calls for this store will go to the platform-wide endpoint. Set both, or neither.'

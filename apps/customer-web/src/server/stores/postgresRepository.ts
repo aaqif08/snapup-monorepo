@@ -1,4 +1,5 @@
 import 'server-only';
+import { credentialFieldsFor } from './credentials';
 import { db } from '../db/client';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
 
@@ -81,6 +82,12 @@ function toRecord(row: StoreRow): StoreRecord {
     merchantDisplayName: (row.merchant_display_name as string | null) ?? null,
     apiBaseUrl: (row.api_base_url as string | null) ?? null,
     apiKeyRef: (row.api_key_ref as string | null) ?? null,
+    apiKeySealed: (row.api_key_sealed as string | null) ?? null,
+    apiKeyMasked: (row.api_key_masked as string | null) ?? null,
+    apiKeyFingerprint: (row.api_key_fingerprint as string | null) ?? null,
+    apiKeySetAt: row.api_key_set_at === null || row.api_key_set_at === undefined
+      ? null
+      : Number(row.api_key_set_at),
     isActive: row.is_active as boolean,
     isOpen: row.is_open as boolean,
   };
@@ -120,11 +127,15 @@ class PostgresStoreRepository implements StoreRepository {
 
   async create(draft: StoreDraft): Promise<StoreRecord> {
     const sql = db();
+    // Sealed here, never by the caller — the route hands over the key in the clear and
+    // this is the last point before it reaches storage.
+    const credential = credentialFieldsFor(draft.apiKey);
     const rows = (await sql`
       INSERT INTO stores (
         id, name, address, latitude, longitude, authorized_egress_cidrs,
         advertised_ssid, merchant_vpa, merchant_display_name,
-        api_base_url, api_key_ref, is_active, is_open
+        api_base_url, api_key_ref, is_active, is_open,
+        api_key_sealed, api_key_masked, api_key_fingerprint, api_key_set_at
       ) VALUES (
         'store_' || nextval('store_id_seq'),
         ${draft.name},
@@ -138,7 +149,11 @@ class PostgresStoreRepository implements StoreRepository {
         ${draft.apiBaseUrl},
         ${draft.apiKeyRef},
         ${draft.isActive},
-        ${draft.isOpen}
+        ${draft.isOpen},
+        ${credential.apiKeySealed},
+        ${credential.apiKeyMasked},
+        ${credential.apiKeyFingerprint},
+        ${credential.apiKeySetAt}
       )
       RETURNING *
     `) as StoreRow[];
@@ -169,6 +184,10 @@ class PostgresStoreRepository implements StoreRepository {
     };
 
     const sql = db();
+    // `patch.apiKey` undefined means the form did not touch the field, so the stored
+    // credential is carried through. Without this, editing a branch's opening hours
+    // would wipe its API key.
+    const credential = credentialFieldsFor(patch.apiKey, existing);
     const rows = (await sql`
       UPDATE stores SET
         name                    = ${merged.name},
@@ -182,7 +201,11 @@ class PostgresStoreRepository implements StoreRepository {
         api_base_url            = ${merged.apiBaseUrl},
         api_key_ref             = ${merged.apiKeyRef},
         is_active               = ${merged.isActive},
-        is_open                 = ${merged.isOpen}
+        is_open                 = ${merged.isOpen},
+        api_key_sealed          = ${credential.apiKeySealed},
+        api_key_masked          = ${credential.apiKeyMasked},
+        api_key_fingerprint     = ${credential.apiKeyFingerprint},
+        api_key_set_at          = ${credential.apiKeySetAt}
       WHERE id = ${id}
       RETURNING *
     `) as StoreRow[];

@@ -86,6 +86,21 @@ class InMemoryOrderRepository implements OrderRepository {
     return null;
   }
 
+  async recordWeightCheck(input: {
+    orderId: string;
+    observedGrams: number;
+    checkedBy: string;
+    at: number;
+    overrodeBy: string | null;
+  }): Promise<void> {
+    const order = this.byId.get(input.orderId);
+    if (!order) return;
+    order.observedWeightGrams = input.observedGrams;
+    order.weightCheckedBy = input.checkedBy;
+    order.weightCheckedAt = input.at;
+    order.weightOverrideBy = input.overrodeBy;
+  }
+
   async listForUser(userId: string, limit: number): Promise<OrderRecord[]> {
     return [...this.byId.values()]
       .filter((order) => order.userId === userId)

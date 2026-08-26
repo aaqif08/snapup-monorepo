@@ -23,6 +23,17 @@ export interface AdminStore {
   api_base_url: string | null;
   /** The *name* of the environment variable holding this branch's key, never the key. */
   api_key_ref: string | null;
+
+  /**
+   * A key pasted into this console, in the only forms the server will part with.
+   *
+   * There is no `api_key` here and there must never be: the key is sealed server-side
+   * and has no read path. `api_key_masked` says a key exists, `api_key_fingerprint`
+   * says which one, and neither can be used to authenticate anything.
+   */
+  api_key_masked: string | null;
+  api_key_fingerprint: string | null;
+  api_key_set_at: number | null;
   is_active: boolean;
   is_open: boolean;
 }

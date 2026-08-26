@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { compareWeight, isPlausibleReading, toleranceFor } from '@/server/orders/weightPolicy';
 import { requireRole } from '@/server/accounts/session';
 import { orderRepository } from '@/server/orders';
 import { mayExit } from '@/server/orders/paymentPolicy';
@@ -81,6 +82,14 @@ export async function GET(request: NextRequest, { params }: Params) {
         transaction_ref: order.payment.transactionRef,
         payee_vpa: order.payment.payeeVpa,
         created_at: order.createdAt,
+
+        // The scale check. `expected_weight_grams` is computed from the catalogue at
+        // order time, so it is the sum of what was actually scanned — not anything the
+        // phone could edit. `tolerance_grams` is sent rather than left to the client to
+        // work out, so the number staff are shown is provably the number the server
+        // judges against.
+        expected_weight_grams: order.expectedWeightGrams,
+        tolerance_grams: toleranceFor(order.expectedWeightGrams),
       },
       store: { id: order.storeId, name: store?.name ?? order.storeId },
       // `awaiting_verification` means the customer has claimed payment. `awaiting_payment`
@@ -116,6 +125,50 @@ export async function POST(request: NextRequest, { params }: Params) {
   const found = await orderRepository.findByVerificationCode(storeId, normalised);
   if (!found) return fail(404, 'not_found', 'No basket is waiting on that code at this branch.');
 
+  // ---- the scale check ----
+  //
+  // Judged here rather than on the staff phone. The phone shows the comparison so the
+  // person can see it, but a client that decides whether it matched is a client that can
+  // be told to say yes.
+  const body = (await request.json().catch(() => ({}))) as {
+    observed_weight_grams?: unknown;
+    override?: unknown;
+  };
+
+  let comparison: ReturnType<typeof compareWeight> | null = null;
+
+  if (body.observed_weight_grams !== undefined) {
+    if (!isPlausibleReading(body.observed_weight_grams)) {
+      return fail(
+        400,
+        'implausible_weight',
+        'That scale reading is not a usable number. Enter the weight in grams.'
+      );
+    }
+
+    comparison = compareWeight(found.expectedWeightGrams, body.observed_weight_grams);
+
+    // A mismatch stops here unless the member of staff explicitly overrides. Two separate
+    // actions on purpose: the first tap must not be able to wave through a basket that is
+    // half a kilo heavy because someone was clearing a queue.
+    if (!comparison.matches && body.override !== true) {
+      return NextResponse.json(
+        {
+          verified: false,
+          reason: 'weight_mismatch',
+          weight: comparison,
+          message:
+            comparison.direction === 'heavier'
+              ? 'The basket weighs more than it should. Check for an unscanned item.'
+              : 'The basket weighs less than it should. Check nothing was left behind.',
+        },
+        { status: 409, headers: NO_STORE }
+      );
+    }
+  }
+
+  const overrode = comparison !== null && !comparison.matches;
+
   const verified = await orderRepository.markVerified(found.id, actor.id, Date.now());
   if (!verified) {
     // Lost the race, or the order moved on between the lookup and the write.
@@ -145,9 +198,26 @@ export async function POST(request: NextRequest, { params }: Params) {
     ? issueExitToken(verified)
     : null;
 
+  if (comparison) {
+    await orderRepository.recordWeightCheck({
+      orderId: verified.id,
+      observedGrams: comparison.observedGrams,
+      checkedBy: actor.id,
+      at: Date.now(),
+      // Written only when the reading disagreed and staff went ahead regardless. This is
+      // the column that makes an override answerable afterwards; an unattributable
+      // override is indistinguishable from having no check at all.
+      overrodeBy: overrode ? actor.id : null,
+    });
+  }
+
   console.info(
     `[exit] ${actor.email ?? actor.id} verified ${verified.id} (${normalised}) ` +
-      `for ${(verified.totalPaise / 100).toFixed(2)} at ${verified.storeId}`
+      `for ${(verified.totalPaise / 100).toFixed(2)} at ${verified.storeId}` +
+      (comparison
+        ? ` · scale ${comparison.observedGrams}g vs ${comparison.expectedGrams}g` +
+          (overrode ? ` · OVERRIDE (${comparison.differenceGrams > 0 ? '+' : ''}${comparison.differenceGrams}g)` : '')
+        : ' · no scale reading')
   );
 
   return NextResponse.json(
@@ -156,6 +226,8 @@ export async function POST(request: NextRequest, { params }: Params) {
       order_id: verified.id,
       total_rupees: (verified.totalPaise / 100).toFixed(2),
       verified_by: actor.name ?? actor.email,
+      weight: comparison,
+      weight_overridden: overrode,
       exit_token: exit?.token ?? null,
       exit_expires_at: exit?.expiresAt ?? null,
     },

@@ -96,6 +96,23 @@ export interface StoreRecord {
    */
   apiKeyRef: string | null;
 
+  /**
+   * A key pasted into the console, encrypted at rest. Never returned to any client.
+   *
+   * Takes precedence over `apiKeyRef`, because someone who typed a key into this branch's
+   * settings means that key — falling through to an environment variable they cannot see
+   * would be the console lying about which credential is in use.
+   *
+   * See `stores/credentials.ts`. Null means no pasted key, and resolution falls back to
+   * `apiKeyRef` and then to the platform-wide key.
+   */
+  apiKeySealed: string | null;
+  /** `••••••••3f9a` — safe to render. Null when no key is set. */
+  apiKeyMasked: string | null;
+  /** Non-reversible handle, so the console can say whether the key changed. */
+  apiKeyFingerprint: string | null;
+  apiKeySetAt: number | null;
+
   /** Whether SnapUp is currently offered here. Inactive stores are hidden and refused. */
   isActive: boolean;
 
@@ -134,6 +151,19 @@ export interface StoreDraft {
   merchantDisplayName: string | null;
   apiBaseUrl: string | null;
   apiKeyRef: string | null;
+  /**
+   * A key typed into the console, in the clear, on its way to being encrypted.
+   *
+   * This is the *only* place a branch credential exists as plaintext, and it exists here
+   * for exactly one hop: the route seals it (`credentials.seal`) before the repository
+   * ever sees a record. It is never read back out — there is no matching field on
+   * `StoreRecord`, only the sealed and masked forms, which is what makes "write-only"
+   * a property of the types rather than a convention someone has to remember.
+   *
+   * `undefined` leaves the stored key alone, which is what an edit that does not touch
+   * the field must do. `null` clears it. A string sets it.
+   */
+  apiKey?: string | null;
   isActive: boolean;
   isOpen: boolean;
 }
@@ -155,3 +185,17 @@ export interface StoreRepository {
   create(draft: StoreDraft): Promise<StoreRecord>;
   update(id: string, patch: Partial<StoreDraft>): Promise<StoreRecord | null>;
 }
+
+/**
+ * The credential fields of a branch that has no pasted key.
+ *
+ * Spread into every place a `StoreRecord` is built from something that predates the
+ * console field — seeds, the retailer-API projection, the in-memory registry. Written
+ * once so that adding a fifth credential column is one edit rather than a hunt.
+ */
+export const NO_STORED_API_KEY = {
+  apiKeySealed: null,
+  apiKeyMasked: null,
+  apiKeyFingerprint: null,
+  apiKeySetAt: null,
+} as const;

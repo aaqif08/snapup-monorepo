@@ -22,6 +22,15 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
   );
   const [apiBaseUrl, setApiBaseUrl] = useState(initial?.api_base_url ?? '');
   const [apiKeyRef, setApiKeyRef] = useState(initial?.api_key_ref ?? '');
+  /**
+   * Always starts empty, even when editing a branch that has a key.
+   *
+   * There is nothing to prefill it with — the server returns a mask, never the key —
+   * and prefilling the mask would be worse than empty: submitting the form would then
+   * save the literal bullet characters as the credential.
+   */
+  const [apiKey, setApiKey] = useState('');
+  const [clearApiKey, setClearApiKey] = useState(false);
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
   const [isOpen, setIsOpen] = useState(initial?.is_open ?? true);
 
@@ -100,6 +109,14 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
         // running one central system.
         apiBaseUrl: apiBaseUrl.trim() || null,
         apiKeyRef: keyRef || null,
+        // Three states, and the difference matters: omitted keeps the stored key,
+        // null clears it, a string replaces it. Sending '' on every save would wipe
+        // the credential of any branch somebody merely renamed.
+        ...(clearApiKey
+          ? { apiKey: null }
+          : apiKey.trim()
+            ? { apiKey: apiKey.trim() }
+            : {}),
         isActive,
         isOpen,
       });
@@ -251,6 +268,70 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
               autoCapitalize="characters"
               spellCheck={false}
             />
+          </Field>
+
+          {/* The pilot field. `api_key_ref` above needs someone who can edit the hosting
+              environment; this needs someone who can paste. The server seals it and never
+              returns it, so the mask below is all the console can ever show. */}
+          <Field label="Branch database API key (paste here)">
+            {initial?.api_key_masked && !clearApiKey && !apiKey.trim() ? (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-bg px-3 py-2.5">
+                <div className="min-w-0">
+                  <p className="font-mono text-sm text-ink">{initial.api_key_masked}</p>
+                  <p className="mt-0.5 text-[11px] text-muted">
+                    Set{' '}
+                    {initial.api_key_set_at
+                      ? new Date(initial.api_key_set_at).toLocaleDateString()
+                      : 'previously'}
+                    {initial.api_key_fingerprint ? ` · ${initial.api_key_fingerprint}` : ''}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setApiKey(' ')}
+                    className="rounded-lg border border-border px-2.5 py-1.5 text-[11px] font-extrabold text-ink"
+                  >
+                    Replace
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setClearApiKey(true)}
+                    className="rounded-lg border border-danger/40 px-2.5 py-1.5 text-[11px] font-extrabold text-danger"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <input
+                  value={apiKey.trim() === '' ? apiKey.replace(' ', '') : apiKey}
+                  onChange={(e) => {
+                    setApiKey(e.target.value);
+                    setClearApiKey(false);
+                  }}
+                  type="password"
+                  className={`${inputClass} font-mono`}
+                  placeholder={clearApiKey ? 'Key will be removed on save' : 'Paste the key from the retailer'}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                {(initial?.api_key_masked || clearApiKey) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setApiKey('');
+                      setClearApiKey(false);
+                    }}
+                    className="mt-1.5 text-[11px] font-bold text-muted underline"
+                  >
+                    Keep the existing key
+                  </button>
+                )}
+              </>
+            )}
           </Field>
 
           {/* The distinction between a reference and a key is the one thing an operator is
