@@ -52,9 +52,19 @@ export function toleranceFor(expectedGrams: number): number {
   );
 }
 
-export function compareWeight(expectedGrams: number, observedGrams: number): WeightComparison {
+/**
+ * `toleranceGrams` is passed in rather than derived from the total, because the honest
+ * window depends on what the basket is made of and not merely what it weighs — see
+ * `toleranceForLines`. Omitted, it falls back to the flat rule, which keeps the simple
+ * two-argument form usable for a comparison that has no lines to hand.
+ */
+export function compareWeight(
+  expectedGrams: number,
+  observedGrams: number,
+  toleranceGrams?: number
+): WeightComparison {
   const difference = observedGrams - expectedGrams;
-  const tolerance = toleranceFor(expectedGrams);
+  const tolerance = toleranceGrams ?? toleranceFor(expectedGrams);
 
   return {
     expectedGrams,
@@ -80,4 +90,67 @@ export function isPlausibleReading(grams: unknown): grams is number {
     grams >= 0 &&
     grams <= MAX_PLAUSIBLE_BASKET_GRAMS
   );
+}
+
+/**
+ * Per-unit weight variation, one standard deviation, as a fraction of the item's own
+ * weight.
+ *
+ * Packaged goods are filled to a target, not to an exact figure, and 2% is a fair working
+ * estimate across dry goods and liquids. It is an assumption rather than a measurement —
+ * if the pilot shows baskets failing honestly, this is the number to raise, and raising it
+ * is a one-line change precisely because it lives here.
+ */
+export const PER_UNIT_VARIATION = 0.02;
+
+/** Three sigma: roughly one honest basket in 370 falls outside, which a person can absorb. */
+export const SIGMA_MULTIPLIER = 3;
+
+export interface WeighedLine {
+  /** Line total — `unit weight × quantity`, matching `OrderLine.expectedWeightGrams`. */
+  expectedWeightGrams: number;
+  quantity: number;
+}
+
+/**
+ * Tolerance from the composition of the basket rather than from its total.
+ *
+ * ## Why not a flat percentage
+ *
+ * A flat 5% assumes error grows in proportion to the basket, and it does not. Per-item
+ * errors are independent, so they add in quadrature — twenty items carry about √20 ≈ 4.5
+ * times one item's error, not twenty times. Charging the basket a linear penalty therefore
+ * hands large baskets a hiding space that grows with every item added, which is exactly
+ * backwards: a twenty-item basket is where an extra item is easiest to conceal.
+ *
+ * A concrete case from the pilot catalogue: twenty 200 g packets total 4 kg. Flat 5% allows
+ * ±200 g — a full extra packet, plus change. Quadrature at three sigma allows ±54 g, and
+ * rejects the packet.
+ *
+ * ## The clamp
+ *
+ * Never looser than the flat rule this replaced, and never tighter than the floor. The
+ * upper clamp matters: if the assumption above turns out to be optimistic, the worst this
+ * can do is behave exactly as the previous rule did, rather than inventing a wider window
+ * than anyone signed off.
+ */
+export function toleranceForLines(lines: WeighedLine[]): number {
+  let expectedTotal = 0;
+  let variance = 0;
+
+  for (const line of lines) {
+    expectedTotal += line.expectedWeightGrams;
+
+    // Each *unit* varies independently, so a line of six contributes six variances rather
+    // than one large one. Dividing back out is why quantity is needed here at all.
+    const quantity = Math.max(1, line.quantity);
+    const unitGrams = line.expectedWeightGrams / quantity;
+    const unitSigma = unitGrams * PER_UNIT_VARIATION;
+    variance += quantity * unitSigma * unitSigma;
+  }
+
+  const statistical = Math.round(SIGMA_MULTIPLIER * Math.sqrt(variance));
+  const flat = Math.round(expectedTotal * WEIGHT_TOLERANCE_FRACTION);
+
+  return Math.max(WEIGHT_TOLERANCE_FLOOR_GRAMS, Math.min(flat, statistical));
 }

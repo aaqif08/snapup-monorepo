@@ -37,6 +37,23 @@ interface VerifyLookup {
   };
   store: { id: string; name: string };
   customer_claims_paid: boolean;
+  coverage: {
+    total_units: number;
+    unchecked_units: number;
+    unchecked_names: string[];
+    checked_rupees: string;
+    unchecked_rupees: string;
+  };
+  /** Present only when the tolerance is wide enough to hide the shop's lightest item. */
+  blind_spot: { lightest_item_grams: number; lightest_item_name: string } | null;
+}
+
+interface GapExplanation {
+  gapGrams: number;
+  lightestItemGrams: number | null;
+  lightestItemName: string | null;
+  belowLightestItem: boolean;
+  candidates: { name: string; unitGrams: number; count: number; residualGrams: number }[];
 }
 
 interface WeightResult {
@@ -56,7 +73,13 @@ type Screen =
    * decision it asks for — let this basket go anyway — is one the member of staff must
    * take deliberately, and it is recorded against them.
    */
-  | { kind: 'mismatch'; lookup: VerifyLookup; weight: WeightResult; message: string }
+  | {
+      kind: 'mismatch';
+      lookup: VerifyLookup;
+      weight: WeightResult;
+      message: string;
+      explanation: GapExplanation | null;
+    }
   | { kind: 'done'; total: string; by: string | null; weight: WeightResult | null; overridden: boolean };
 
 export default function VerifyPage() {
@@ -157,6 +180,7 @@ export default function VerifyPage() {
           lookup: lookupResult,
           weight: body.weight as WeightResult,
           message: body.message ?? 'The basket does not match its expected weight.',
+          explanation: (body.explanation as GapExplanation | null) ?? null,
         });
         return;
       }
@@ -346,6 +370,45 @@ export default function VerifyPage() {
               Ask the customer to put every item on the scale. Leave blank if this exit has
               no scale.
             </p>
+
+            {/* Shown before weighing, not after. Knowing that three items carry no weight
+                changes how staff read the number — it is the difference between an
+                informed override and a reflexive one. */}
+            {screen.lookup.coverage.unchecked_units > 0 && (
+              <div className="mt-3 rounded-xl border border-warning/40 bg-warning/10 p-3">
+                <p className="text-[11px] font-extrabold uppercase tracking-wide text-warning">
+                  Weight check is partial
+                </p>
+                <p className="mt-1 text-[13px] leading-relaxed text-ink">
+                  Covers ₹{screen.lookup.coverage.checked_rupees} of ₹
+                  {(
+                    Number(screen.lookup.coverage.checked_rupees) +
+                    Number(screen.lookup.coverage.unchecked_rupees)
+                  ).toFixed(2)}
+                  . {screen.lookup.coverage.unchecked_units} item
+                  {screen.lookup.coverage.unchecked_units === 1 ? ' has' : 's have'} no recorded
+                  weight, so the total below does not include{' '}
+                  {screen.lookup.coverage.unchecked_units === 1 ? 'it' : 'them'}:
+                </p>
+                <p className="mt-1 text-[13px] font-bold text-ink">
+                  {screen.lookup.coverage.unchecked_names.join(', ')}
+                </p>
+                <p className="mt-1.5 text-[12px] text-muted">
+                  Check those by eye. A scanned item with no weight makes the basket read
+                  heavy for an entirely innocent reason.
+                </p>
+              </div>
+            )}
+
+            {screen.lookup.blind_spot && (
+              <p className="mt-2 text-[12px] leading-relaxed text-muted">
+                Note: this basket&rsquo;s allowance (± {screen.lookup.order.tolerance_grams} g) is
+                wider than the lightest item in stock (
+                {screen.lookup.blind_spot.lightest_item_name},{' '}
+                {screen.lookup.blind_spot.lightest_item_grams} g), so weight alone cannot rule
+                one out.
+              </p>
+            )}
           </div>
 
           <div className="flex gap-3 border-t border-border p-4">
@@ -384,10 +447,52 @@ export default function VerifyPage() {
             />
           </div>
 
+          {/* The whole point of the exercise: turn a number into something to look for. */}
+          {screen.explanation && screen.explanation.candidates.length > 0 && (
+            <div className="mt-5 rounded-2xl border border-border bg-surface p-4">
+              <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+                A difference this size matches
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {screen.explanation.candidates.map((candidate) => (
+                  <li
+                    key={`${candidate.name}-${candidate.count}`}
+                    className="flex items-baseline justify-between gap-3 text-sm"
+                  >
+                    <span className="min-w-0 font-bold text-ink">
+                      {candidate.count > 1 && (
+                        <span className="mr-1.5 text-muted">{candidate.count}×</span>
+                      )}
+                      {candidate.name}
+                    </span>
+                    <span className="shrink-0 font-mono text-xs tabular-nums text-muted">
+                      {candidate.unitGrams * candidate.count} g
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2.5 text-[12px] leading-relaxed text-muted">
+                Ask the customer to check for these before deciding.
+              </p>
+            </div>
+          )}
+
+          {screen.explanation?.belowLightestItem && (
+            <div className="mt-5 rounded-2xl border border-primary/40 bg-primary/5 p-4">
+              <p className="text-[13px] leading-relaxed text-ink">
+                <strong className="font-extrabold">Nothing in this shop weighs that little.</strong>{' '}
+                The lightest item in stock is {screen.explanation.lightestItemName} at{' '}
+                {screen.explanation.lightestItemGrams} g, and the difference is only{' '}
+                {screen.explanation.gapGrams} g — so no missing item explains it. This is
+                almost certainly the scale or packaging, not a basket problem.
+              </p>
+            </div>
+          )}
+
           <p className="mt-4 text-[13px] leading-relaxed text-muted">
-            Allowed difference is ± {screen.weight.toleranceGrams} g. Check for an item that
-            was not scanned, or one left in the trolley. If the basket is genuinely correct
-            you can let it through — that decision is recorded against your account.
+            Allowed difference is ± {screen.weight.toleranceGrams} g. If the basket is
+            genuinely correct you can let it through — that decision is recorded against your
+            account.
           </p>
 
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">

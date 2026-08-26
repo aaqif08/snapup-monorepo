@@ -1,5 +1,14 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { compareWeight, isPlausibleReading, toleranceFor } from '@/server/orders/weightPolicy';
+import {
+  compareWeight,
+  isPlausibleReading,
+  toleranceForLines,
+} from '@/server/orders/weightPolicy';
+import {
+  coverageFor,
+  explainGap,
+  hasBlindSpot,
+} from '@/server/orders/weightExplain';
 import { requireRole } from '@/server/accounts/session';
 import { orderRepository } from '@/server/orders';
 import { mayExit } from '@/server/orders/paymentPolicy';
@@ -89,9 +98,31 @@ export async function GET(request: NextRequest, { params }: Params) {
         // work out, so the number staff are shown is provably the number the server
         // judges against.
         expected_weight_grams: order.expectedWeightGrams,
-        tolerance_grams: toleranceFor(order.expectedWeightGrams),
+        tolerance_grams: toleranceForLines(order.lines),
       },
       store: { id: order.storeId, name: store?.name ?? order.storeId },
+
+      // What the weight check can and cannot see, sent with the lookup rather than left
+      // for the mismatch. Staff need it *before* they weigh: knowing three items carry no
+      // weight changes how they read the number, and is the difference between an informed
+      // override and a reflexive one.
+      coverage: (() => {
+        const coverage = coverageFor(order.lines);
+        return {
+          total_units: coverage.totalUnits,
+          unchecked_units: coverage.uncheckedUnits,
+          unchecked_names: coverage.uncheckedNames,
+          checked_rupees: (coverage.checkedValuePaise / 100).toFixed(2),
+          unchecked_rupees: (coverage.uncheckedValuePaise / 100).toFixed(2),
+        };
+      })(),
+      blind_spot: await (async () => {
+        const tolerance = toleranceForLines(order.lines);
+        const { lightestItemGrams, lightestItemName } = await explainGap(order.storeId, 0);
+        return hasBlindSpot(tolerance, lightestItemGrams)
+          ? { lightest_item_grams: lightestItemGrams, lightest_item_name: lightestItemName }
+          : null;
+      })(),
       // `awaiting_verification` means the customer has claimed payment. `awaiting_payment`
       // means they have not even done that — worth showing, because it usually means they
       // are at the wrong desk rather than that anything is wrong.
@@ -146,17 +177,25 @@ export async function POST(request: NextRequest, { params }: Params) {
       );
     }
 
-    comparison = compareWeight(found.expectedWeightGrams, body.observed_weight_grams);
+    comparison = compareWeight(
+      found.expectedWeightGrams,
+      body.observed_weight_grams,
+      toleranceForLines(found.lines)
+    );
 
     // A mismatch stops here unless the member of staff explicitly overrides. Two separate
     // actions on purpose: the first tap must not be able to wave through a basket that is
     // half a kilo heavy because someone was clearing a queue.
     if (!comparison.matches && body.override !== true) {
+      const explanation = await explainGap(found.storeId, comparison.differenceGrams);
+
       return NextResponse.json(
         {
           verified: false,
           reason: 'weight_mismatch',
           weight: comparison,
+          // What to look for, rather than only that something is wrong.
+          explanation,
           message:
             comparison.direction === 'heavier'
               ? 'The basket weighs more than it should. Check for an unscanned item.'
