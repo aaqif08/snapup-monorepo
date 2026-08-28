@@ -263,6 +263,14 @@ async function importStores(sql, file) {
     );
   }
 
+  // Ids from a sheet are inserted explicitly, and an explicit insert does not advance the
+  // sequence the console mints ids from. Left unsynced, the first shop registered through
+  // signup collides on store_1 and fails with a primary-key violation that looks nothing
+  // like its cause. Only ever moves the sequence forward.
+  await sql(
+    `SELECT setval('store_id_seq', GREATEST((SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '\D', '', 'g'), '')::bigint), 0) FROM stores), 1))`
+  );
+
   console.log(`  stores: ${rows.length} rows imported or updated`);
 
   // Both of these produce a branch that is switched on and unusable, which looks exactly

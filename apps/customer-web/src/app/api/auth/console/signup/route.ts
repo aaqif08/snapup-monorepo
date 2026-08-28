@@ -1,4 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { storeRepository } from '@/server/stores';
+import { validateStoreDraft } from '@/server/stores/validation';
+import type { StoreDraft } from '@/server/stores/types';
 import { getEgressIp } from '@/server/network';
 import { consumeToken } from '@/server/rateLimit';
 import { hashPassword, passwordProblem } from '@/server/accounts/password';
@@ -42,7 +45,14 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  let body: { email?: unknown; password?: unknown; name?: unknown; phone?: unknown };
+  let body: {
+    email?: unknown;
+    password?: unknown;
+    name?: unknown;
+    phone?: unknown;
+    /** Present when an owner is registering their shop as part of signing up. */
+    store?: unknown;
+  };
   try {
     body = await request.json();
   } catch {
@@ -82,18 +92,71 @@ export async function POST(request: NextRequest) {
   const existingStaff = await userRepository.countStaff();
   const isBootstrap = existingStaff === 0;
 
+  // ---- the shop, when one is being registered ----
+  //
+  // Validated before the account is created, so a rejected shop does not leave a usable
+  // login behind with nothing attached to it. The two are meant to arrive together.
+  let storeDraft: StoreDraft | null = null;
+  if (body.store !== undefined && body.store !== null) {
+    if (typeof body.store !== 'object') {
+      return fail(400, 'invalid_store', 'Expected the shop details as an object.');
+    }
+
+    // The owner supplies what an owner can know: the shop's name, where it is, what its
+    // Wi-Fi is called and when it opens. The operational fields are defaulted here rather
+    // than demanded, because nobody registering a shop from their phone can read their own
+    // public IP range off the router, and asking for it is how a signup gets abandoned.
+    //
+    // Every default is the fail-closed one. An empty CIDR list refuses every shopper and a
+    // missing VPA leaves checkout at the counter — which is correct for a shop that is not
+    // live yet anyway, and is surfaced in the console as a warning rather than hidden.
+    const submitted = {
+      authorizedEgressCidrs: [],
+      merchantVpa: null,
+      merchantDisplayName: null,
+      apiBaseUrl: null,
+      apiKeyRef: null,
+      ...(body.store as Record<string, unknown>),
+    };
+
+    // Not `partial`: a shop being registered must end up with every field a shop needs, and
+    // the same validator the console's own writes use runs here so the two cannot diverge.
+    const parsed = validateStoreDraft(submitted, { partial: false });
+    if (!parsed.ok) {
+      return fail(400, 'invalid_store', parsed.errors.join(' '));
+    }
+
+    storeDraft = {
+      ...(parsed.value as StoreDraft),
+      // Registered dark, always. The person filling this in is asserting their own shop's
+      // name and location and nobody has checked either yet, so it must not be able to
+      // appear to customers on their say-so. An existing owner activates it from the
+      // console once the details are confirmed.
+      isActive: false,
+      isOpen: true,
+    };
+  }
+
   // An owner creating a colleague's account gets to skip the approval step, since they are
   // the approval step.
   const actor = await readAccount(request);
   const byOwner = actor.ok && atLeast(actor.user.role, 'owner');
 
+  // Created before the account so the account can carry its id. If the account creation
+  // then fails, an inactive store with nobody attached is left behind — invisible to
+  // customers, listed in the console, and removable there. The opposite ordering would
+  // leave a live login belonging to a shop that does not exist, which is worse.
+  const store = storeDraft ? await storeRepository.create(storeDraft) : null;
+
   const user = await userRepository.create({
-    role: isBootstrap ? 'owner' : 'staff',
+    // Registering a shop makes you its owner. Not the platform's — `storeId` scopes it, and
+    // every branch-aware check already reads that field rather than the role alone.
+    role: isBootstrap || store ? 'owner' : 'staff',
     phone,
     email,
     passwordHash: await hashPassword(password),
     name,
-    storeId: null,
+    storeId: store?.id ?? null,
     isActive: isBootstrap || byOwner,
   });
 
@@ -103,6 +166,17 @@ export async function POST(request: NextRequest) {
       bootstrap: isBootstrap,
       // The client needs this to decide between "you're in" and "wait to be approved".
       pending_approval: !user.isActive,
+      store: store
+        ? {
+            id: store.id,
+            name: store.name,
+            // Never true here, and sent anyway: the signup screen has to tell the owner
+            // their shop is registered but not yet visible, and reading that from the
+            // record is better than the screen assuming it.
+            is_active: store.isActive,
+            awaiting_approval: !store.isActive,
+          }
+        : null,
     },
     { status: 201, headers: { 'cache-control': 'no-store' } }
   );

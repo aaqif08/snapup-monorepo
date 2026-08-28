@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AuthShell, { AuthAlert, AuthField, AuthSubmit, authInputClass } from '@/components/AuthShell';
 import PasswordField, { MIN_PASSWORD } from '@/components/PasswordField';
 import { AccountError, fetchMe, signup } from '@/lib/accountClient';
@@ -29,6 +29,34 @@ export default function ConsoleSignupPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  /**
+   * Registering a shop is opt-in.
+   *
+   * A colleague joining an existing branch has no shop of their own to describe, and
+   * making them scroll past eight fields that do not apply is how a signup form gets
+   * abandoned. Owners tick the box; staff do not.
+   */
+  const [registerStore, setRegisterStore] = useState(false);
+  const [storeName, setStoreName] = useState('');
+  const [address, setAddress] = useState('');
+  const [ssid, setSsid] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [opensAt, setOpensAt] = useState('09:00');
+  const [closesAt, setClosesAt] = useState('21:00');
+  const [storeRegistered, setStoreRegistered] = useState<string | null>(null);
+
+  /**
+   * Google sends people here when their address has no console account.
+   *
+   * There is deliberately no "sign up with Google" button: signing up decides a role,
+   * an approval state and possibly a whole shop, none of which follows from owning a
+   * Google account. So Google signs you *in* to an account made here, and this explains
+   * that to someone who has just been bounced.
+   */
+  const params = useSearchParams();
+  const fromGoogle = params.get('auth_error') === 'google_no_account';
   const [busy, setBusy] = useState(false);
   const [durable, setDurable] = useState<boolean | null>(null);
 
@@ -82,7 +110,26 @@ export default function ConsoleSignupPage() {
         password,
         name: name.trim() || undefined,
         phone: phone.trim() || undefined,
+        store: registerStore
+          ? {
+              name: storeName.trim(),
+              address: address.trim(),
+              advertisedSsid: ssid.trim(),
+              // Sent as numbers or omitted entirely. An empty string would be coerced to
+              // zero somewhere downstream, and zero is a real coordinate in the Gulf of
+              // Guinea rather than a missing one.
+              ...(latitude.trim() ? { latitude: Number(latitude) } : {}),
+              ...(longitude.trim() ? { longitude: Number(longitude) } : {}),
+              opensAt,
+              closesAt,
+              // Deliberately not sent: the server registers every self-signed-up shop
+              // inactive regardless, and a field the client could set would be a field the
+              // client could set to true.
+            }
+          : undefined,
       });
+
+      if (result.store) setStoreRegistered(result.store.name);
 
       if (result.pending_approval) {
         setPending(true);
@@ -93,7 +140,9 @@ export default function ConsoleSignupPage() {
       setUser(result.user);
       router.replace('/');
     } catch (exc) {
-      if (exc instanceof AccountError && exc.code === 'email_taken') {
+      if (exc instanceof AccountError && exc.code === 'invalid_store') {
+        setError(exc.message);
+      } else if (exc instanceof AccountError && exc.code === 'email_taken') {
         setFieldErrors({ email: 'An account already exists for this email.' });
       } else if (exc instanceof AccountError && exc.code === 'phone_taken') {
         setFieldErrors({ phone: 'That mobile number is already attached to an account.' });
@@ -123,6 +172,17 @@ export default function ConsoleSignupPage() {
           you can sign in. Ask whoever set up this console — they will see you at the top of
           that screen, marked as waiting for approval.
         </AuthAlert>
+
+        {storeRegistered && (
+          <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+            <p className="text-sm font-extrabold text-ink">{storeRegistered} is registered</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-muted">
+              It is saved with your Wi-Fi network, location and opening hours, and is hidden
+              from customers until an owner activates it in <strong>Stores</strong>. Nothing
+              is lost in the meantime.
+            </p>
+          </div>
+        )}
       </AuthShell>
     );
   }
@@ -141,6 +201,16 @@ export default function ConsoleSignupPage() {
         </p>
       }
     >
+      {fromGoogle && (
+        <div className="mb-5">
+          <AuthAlert tone="warning">
+            That Google account is not registered here yet. Create an account with the same
+            email address and you will be able to use the Google button to sign in from
+            then on.
+          </AuthAlert>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <AuthField label="Your name">
           <input
@@ -223,6 +293,119 @@ export default function ConsoleSignupPage() {
             lost on restart. Run <code className="font-mono">npm run db:migrate</code> first.
           </AuthAlert>
         )}
+
+        {/* ---- The shop ---- */}
+        <div className="rounded-2xl border border-border bg-bg p-4">
+          <label className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              checked={registerStore}
+              onChange={(event) => setRegisterStore(event.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-[rgb(var(--color-primary))]"
+            />
+            <span>
+              <span className="block text-sm font-extrabold text-ink">
+                I am registering my shop
+              </span>
+              <span className="mt-0.5 block text-[12px] leading-relaxed text-muted">
+                Tick this if you own the shop. Leave it if you are joining a branch that is
+                already on SnapUp.
+              </span>
+            </span>
+          </label>
+
+          {registerStore && (
+            <div className="mt-4 space-y-4 border-t border-border pt-4">
+              <AuthField label="Shop name">
+                <input
+                  value={storeName}
+                  onChange={(event) => setStoreName(event.target.value)}
+                  placeholder="Kurinji Metro Bazaar — Trichy"
+                  className={authInputClass}
+                />
+              </AuthField>
+
+              <AuthField label="Address">
+                <input
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                  placeholder="60/4 A1C Singaram Nagar, Kattur, Tiruchirappalli"
+                  className={authInputClass}
+                />
+              </AuthField>
+
+              <AuthField label="Customer Wi-Fi network name (SSID)">
+                <input
+                  value={ssid}
+                  onChange={(event) => setSsid(event.target.value)}
+                  placeholder="KMB-Trichy-Guest"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  className={`${authInputClass} font-mono`}
+                />
+              </AuthField>
+              <p className="-mt-2 text-[12px] leading-relaxed text-muted">
+                Shoppers must be on this network for a session to start. The name alone does
+                not grant access — an owner adds the network&rsquo;s public IP range in the
+                console before the shop goes live.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                <AuthField label="Latitude">
+                  <input
+                    value={latitude}
+                    onChange={(event) => setLatitude(event.target.value)}
+                    placeholder="10.7905"
+                    inputMode="decimal"
+                    className={`${authInputClass} font-mono`}
+                  />
+                </AuthField>
+                <AuthField label="Longitude">
+                  <input
+                    value={longitude}
+                    onChange={(event) => setLongitude(event.target.value)}
+                    placeholder="78.7047"
+                    inputMode="decimal"
+                    className={`${authInputClass} font-mono`}
+                  />
+                </AuthField>
+              </div>
+              <p className="-mt-2 text-[12px] leading-relaxed text-muted">
+                Stand at the entrance and read them off Google Maps. Without them the shop
+                still works, but it is listed after every located shop and shows no distance.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                <AuthField label="Opens at">
+                  <input
+                    type="time"
+                    value={opensAt}
+                    onChange={(event) => setOpensAt(event.target.value)}
+                    className={`${authInputClass} font-mono`}
+                  />
+                </AuthField>
+                <AuthField label="Closes at">
+                  <input
+                    type="time"
+                    value={closesAt}
+                    onChange={(event) => setClosesAt(event.target.value)}
+                    className={`${authInputClass} font-mono`}
+                  />
+                </AuthField>
+              </div>
+              <p className="-mt-2 text-[12px] leading-relaxed text-muted">
+                Customers see these, and the app shows the shop as closed outside them.
+                Closing after midnight is fine — set 22:00 to 02:00.
+              </p>
+
+              <AuthAlert tone="warning">
+                Your shop is registered straight away but stays <strong>hidden from
+                customers</strong> until an owner activates it. Nobody can put a shop in the
+                customer app on their own say-so.
+              </AuthAlert>
+            </div>
+          )}
+        </div>
 
         <AuthSubmit busy={busy} busyLabel="Creating account…">
           Create account

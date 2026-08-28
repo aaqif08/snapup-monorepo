@@ -87,6 +87,8 @@ export interface SignupResult {
   bootstrap: boolean;
   /** True when an owner still has to activate this account before it can sign in. */
   pending_approval: boolean;
+  /** Present only when a shop was registered alongside the account. */
+  store: { id: string; name: string; is_active: boolean; awaiting_approval: boolean } | null;
 }
 
 export function signup(input: {
@@ -94,6 +96,22 @@ export function signup(input: {
   password: string;
   name?: string;
   phone?: string;
+  /**
+   * The owner's shop, when they are registering one.
+   *
+   * Notably has no `isActive`: the gateway registers every self-signed-up shop hidden
+   * regardless, and a field the client could send would be a field the client could
+   * send as true.
+   */
+  store?: {
+    name: string;
+    address: string;
+    advertisedSsid: string;
+    latitude?: number;
+    longitude?: number;
+    opensAt?: string;
+    closesAt?: string;
+  };
 }): Promise<SignupResult> {
   return call<SignupResult>('/api/auth/signup', {
     method: 'POST',
@@ -190,4 +208,38 @@ export function updateStaff(
 /** Deactivates rather than deletes — past activity has to stay attributable. */
 export function removeStaff(id: string): Promise<{ staff: AccountUser; notice: string }> {
   return call(`/api/staff/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}
+
+/** Which sign-in methods this deployment offers. Drives whether the Google button exists. */
+export async function fetchAuthConfig(): Promise<{ google: boolean }> {
+  try {
+    return await call<{ google: boolean }>('/api/auth/config');
+  } catch {
+    // A console that cannot reach its own config should draw fewer buttons, not more.
+    return { google: false };
+  }
+}
+
+/** Ask for a one-time code. Shared with the customer app; only redemption differs. */
+export async function requestConsoleOtp(phone: string): Promise<void> {
+  await call<unknown>('/api/auth/otp/request', {
+    method: 'POST',
+    body: JSON.stringify({ phone }),
+  });
+}
+
+/**
+ * Redeem a code for a console session.
+ *
+ * Hits the console-only endpoint, which refuses to create an account. A number with no
+ * console account is turned away rather than quietly becoming a shopper's.
+ */
+export async function verifyConsoleOtp(
+  phone: string,
+  code: string
+): Promise<{ user: AccountUser }> {
+  return call<{ user: AccountUser }>('/api/auth/otp/verify', {
+    method: 'POST',
+    body: JSON.stringify({ phone, code }),
+  });
 }

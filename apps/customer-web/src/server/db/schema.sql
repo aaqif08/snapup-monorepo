@@ -450,3 +450,56 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_checked_by     text REFERENCE
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_checked_at     bigint;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS weight_override_by    text REFERENCES users (id);
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS exit_approved_at      bigint;
+
+-- ---------------------------------------------------------------------------
+-- Stores: opening hours
+-- ---------------------------------------------------------------------------
+--
+-- Minutes since local midnight, 0–1439. Not a timestamp and not a time zone: a shop opens
+-- at nine in the morning where it stands, and every branch here is in one country. Storing
+-- wall-clock minutes keeps "09:00" the same string the owner typed, through every backup
+-- and restore, with no offset arithmetic to get wrong twice a year.
+--
+-- Nullable, because a branch is registered before anyone confirms its hours, and because
+-- some shops genuinely do not keep fixed ones. Null means "hours not stated" — the
+-- directory then falls back to the manual `is_open` flag rather than inventing a schedule.
+--
+-- `closes_at_minutes` less than `opens_at_minutes` means the shop closes after midnight
+-- (22:00–02:00). That is a real case for a metro bazaar and the comparison has to allow
+-- for it, so it is written down here rather than discovered as a bug at 1am.
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS opens_at_minutes  integer;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS closes_at_minutes integer;
+
+DO $$ BEGIN
+  ALTER TABLE stores DROP CONSTRAINT IF EXISTS stores_hours_range_check;
+  ALTER TABLE stores ADD CONSTRAINT stores_hours_range_check
+    CHECK (
+      (opens_at_minutes  IS NULL OR (opens_at_minutes  >= 0 AND opens_at_minutes  <= 1439)) AND
+      (closes_at_minutes IS NULL OR (closes_at_minutes >= 0 AND closes_at_minutes <= 1439))
+    );
+EXCEPTION WHEN others THEN NULL;
+END $$;
+
+-- ---------------------------------------------------------------------------
+-- Keep store_id_seq ahead of the ids already in the table
+-- ---------------------------------------------------------------------------
+--
+-- `create()` mints ids as 'store_' || nextval('store_id_seq'), but the CSV importer writes
+-- ids straight from the sheet — store_1, store_2 — and an explicit insert does not advance
+-- a sequence. So after any import the sequence still points at 1, and the first shop
+-- registered through the console dies on:
+--
+--     duplicate key value violates unique constraint "stores_pkey"
+--
+-- which reads as a bug in signup rather than as a sequence that was never caught up.
+--
+-- Idempotent, and safe to run on every migration: it only ever moves the sequence forward,
+-- to the highest numeric suffix present. Ids with no digits are ignored rather than
+-- treated as zero.
+SELECT setval(
+  'store_id_seq',
+  GREATEST(
+    (SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '\D', '', 'g'), '')::bigint), 0) FROM stores),
+    1
+  )
+);

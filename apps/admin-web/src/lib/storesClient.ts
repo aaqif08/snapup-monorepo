@@ -36,6 +36,9 @@ export interface AdminStore {
   api_key_set_at: number | null;
   is_active: boolean;
   is_open: boolean;
+  /** `"09:00"`, or null when the branch has not stated hours. */
+  opens_at: string | null;
+  closes_at: string | null;
 }
 
 export interface StoreDraft {
@@ -51,6 +54,14 @@ export interface StoreDraft {
   apiKeyRef: string | null;
   isActive: boolean;
   isOpen: boolean;
+  /** `"09:00"`, or null to state no hours. Sent as a clock time, stored as minutes. */
+  opensAt?: string | null;
+  closesAt?: string | null;
+  /**
+   * Write-only. Omitted keeps the stored key, null clears it, a string replaces it —
+   * there is no field it can ever be read back out of.
+   */
+  apiKey?: string | null;
 }
 
 export class RegistryError extends Error {

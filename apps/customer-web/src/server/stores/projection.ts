@@ -1,4 +1,5 @@
 import 'server-only';
+import { describeHours, formatClockTime, isOpenAt } from './hours';
 import type { PublicStore, StoreRecord } from './types';
 
 /**
@@ -28,7 +29,14 @@ export function toPublicStore(store: StoreRecord, distanceKm?: number): PublicSt
     latitude: store.latitude,
     longitude: store.longitude,
     ssid: store.advertisedSsid,
-    isOpen: store.isOpen,
+    // Hours decide it when the branch has stated them, and the manual flag is the
+    // fallback when it has not. The flag still wins as an override in one direction:
+    // an owner who closes early for a wedding flips it, and no schedule should
+    // contradict a person standing in the shop.
+    isOpen: store.isOpen && (isOpenAt(store.opensAtMinutes, store.closesAtMinutes) ?? true),
+    hours: describeHours(store.opensAtMinutes, store.closesAtMinutes),
+    opensAt: store.opensAtMinutes === null ? null : formatClockTime(store.opensAtMinutes),
+    closesAt: store.closesAtMinutes === null ? null : formatClockTime(store.closesAtMinutes),
   };
 
   if (distanceKm !== undefined) {

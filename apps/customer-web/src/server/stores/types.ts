@@ -118,6 +118,16 @@ export interface StoreRecord {
 
   /** Local opening state, shown in the directory. Not an access control input. */
   isOpen: boolean;
+
+  /**
+   * Opening hours as minutes since local midnight, or null when not stated.
+   *
+   * Null is not "closed" — a branch is registered before anyone confirms its times, and
+   * treating unstated as closed would hide it from the directory. The customer view falls
+   * back to `isOpen` in that case. See `stores/hours.ts`.
+   */
+  opensAtMinutes: number | null;
+  closesAtMinutes: number | null;
 }
 
 /**
@@ -136,6 +146,10 @@ export interface PublicStore {
   longitude: number | null;
   ssid: string;
   isOpen: boolean;
+  /** `"09:00 – 21:30"`, `"Open 24 hours"`, or null when the branch has not stated hours. */
+  hours: string | null;
+  opensAt: string | null;
+  closesAt: string | null;
   /** Great-circle distance from the requesting device, when coordinates were supplied. */
   distanceKm?: number;
 }
@@ -166,6 +180,8 @@ export interface StoreDraft {
   apiKey?: string | null;
   isActive: boolean;
   isOpen: boolean;
+  opensAtMinutes?: number | null;
+  closesAtMinutes?: number | null;
 }
 
 /**
@@ -193,6 +209,12 @@ export interface StoreRepository {
  * console field — seeds, the retailer-API projection, the in-memory registry. Written
  * once so that adding a fifth credential column is one edit rather than a hunt.
  */
+/** Hours a branch has not stated yet. */
+export const NO_STATED_HOURS = {
+  opensAtMinutes: null,
+  closesAtMinutes: null,
+} as const;
+
 export const NO_STORED_API_KEY = {
   apiKeySealed: null,
   apiKeyMasked: null,

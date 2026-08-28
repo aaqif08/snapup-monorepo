@@ -90,6 +90,17 @@ function toRecord(row: StoreRow): StoreRecord {
       : Number(row.api_key_set_at),
     isActive: row.is_active as boolean,
     isOpen: row.is_open as boolean,
+    // `Number(null)` is 0, which is a real time — midnight — so each is checked rather
+    // than coerced. A branch with no stated hours must read as unstated, not as opening
+    // and closing at 00:00.
+    opensAtMinutes:
+      row.opens_at_minutes === null || row.opens_at_minutes === undefined
+        ? null
+        : Number(row.opens_at_minutes),
+    closesAtMinutes:
+      row.closes_at_minutes === null || row.closes_at_minutes === undefined
+        ? null
+        : Number(row.closes_at_minutes),
   };
 }
 
@@ -135,6 +146,7 @@ class PostgresStoreRepository implements StoreRepository {
         id, name, address, latitude, longitude, authorized_egress_cidrs,
         advertised_ssid, merchant_vpa, merchant_display_name,
         api_base_url, api_key_ref, is_active, is_open,
+        opens_at_minutes, closes_at_minutes,
         api_key_sealed, api_key_masked, api_key_fingerprint, api_key_set_at
       ) VALUES (
         'store_' || nextval('store_id_seq'),
@@ -150,6 +162,8 @@ class PostgresStoreRepository implements StoreRepository {
         ${draft.apiKeyRef},
         ${draft.isActive},
         ${draft.isOpen},
+        ${draft.opensAtMinutes ?? null},
+        ${draft.closesAtMinutes ?? null},
         ${credential.apiKeySealed},
         ${credential.apiKeyMasked},
         ${credential.apiKeyFingerprint},
@@ -202,6 +216,8 @@ class PostgresStoreRepository implements StoreRepository {
         api_key_ref             = ${merged.apiKeyRef},
         is_active               = ${merged.isActive},
         is_open                 = ${merged.isOpen},
+        opens_at_minutes        = ${merged.opensAtMinutes ?? null},
+        closes_at_minutes       = ${merged.closesAtMinutes ?? null},
         api_key_sealed          = ${credential.apiKeySealed},
         api_key_masked          = ${credential.apiKeyMasked},
         api_key_fingerprint     = ${credential.apiKeyFingerprint},

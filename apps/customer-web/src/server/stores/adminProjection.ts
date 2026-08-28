@@ -1,4 +1,5 @@
 import 'server-only';
+import { formatClockTime } from './hours';
 import type { StoreRecord } from './types';
 
 /**
@@ -37,6 +38,11 @@ export function toAdminStore(store: StoreRecord) {
     api_key_set_at: store.apiKeySetAt,
     is_active: store.isActive,
     is_open: store.isOpen,
+    // Sent as "09:00" rather than 540: the console renders them into time inputs, and a
+    // number that has to be divided by sixty before a human can read it is a number that
+    // will eventually be shown to one by mistake.
+    opens_at: store.opensAtMinutes === null ? null : formatClockTime(store.opensAtMinutes),
+    closes_at: store.closesAtMinutes === null ? null : formatClockTime(store.closesAtMinutes),
   };
 }
 

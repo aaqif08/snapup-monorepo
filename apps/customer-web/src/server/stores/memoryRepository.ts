@@ -57,6 +57,8 @@ class InMemoryStoreRepository implements StoreRepository {
 
     const record: StoreRecord = {
       ...credentialFieldsFor(draft.apiKey),
+      opensAtMinutes: draft.opensAtMinutes ?? null,
+      closesAtMinutes: draft.closesAtMinutes ?? null,
       id,
       name: draft.name,
       address: draft.address,

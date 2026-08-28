@@ -29,6 +29,8 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
    * and prefilling the mask would be worse than empty: submitting the form would then
    * save the literal bullet characters as the credential.
    */
+  const [opensAt, setOpensAt] = useState(initial?.opens_at ?? '');
+  const [closesAt, setClosesAt] = useState(initial?.closes_at ?? '');
   const [apiKey, setApiKey] = useState('');
   const [clearApiKey, setClearApiKey] = useState(false);
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
@@ -107,6 +109,10 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
         merchantDisplayName: merchantDisplayName.trim() || null,
         // Blank means "use the platform-wide endpoint", which is correct for a retailer
         // running one central system.
+        // Empty clears the hours, which reads as "not stated" rather than as closed —
+        // the directory then falls back to the manual open flag.
+        opensAt: opensAt || null,
+        closesAt: closesAt || null,
         apiBaseUrl: apiBaseUrl.trim() || null,
         apiKeyRef: keyRef || null,
         // Three states, and the difference matters: omitted keeps the stored key,
@@ -178,6 +184,29 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
             list. Stand at the shop entrance, long-press the pin in Google Maps and copy the
             two numbers. <strong>Leave both blank if you have not surveyed it yet</strong> —
             the store still works, it is simply listed last with no distance. Never enter 0.
+          </p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Opens at">
+              <input
+                type="time"
+                value={opensAt}
+                onChange={(e) => setOpensAt(e.target.value)}
+                className={`${inputClass} font-mono`}
+              />
+            </Field>
+            <Field label="Closes at">
+              <input
+                type="time"
+                value={closesAt}
+                onChange={(e) => setClosesAt(e.target.value)}
+                className={`${inputClass} font-mono`}
+              />
+            </Field>
+          </div>
+          <p className="-mt-1 text-[11px] leading-relaxed text-muted">
+            Shown to customers, and the app marks the shop closed outside them. Leave both
+            blank to state no hours. Closing after midnight is fine — 22:00 to 02:00.
           </p>
 
           <Field label="Customer Wi-Fi SSID">

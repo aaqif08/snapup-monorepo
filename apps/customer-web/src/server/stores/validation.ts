@@ -1,4 +1,5 @@
 import 'server-only';
+import { parseClockTime } from './hours';
 import { isValidLatitude, isValidLongitude } from './geo';
 import { isValidCidr } from './cidr';
 import type { StoreDraft } from './types';
@@ -240,6 +241,35 @@ export function validateStoreDraft(
     errors.push('apiKey is longer than 512 characters. That is not a key; check the paste.');
   } else {
     draft.apiKey = body.apiKey.trim();
+  }
+
+  // ---- opening hours ----
+  //
+  // Accepted as "09:00" rather than a minute count, because that is what a time input
+  // produces and what an owner types. Either may be omitted; a branch registered before
+  // anyone confirmed its times is a normal state, not an error.
+  //
+  // Deliberately no check that closing is after opening: 22:00–02:00 is a shop that closes
+  // after midnight, not a mistake, and `isOpenAt` handles the wrap. Rejecting it would tell
+  // a late-opening branch its own hours are invalid.
+  for (const [field, key] of [
+    ['opensAt', 'opensAtMinutes'],
+    ['closesAt', 'closesAtMinutes'],
+  ] as const) {
+    const value = body[field];
+    if (value === undefined) continue;
+    if (value === null || value === '') {
+      draft[key] = null;
+    } else if (typeof value !== 'string') {
+      errors.push(`${field} must be a 24-hour time like "09:00", or null.`);
+    } else {
+      const minutes = parseClockTime(value);
+      if (minutes === null) {
+        errors.push(`${field} must be a 24-hour time like "09:00" or "21:30".`);
+      } else {
+        draft[key] = minutes;
+      }
+    }
   }
 
   // ---- flags ----
