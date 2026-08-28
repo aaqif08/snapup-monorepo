@@ -46,6 +46,14 @@ export default function ScanPage() {
   /** Set when the camera cannot start, so manual entry is offered instead of nothing. */
   const [cameraFault, setCameraFault] = useState(false);
   const [manualCode, setManualCode] = useState('');
+  /**
+   * What the server has told us about this device's network, if anything.
+   *
+   * `unknown` until an entrance code is redeemed — the check happens there, not here,
+   * and a client-side guess about Wi-Fi is exactly the kind of claim that sends someone
+   * walking round a shop believing they are connected.
+   */
+  const [network, setNetwork] = useState<'unknown' | 'rejected'>('unknown');
 
   const addProduct = useCartStore((state) => state.addProduct);
   const cartItems = useCartStore((state) => state.items);
@@ -107,6 +115,11 @@ export default function ScanPage() {
       try {
         await startSession(qrToken);
       } catch (error) {
+        // The gateway distinguishes "your code is fine but you are not on our network" from
+        // every other failure, and that is the one a customer can act on.
+        if (error instanceof GatewayError && error.code === 'presence_not_verified') {
+          setNetwork('rejected');
+        }
         setScanError(
           error instanceof GatewayError
             ? error.message
@@ -180,8 +193,30 @@ export default function ScanPage() {
               </Pill>
             </>
           ) : (
-            <Pill>Scan the entrance code to start</Pill>
+            // The design shows "Wifi Connected Successfully" here, and this reports what is
+            // actually known rather than asserting it. Before a session exists nothing has
+            // checked the network — presence is verified server-side when the entrance code
+            // is redeemed — so claiming a successful connection would be a guess the
+            // customer is about to act on. It says so only once the server has confirmed it,
+            // and says the opposite when a start was refused for that reason.
+            <Pill tone={network === 'rejected' ? 'danger' : undefined}>
+              {network === 'rejected' ? (
+                <>
+                  Not on the store <strong className="font-extrabold">Wi-Fi</strong> — connect and
+                  scan again
+                </>
+              ) : (
+                <>Connect to the store Wi-Fi, then scan the entrance code</>
+              )}
+            </Pill>
           ))}
+
+        {active && storeName && (
+          <Pill tone="success">
+            Wifi Connected{' '}
+            <strong className="ml-1 font-extrabold text-primary">Successfully</strong>
+          </Pill>
+        )}
       </div>
 
       {/* ---- Viewfinder ---- */}

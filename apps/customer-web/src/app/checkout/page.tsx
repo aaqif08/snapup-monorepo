@@ -7,6 +7,7 @@ import CheckoutStepper from '@/components/CheckoutStepper';
 import ScreenHeader from '@/components/ScreenHeader';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
+import { useSessionStore } from '@/store/useSessionStore';
 import { confirmPayment, createOrder, GatewayError, type ServerOrder } from '@/lib/api';
 import { attemptUpiRedirect, buildUpiLink, isLikelyMobileDevice } from '@/lib/upi';
 
@@ -41,7 +42,10 @@ export default function CheckoutPage() {
     token: string | null;
     verified: boolean;
     code: string | null;
+    /** Which method was used, so the receipt names it rather than guessing. */
+    method: string;
   } | null>(null);
+  const storeName = useSessionStore((state) => state.storeName);
   const [pendingUpiQr, setPendingUpiQr] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -126,6 +130,7 @@ export default function CheckoutPage() {
         token: result.exitToken,
         verified: result.paymentVerified,
         code: result.verificationCode,
+        method,
       });
       setPendingUpiQr(null);
       clearCart();
@@ -148,12 +153,39 @@ export default function CheckoutPage() {
         <CheckoutStepper current="pay" />
 
         <div className="px-4 pb-6 text-center">
+          {/* The design's success mark. Shown only when the payment is actually confirmed —
+              a green tick over an unverified basket would tell the customer the money
+              arrived when nothing has checked, which is the one claim this screen must
+              never make. Unverified gets the neutral mark and the exit code instead. */}
+          <div
+            className={`mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full ${
+              settled.verified ? 'bg-primary' : 'bg-tint'
+            }`}
+            aria-hidden
+          >
+            {settled.verified ? (
+              <svg viewBox="0 0 24 24" className="h-10 w-10 text-onPrimary" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="h-10 w-10 text-primary" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            )}
+          </div>
+
           <h1 className="text-2xl font-extrabold text-ink">
-            {settled.verified ? 'Payment recorded' : 'Almost done'}
+            {settled.verified ? 'Payment Successful' : 'Almost done'}
           </h1>
-          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted">
+
+          <p className="mt-2 text-4xl font-extrabold tabular-nums text-ink">
+            ₹{(order.total / 100).toFixed(2)}
+          </p>
+
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">
             {settled.verified
-              ? 'Show this at the exit to verify your basket and leave.'
+              ? 'Your payment was completed successfully. Show this at the exit to verify your basket and leave.'
               : // True, and worth saying: a tap on "I've paid" is not proof when the money
                 // went to the shop's own account and no provider confirmed it. Setting the
                 // expectation here is what prevents an argument at the gate.
@@ -180,14 +212,22 @@ export default function CheckoutPage() {
           )}
 
           <div className="mx-auto mt-6 w-full rounded-2xl border border-border bg-surface p-4 text-left">
-            <Row label="Paid" value={`₹${(order.total / 100).toFixed(2)}`} strong />
+            <Row label="Store" value={storeName ?? 'This shop'} />
+            <Row label="Payment method" value={methodLabel(settled.method)} />
+            <Row label="Transaction ID" value={order.payment.transaction_ref} mono />
             <Row label="Expected basket weight" value={`${order.expected_weight_grams} g`} />
-            <Row label="Reference" value={order.payment.transaction_ref} mono />
+            <Row label="Amount paid" value={`₹${(order.total / 100).toFixed(2)}`} strong />
           </div>
 
           <button
-            onClick={() => router.push('/bills')}
+            onClick={() => router.push('/')}
             className="mt-5 w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition hover:opacity-90"
+          >
+            Back to Home →
+          </button>
+          <button
+            onClick={() => router.push('/bills')}
+            className="mt-3 w-full text-sm font-extrabold text-primary hover:underline"
           >
             View my bills
           </button>
@@ -383,4 +423,17 @@ function CashMark() {
       <circle cx="12" cy="12" r="2.6" />
     </svg>
   );
+}
+
+/**
+ * How the money was tendered, in the customer's words.
+ *
+ * `upi_attested` is deliberately not called "UPI — paid": the confirmation it produces is
+ * the customer's own claim, and the heading beside this already distinguishes verified from
+ * awaiting. Naming the method is not the place to relitigate that.
+ */
+function methodLabel(method: string): string {
+  if (method === 'upi_attested') return 'UPI';
+  if (method === 'in_store') return 'At the counter';
+  return method;
 }
