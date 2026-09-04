@@ -61,6 +61,9 @@ function toOrder(row: OrderRow): OrderRecord {
     weightOverrideBy: (row.weight_override_by as string | null) ?? null,
 
     subtotalPaise: Number(row.subtotal_paise),
+    productSavingsPaise: Number(row.product_savings_paise ?? 0),
+    serviceFeePaise: Number(row.service_fee_paise ?? 0),
+    gstPaise: Number(row.gst_paise ?? 0),
     discountPaise: Number(row.discount_paise),
     platformFeePaise: Number(row.platform_fee_paise),
     totalPaise: Number(row.total_paise),
@@ -126,6 +129,7 @@ class PostgresOrderRepository implements OrderRepository {
       sql`
         INSERT INTO orders (
           id, store_id, session_id, status, subtotal_paise, discount_paise,
+          product_savings_paise, service_fee_paise, gst_paise,
           platform_fee_paise, total_paise, total_cost_paise, expected_weight_grams,
           created_at, paid_at, payee_vpa, payee_name, transaction_ref, confirmation,
           verification_code, user_id
@@ -136,6 +140,9 @@ class PostgresOrderRepository implements OrderRepository {
           ${draft.status},
           ${draft.subtotalPaise},
           ${draft.discountPaise},
+          ${draft.productSavingsPaise},
+          ${draft.serviceFeePaise},
+          ${draft.gstPaise},
           ${draft.platformFeePaise},
           ${draft.totalPaise},
           ${draft.totalCostPaise},

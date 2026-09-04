@@ -89,6 +89,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       occurredAt: order.paidAt ?? Date.now(),
       orderId: order.id,
       grossPaise: order.totalPaise,
+      // The fee this order actually carried — zero when the customer was signed in
+      // and the waiver applied. Recorded rather than recomputed, so a later change
+      // to the rate cannot rewrite what was already taken.
+      feePaise: order.platformFeePaise,
       costPaise: order.totalCostPaise,
       itemCount: order.lines.reduce((acc, line) => acc + line.quantity, 0),
       lines: order.lines.map((line) => ({

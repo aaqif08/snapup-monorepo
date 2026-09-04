@@ -114,6 +114,7 @@ export function aggregate(
   let sessionsStarted = 0;
   let sessionsCompleted = 0;
   let grossPaise = 0;
+  let feePaise = 0;
   let costPaise = 0;
   let ordersPlaced = 0;
 
@@ -199,6 +200,8 @@ export function aggregate(
       case 'order_placed': {
         ordersPlaced += 1;
         grossPaise += event.grossPaise ?? 0;
+        // Falls back to the flat figure for events written before the fee was recorded.
+        feePaise += event.feePaise ?? platformFeePaisePerOrder;
         costPaise += event.costPaise ?? 0;
         unitsSold += event.itemCount ?? 0;
         convertedSessions.add(event.sessionId);
@@ -274,7 +277,10 @@ export function aggregate(
       grossProfitPaise: grossPaise - costPaise,
       ordersPlaced,
       averageOrderValuePaise: ordersPlaced > 0 ? Math.round(grossPaise / ordersPlaced) : null,
-      platformFeePaise: ordersPlaced * platformFeePaisePerOrder,
+      // Summed from what each order actually carried. `platformFeePaisePerOrder` remains
+      // the fallback for events written before the fee was recorded, so historic figures
+      // do not silently drop to zero.
+      platformFeePaise: feePaise,
     },
   };
 }

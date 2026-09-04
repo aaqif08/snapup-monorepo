@@ -299,7 +299,10 @@ export interface ServerOrder {
     line_total: number;
   }>;
   subtotal: number;
+  product_savings: number;
+  service_fee: number;
   discount: number;
+  gst: number;
   platform_fee: number;
   total: number;
   expected_weight_grams: number;

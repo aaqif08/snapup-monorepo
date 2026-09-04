@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import ScreenHeader from '@/components/ScreenHeader';
 import UndoToast from '@/components/UndoToast';
@@ -24,6 +25,8 @@ interface PendingRemoval {
  * The real discount depends on whether the shopper is signed in, and the server decides
  * that; a number here that the next screen contradicts is worse than no number at all.
  */
+const SERVICE_FEE_RATE = 0.1;
+
 export default function CartPage() {
   const router = useRouter();
 
@@ -33,6 +36,8 @@ export default function CartPage() {
   const hasSession = useSessionStore((state) => Boolean(state.token));
 
   const [pendingRemoval, setPendingRemoval] = useState<PendingRemoval | null>(null);
+  const [showOffer, setShowOffer] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Zustand's persist hydrates asynchronously; rendering first would flash the empty
   // state at anyone returning to a full basket.
@@ -129,12 +134,35 @@ export default function CartPage() {
           </div>
 
           <button
-            onClick={() => router.push('/checkout')}
+            onClick={() => {
+              // The offer is put in front of a guest once, here, because this is the last
+              // moment it can change what they pay. Signed-in shoppers go straight
+              // through — there is nothing to offer them.
+              if (isAuthenticated) router.push('/checkout');
+              else setShowOffer(true);
+            }}
             disabled={!hasSession}
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-40"
           >
             Proceed to Pay <span aria-hidden>→</span> {rupees(totalPrice)}
           </button>
+
+          {showOffer && (
+            <DiscountOffer
+              savingPaise={Math.round(totalPrice * SERVICE_FEE_RATE)}
+              onIgnore={() => {
+                // Continue at the guest total, exactly as the spec asks. Dismissing must
+                // not cost the customer their basket or send them round the loop again.
+                setShowOffer(false);
+                router.push('/checkout');
+              }}
+              onLogin={() => {
+                // Returns here rather than to the home screen. The cart is persisted, so
+                // coming back finds the same basket — no new cart is created.
+                router.push('/login?redirect=/checkout');
+              }}
+            />
+          )}
 
           {!hasSession && (
             <p className="mt-2 text-center text-[12px] font-semibold text-warning">
@@ -252,4 +280,71 @@ function PinIcon() {
 /** Paise to a displayed rupee amount. Display only — never used to compute anything. */
 function rupees(paise: number): string {
   return `₹${(paise / 100).toFixed(2).replace(/\.00$/, '')}`;
+}
+
+/**
+ * The membership offer, shown once, on the way to payment.
+ *
+ * ## Why it interrupts at all
+ *
+ * This is the last moment the number can change. A guest who reaches the payment screen and
+ * only then learns that signing in would have removed the fee has to go back, and going
+ * back through a checkout is where baskets get abandoned.
+ *
+ * ## Why Ignore is a real choice
+ *
+ * The spec asks for it and it is right: somebody in a queue with a trolley does not want an
+ * account, and making the offer refusable is what keeps it an offer. Ignoring continues at
+ * the guest total and never asks again in this basket.
+ *
+ * Login returns to `/checkout`, not to the home screen. The cart is persisted, so the same
+ * basket is waiting — no cart is created, nothing is rescanned.
+ */
+function DiscountOffer({
+  savingPaise,
+  onIgnore,
+  onLogin,
+}: {
+  savingPaise: number;
+  onIgnore: () => void;
+  onLogin: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="offer-title"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+    >
+      <div className="w-full max-w-sm rounded-3xl bg-surface p-6 text-center shadow-pop">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-tint">
+          <svg viewBox="0 0 24 24" className="h-7 w-7 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M20.6 8.6L12 2 3.4 8.6 6.7 19h10.6z" />
+            <path d="M9.5 14.5l5-5M9.6 9.6h.01M14.4 14.4h.01" />
+          </svg>
+        </div>
+
+        <h2 id="offer-title" className="mt-4 text-xl font-extrabold text-ink">
+          Save ₹{(savingPaise / 100).toFixed(2)} on this basket
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          Snap Up members pay no service fee. Sign in and it comes straight off this bill —
+          your basket stays exactly as it is.
+        </p>
+
+        <button
+          onClick={onLogin}
+          className="mt-6 w-full rounded-2xl bg-primary py-3.5 text-base font-extrabold text-onPrimary transition hover:opacity-90"
+        >
+          Login &amp; save ₹{(savingPaise / 100).toFixed(2)}
+        </button>
+        <button
+          onClick={onIgnore}
+          className="mt-3 w-full py-2 text-sm font-bold text-muted hover:underline"
+        >
+          Ignore and continue
+        </button>
+      </div>
+    </div>
+  );
 }

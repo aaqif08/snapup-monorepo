@@ -258,6 +258,11 @@ export function toOrderRecord(dto: OrderDto): OrderRecord {
       expectedWeightGrams: num(line.expected_weight_grams),
     })),
     subtotalPaise: num(dto.subtotal_paise),
+    // A retailer's order book has no Snap Up fee model in it, so these read as zero
+    // rather than being invented from a rate we would then have to keep in step.
+    productSavingsPaise: 0,
+    serviceFeePaise: 0,
+    gstPaise: 0,
     discountPaise: num(dto.discount_paise),
     platformFeePaise: num(dto.platform_fee_paise),
     totalPaise: num(dto.total_paise),

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { guardAdminRequest } from '@/server/adminAuth';
 import { aggregate, analyticsRepository } from '@/server/analytics';
-import { PLATFORM_FEE_PAISE } from '@/server/orders';
+
 import { storeRepository } from '@/server/stores';
 
 export const runtime = 'nodejs';
@@ -45,7 +45,10 @@ export async function GET(request: NextRequest) {
   const fromMs = windowKey === 'today' ? startOfToday(now) : now - WINDOWS[windowKey];
 
   const events = await analyticsRepository.query({ storeId, fromMs, toMs: now + 1 });
-  const analytics = aggregate(storeId, events, { fromMs, toMs: now }, PLATFORM_FEE_PAISE);
+  // Zero as the fallback for events predating per-order fee recording. A historic order
+  // with no recorded fee contributes nothing rather than a fabricated flat amount — an
+  // understated take is checkable against the ledger; an invented one is not.
+  const analytics = aggregate(storeId, events, { fromMs, toMs: now }, 0);
 
   const earliestEventAt = await analyticsRepository.earliestEventAt(storeId);
 

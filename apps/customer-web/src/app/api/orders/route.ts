@@ -55,10 +55,12 @@ export async function POST(request: NextRequest) {
   );
 
   const priced = priceOrder(parsed.lines, catalogue, {
-    // Customer login is still mocked and client-side, so the server has no identity it can
-    // verify and correctly withholds the 5% rather than granting it on a claim anyone can
-    // forge in devtools. `discountReason` tells the UI which case it is in.
-    verifiedCustomerId: null,
+    // From the signed account cookie, never from the request body. The client also sends
+    // what it *believes* about being signed in, and the two are compared rather than
+    // conflated: when they disagree, `discountReason` comes back as
+    // `identity_unverifiable` and the checkout can say why the fee was still charged,
+    // instead of the customer seeing a total they cannot account for.
+    verifiedCustomerId: account.ok ? account.user.id : null,
     clientClaimsAuthenticated: body.client_claims_authenticated === true,
   });
 
@@ -86,6 +88,9 @@ export async function POST(request: NextRequest) {
     ...NO_WEIGHT_CHECK,
     lines: priced.order.lines,
     subtotalPaise: priced.order.subtotalPaise,
+    productSavingsPaise: priced.order.productSavingsPaise,
+    serviceFeePaise: priced.order.serviceFeePaise,
+    gstPaise: priced.order.gstPaise,
     discountPaise: priced.order.discountPaise,
     platformFeePaise: priced.order.platformFeePaise,
     totalPaise: priced.order.totalPaise,

@@ -3,8 +3,8 @@ import 'server-only';
 export { orderRepository } from './repository';
 export {
   priceOrder,
-  PLATFORM_FEE_PAISE,
-  LOGIN_DISCOUNT_RATE,
+  SERVICE_FEE_RATE,
+  gstRate,
   MAX_LINE_QUANTITY,
   MAX_DISTINCT_LINES,
 } from './pricing';

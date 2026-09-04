@@ -73,6 +73,15 @@ export interface StoreEvent {
   orderId?: string;
   /** Paise. Integer arithmetic throughout — see the note in useCartStore. */
   grossPaise?: number;
+  /**
+   * Snap Up's own take on this order, in paise.
+   *
+   * Recorded per order rather than derived from a constant, because the fee is a
+   * percentage of the basket and is waived entirely for a signed-in customer. Multiplying
+   * an order count by a flat figure — which is what this replaced — overstated the take
+   * by the whole of every member's waiver.
+   */
+  feePaise?: number;
   costPaise?: number;
   itemCount?: number;
   /** Seconds between the session's start and the order. */

@@ -23,7 +23,14 @@ export interface CustomerOrder {
     line_total: number;
   }>;
   subtotal: number;
+  /** What the shop's own markdowns took off. Shown in the cart, not as a bill line. */
+  product_savings: number;
+  /** Charged to a guest, struck through and free for a member. */
+  service_fee: number;
+  /** The waiver. Equals `service_fee` for a member, zero for a guest. */
   discount: number;
+  gst: number;
+  /** Deprecated alias for `service_fee`, kept so older clients keep working. */
   platform_fee: number;
   total: number;
   expected_weight_grams: number;
@@ -49,7 +56,10 @@ export function toCustomerOrder(order: OrderRecord): CustomerOrder {
       line_total: line.linePaise,
     })),
     subtotal: order.subtotalPaise,
+    product_savings: order.productSavingsPaise,
+    service_fee: order.serviceFeePaise,
     discount: order.discountPaise,
+    gst: order.gstPaise,
     platform_fee: order.platformFeePaise,
     total: order.totalPaise,
     expected_weight_grams: order.expectedWeightGrams,

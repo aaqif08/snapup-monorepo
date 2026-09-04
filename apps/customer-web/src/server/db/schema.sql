@@ -563,3 +563,22 @@ DO $$ BEGIN
     CHECK (discount_paise >= 0);
 EXCEPTION WHEN others THEN NULL;
 END $$;
+
+-- ---------------------------------------------------------------------------
+-- Orders: the payment summary, line by line
+-- ---------------------------------------------------------------------------
+--
+-- The pilot bill has more shape than a subtotal and a total, and each line has to survive
+-- into the order record — a receipt reprinted next month must show what was actually
+-- charged, not what today's rates would produce.
+--
+--   product_savings_paise  the shop's own markdowns, for "you saved"
+--   service_fee_paise      one tenth of the item total, charged to a guest
+--   discount_paise         the member waiver: equals the fee, or zero
+--   gst_paise              tax, zero until a rate is configured
+--
+-- `platform_fee_paise` already exists and now carries the same figure as
+-- `service_fee_paise`; it is kept because analytics and older rows read it.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS product_savings_paise integer NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS service_fee_paise     integer NOT NULL DEFAULT 0;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS gst_paise             integer NOT NULL DEFAULT 0;

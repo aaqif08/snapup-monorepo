@@ -82,7 +82,14 @@ export interface OrderRecord {
   lines: OrderLine[];
 
   subtotalPaise: number;
+  /** The shop's own markdowns. Shown in the cart, never as a bill line. */
+  productSavingsPaise: number;
+  /** One tenth of the item total. Charged to a guest; struck through for a member. */
+  serviceFeePaise: number;
+  /** The member waiver. Equals the service fee, or zero. */
   discountPaise: number;
+  gstPaise: number;
+  /** Same figure as `serviceFeePaise`; retained because analytics reads it. */
   platformFeePaise: number;
   totalPaise: number;
   /** Cost of goods, for the margin figure on the owner's dashboard. Internal only. */

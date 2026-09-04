@@ -223,6 +223,8 @@ export async function POST(request: NextRequest, { params }: Params) {
     occurredAt: verified.paidAt ?? Date.now(),
     orderId: verified.id,
     grossPaise: verified.totalPaise,
+    // The fee this order actually carried — zero when the waiver applied.
+    feePaise: verified.platformFeePaise,
     costPaise: verified.totalCostPaise,
     itemCount: verified.lines.reduce((total, line) => total + line.quantity, 0),
     lines: verified.lines.map((line) => ({

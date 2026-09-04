@@ -10,11 +10,34 @@ import type { OrderDraftLine, OrderLine } from './types';
  * kind of discrepancy that ends a pilot.
  */
 
-/** Matches the ₹2.00 shown at checkout. The single definition — the UI reads it from here. */
-export const PLATFORM_FEE_PAISE = 200;
+/**
+ * The service fee: one tenth of the item total, and the whole of the membership offer.
+ *
+ * A guest pays it. A signed-in customer does not — the checkout strikes it through and
+ * prints FREE, and the "Snap Up Discount" line carries the same figure back off the bill.
+ * That is why there is no separate discount rate: the benefit *is* the waiver, so a second
+ * percentage would be a second number that has to agree with this one forever.
+ *
+ * Rounded half-up on the subtotal. On ₹500 the fee is ₹50.
+ */
+export const SERVICE_FEE_RATE = 0.1;
 
-/** FR-3: 5% for a logged-in customer, on the item subtotal only, never on the fee. */
-export const LOGIN_DISCOUNT_RATE = 0.05;
+/**
+ * Tax on the bill, as a fraction.
+ *
+ * Zero by default, and deliberately so. Real GST is per-HSN — 0% on most staples, then 5,
+ * 12, 18 — and the supplied catalogue carries neither an HSN code nor a rate. Inventing a
+ * blended figure would put a number on a customer's tax invoice that no return could
+ * justify, which is worse than showing nothing.
+ *
+ * `SNAPUP_GST_RATE` sets it for the pilot (e.g. `0.05`). The line is hidden entirely while
+ * it is zero rather than printed as ₹0.00, because a tax line of zero invites the question
+ * this comment exists to answer.
+ */
+export function gstRate(): number {
+  const raw = Number(process.env.SNAPUP_GST_RATE ?? '0');
+  return Number.isFinite(raw) && raw >= 0 && raw < 1 ? raw : 0;
+}
 
 export const MAX_LINE_QUANTITY = 99;
 export const MAX_DISTINCT_LINES = 200;
@@ -27,8 +50,16 @@ export type PricingFailure =
 
 export interface PricedOrder {
   lines: OrderLine[];
+  /** Item Total: what the goods come to, after any shelf promotion. */
   subtotalPaise: number;
+  /** What the shop's own markdowns took off. Shown in the cart, not as a bill line. */
+  productSavingsPaise: number;
+  /** Charged to a guest, waived for a member. */
+  serviceFeePaise: number;
+  /** The waiver, so guest and member bills are the same shape. Equals the fee, or zero. */
   discountPaise: number;
+  gstPaise: number;
+  /** Retained under its old name so nothing downstream breaks; always the service fee. */
   platformFeePaise: number;
   totalPaise: number;
   totalCostPaise: number;
@@ -101,6 +132,7 @@ export function priceOrder(
 
   const lines: OrderLine[] = [];
   let subtotalPaise = 0;
+  let productSavingsPaise = 0;
   let totalCostPaise = 0;
   let expectedWeightGrams = 0;
 
@@ -121,7 +153,16 @@ export function priceOrder(
     }
 
     const cappedQuantity = Math.min(quantity, MAX_LINE_QUANTITY);
-    const linePaise = product.unit_price * cappedQuantity;
+
+    // The shop's own markdown, applied to everyone. Clamped so a bad catalogue row can
+    // never make an item free or negative, which would otherwise be a way to pay less by
+    // buying more of it.
+    const promotionPaise = Math.min(
+      Math.max(0, product.discount_paise ?? 0),
+      product.unit_price
+    );
+    const effectiveUnitPaise = product.unit_price - promotionPaise;
+    const linePaise = effectiveUnitPaise * cappedQuantity;
     const lineCostPaise = product.cost_price * cappedQuantity;
 
     lines.push({
@@ -129,7 +170,9 @@ export function priceOrder(
       barcode: product.barcode,
       name: product.name,
       quantity: cappedQuantity,
-      unitPricePaise: product.unit_price,
+      // What is actually charged, not the shelf ticket — every downstream figure, the
+      // exit token included, has to agree with the money that changed hands.
+      unitPricePaise: effectiveUnitPaise,
       linePaise,
       unitCostPaise: product.cost_price,
       lineCostPaise,
@@ -137,12 +180,24 @@ export function priceOrder(
     });
 
     subtotalPaise += linePaise;
+    productSavingsPaise += promotionPaise * cappedQuantity;
     totalCostPaise += lineCostPaise;
     expectedWeightGrams += product.expected_weight_grams * cappedQuantity;
   }
 
   const isVerified = context.verifiedCustomerId !== null;
-  const discountPaise = isVerified ? Math.round(subtotalPaise * LOGIN_DISCOUNT_RATE) : 0;
+
+  const serviceFeePaise = Math.round(subtotalPaise * SERVICE_FEE_RATE);
+
+  // The membership benefit, in full. A member is charged the fee and then credited exactly
+  // the same amount, so the bill shows both lines and nets to the goods plus tax. Expressing
+  // it as a waiver rather than as "no fee" is what lets the checkout say what was saved.
+  const discountPaise = isVerified ? serviceFeePaise : 0;
+
+  // Tax on what is actually payable — goods plus any fee that survives the waiver. Charging
+  // it on a fee the customer is not paying would overstate the bill for every member.
+  const taxablePaise = subtotalPaise + serviceFeePaise - discountPaise;
+  const gstPaise = Math.round(taxablePaise * gstRate());
 
   const discountReason: PricedOrder['discountReason'] = isVerified
     ? 'applied'
@@ -155,9 +210,12 @@ export function priceOrder(
     order: {
       lines: lines.sort((a, b) => a.name.localeCompare(b.name)),
       subtotalPaise,
+      productSavingsPaise,
+      serviceFeePaise,
       discountPaise,
-      platformFeePaise: PLATFORM_FEE_PAISE,
-      totalPaise: subtotalPaise - discountPaise + PLATFORM_FEE_PAISE,
+      gstPaise,
+      platformFeePaise: serviceFeePaise,
+      totalPaise: subtotalPaise + serviceFeePaise - discountPaise + gstPaise,
       totalCostPaise,
       expectedWeightGrams,
       discountReason,

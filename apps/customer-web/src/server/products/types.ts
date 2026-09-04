@@ -23,6 +23,18 @@ export interface InternalProduct {
   image_url: string;
   /** Paise. Integer arithmetic only — see the note in useCartStore. */
   unit_price: number;
+
+  /** Manufacturer's printed maximum, in paise. Null when the catalogue did not state one. */
+  mrp_paise?: number | null;
+  /**
+   * Shelf promotion, in paise off `unit_price`. Applied to everybody.
+   *
+   * Not the Snap Up member benefit — that is the service-fee waiver, computed in
+   * `pricing.ts`. This is the shop's own markdown, and the supplied catalogue carries
+   * one on 448 of its 547 lines.
+   */
+  discount_paise?: number;
+  brand?: string | null;
   expected_weight_grams: number;
 
   /**

@@ -259,6 +259,8 @@ export default function CheckoutPage() {
           )}
         </div>
 
+        {order && <PaymentSummary order={order} />}
+
         {error && (
           <p role="alert" className="mt-4 rounded-2xl bg-danger/10 px-4 py-3 text-sm font-bold text-danger">
             {error}
@@ -436,4 +438,86 @@ function methodLabel(method: string): string {
   if (method === 'upi_attested') return 'UPI';
   if (method === 'in_store') return 'At the counter';
   return method;
+}
+
+/**
+ * The payment summary.
+ *
+ * Every figure comes from the priced order the server returned — nothing here adds up a
+ * total of its own. A summary that recomputes is a summary that can disagree with the
+ * amount actually charged, and the first anyone would know of it is a customer at the exit
+ * holding a bill that does not match their screen.
+ *
+ * The service fee is the whole of the membership offer: a guest pays a tenth of the item
+ * total, and signing in strikes it through and prints FREE. So the fee line is always shown
+ * — struck through rather than removed — because "you are not paying this" only lands if
+ * the customer can see what they are not paying.
+ */
+function PaymentSummary({ order }: { order: ServerOrder }) {
+  const waived = order.discount > 0;
+  const rupees = (paise: number) => `₹${(paise / 100).toFixed(2)}`;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+      <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+        Payment summary
+      </p>
+
+      <dl className="mt-3 space-y-2.5 text-sm">
+        <SummaryRow label="Item Total" value={rupees(order.subtotal)} />
+
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted">Service Fees</dt>
+          <dd className="flex items-baseline gap-2 tabular-nums">
+            <span className={waived ? 'text-muted line-through' : 'font-semibold text-ink'}>
+              {rupees(order.service_fee)}
+            </span>
+            {waived && <span className="font-extrabold text-primary">FREE</span>}
+          </dd>
+        </div>
+
+        <div className="flex items-baseline justify-between gap-3">
+          <dt className="text-muted">Snap Up Discount</dt>
+          <dd className="tabular-nums">
+            {waived ? (
+              <span className="font-semibold text-primary">−{rupees(order.discount)}</span>
+            ) : (
+              // The offer, stated where the money would be. A guest is not being told they
+              // saved nothing; they are being told what signing in is worth on this basket.
+              <span className="text-[13px] font-semibold text-primary">
+                ₹0 — Login to redeem
+              </span>
+            )}
+          </dd>
+        </div>
+
+        {/* Hidden entirely while the rate is zero. A tax line of ₹0.00 invites a question
+            about why it is zero, and the honest answer — no HSN codes in the catalogue yet
+            — does not belong on a customer's checkout. */}
+        {order.gst > 0 && <SummaryRow label="GST & Other Charges" value={rupees(order.gst)} />}
+
+        <div className="flex items-baseline justify-between gap-3 border-t border-border pt-2.5">
+          <dt className="font-extrabold text-ink">Total to Pay</dt>
+          <dd className="text-lg font-extrabold tabular-nums text-ink">
+            {rupees(order.total)}
+          </dd>
+        </div>
+      </dl>
+
+      {order.product_savings > 0 && (
+        <p className="mt-3 text-[12px] font-semibold text-primary">
+          Shop offers already applied: you saved {rupees(order.product_savings)}.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <dt className="text-muted">{label}</dt>
+      <dd className="font-semibold tabular-nums text-ink">{value}</dd>
+    </div>
+  );
 }
