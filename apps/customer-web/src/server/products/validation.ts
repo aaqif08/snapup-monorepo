@@ -1,10 +1,11 @@
 import 'server-only';
+import { isValidBarcode } from './barcodeFormat';
 import type { ProductDraft } from './types';
 
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] };
 
 /** EAN/UPC: digits only. Matches the pattern the customer lookup route enforces. */
-const BARCODE_PATTERN = /^\d{6,14}$/;
+
 
 const MAX_NAME = 120;
 const MAX_TEXT = 120;
@@ -87,7 +88,7 @@ export function validateProductDraft(
   }
 
   if (body.barcode === undefined) requireField('barcode');
-  else if (typeof body.barcode !== 'string' || !BARCODE_PATTERN.test(body.barcode.trim())) {
+  else if (typeof body.barcode !== 'string' || !isValidBarcode(body.barcode)) {
     errors.push('barcode must be 6-14 digits.');
   } else {
     draft.barcode = body.barcode.trim();

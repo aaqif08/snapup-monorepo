@@ -499,7 +499,7 @@ END $$;
 SELECT setval(
   'store_id_seq',
   GREATEST(
-    (SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '\D', '', 'g'), '')::bigint), 0) FROM stores),
+    (SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '[^0-9]', '', 'g'), '')::bigint), 0) FROM stores),
     1
   )
 );
@@ -531,5 +531,35 @@ DO $$ BEGIN
   ALTER TABLE users DROP CONSTRAINT IF EXISTS users_have_an_identifier;
   ALTER TABLE users ADD CONSTRAINT users_have_an_identifier
     CHECK (phone IS NOT NULL OR email IS NOT NULL OR username_folded IS NOT NULL);
+EXCEPTION WHEN others THEN NULL;
+END $$;
+
+-- ---------------------------------------------------------------------------
+-- Products: brand, MRP and the Snap Up discount
+-- ---------------------------------------------------------------------------
+--
+-- The supplied catalogue carries four money figures per item: MRP, Sell, Discount and
+-- Final. They are not interchangeable and the pilot checkout depends on the difference.
+--
+--   mrp_paise       the printed maximum price, shown struck through
+--   unit_price      what anybody pays -- the catalogue's "Sell"
+--   discount_paise  the Snap Up discount, applied only to a signed-in customer
+--
+-- Section 3 of the pilot specification makes that last distinction load-bearing: a guest
+-- sees "Snap Up Discount ₹0 — Login to redeem" and the same basket costs less once they
+-- sign in. Storing only a final price would make that impossible to express, and storing
+-- a percentage would let guest and member totals disagree by a rounding paisa.
+--
+-- Derived as Sell − Final rather than read from the "Discount" column, which appears as a
+-- flat rupee amount, a percentage, or "None" depending on the row. One subtraction is
+-- exact for all three.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS brand          text;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS mrp_paise      integer;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS discount_paise integer NOT NULL DEFAULT 0;
+
+DO $$ BEGIN
+  ALTER TABLE products DROP CONSTRAINT IF EXISTS products_discount_not_negative;
+  ALTER TABLE products ADD CONSTRAINT products_discount_not_negative
+    CHECK (discount_paise >= 0);
 EXCEPTION WHEN others THEN NULL;
 END $$;

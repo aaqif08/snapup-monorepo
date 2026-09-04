@@ -73,6 +73,13 @@ function embeddedDataDir(url) {
  */
 function splitStatements(sql) {
   const withoutComments = sql
+    // Normalised before anything else. Git checks this file out with CRLF on Windows, and
+    // in JavaScript `.` does not match `\r` — it is a line terminator — so `/--.*$/`
+    // silently strips nothing on a CRLF file. The unstripped comments then reach the
+    // scanner below, where the one describing the scrypt format ('scrypt$N$r$p$salt$hash')
+    // reads as a dollar-quote opener and swallows the rest of the schema. It surfaces as
+    // "syntax error at end of input", which points nowhere near the cause.
+    .replace(/\r\n?/g, '\n')
     .split('\n')
     .map((line) => line.replace(/--.*$/, ''))
     .join('\n');

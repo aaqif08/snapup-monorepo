@@ -167,10 +167,12 @@ async function importProducts(sql, file) {
          id, store_id, barcode, name, category, aisle, image_url,
          unit_price, expected_weight_grams, is_active,
          cost_price, profit_margin_pct, supplier_name, supplier_contact,
-         stock_quantity, internal_sku, purchase_history
+         stock_quantity, internal_sku, purchase_history,
+         brand, mrp_paise, discount_paise
        ) VALUES (
          'prod_' || nextval('product_id_seq'), $1, $2, $3, $4, NULLIF($5, ''), $6,
-         $7, $8, true, $9, $10, $11, '', $12, $13, '[]'::jsonb
+         $7, $8, true, $9, $10, $11, '', $12, $13, '[]'::jsonb,
+         NULLIF($14, ''), $15, $16
        )
        ON CONFLICT (store_id, barcode) DO UPDATE SET
          name = EXCLUDED.name,
@@ -183,6 +185,9 @@ async function importProducts(sql, file) {
          supplier_name = EXCLUDED.supplier_name,
          stock_quantity = EXCLUDED.stock_quantity,
          internal_sku = EXCLUDED.internal_sku,
+         brand = EXCLUDED.brand,
+         mrp_paise = EXCLUDED.mrp_paise,
+         discount_paise = EXCLUDED.discount_paise,
          is_active = true`,
       [
         storeId,
@@ -198,6 +203,12 @@ async function importProducts(sql, file) {
         row.supplier || '',
         Number(row.stock || 0),
         row.sku || '',
+        row.brand || '',
+        // Optional columns. A sheet without them leaves MRP unknown and the Snap Up
+        // discount at zero, which is the correct reading of "not stated" — a missing
+        // discount must never be inferred from the price.
+        row.mrp_rupees ? toPaise(row.mrp_rupees, 'mrp_rupees', line) : null,
+        row.discount_rupees ? toPaise(row.discount_rupees, 'discount_rupees', line) : 0,
       ]
     );
     count += 1;
@@ -268,7 +279,7 @@ async function importStores(sql, file) {
   // signup collides on store_1 and fails with a primary-key violation that looks nothing
   // like its cause. Only ever moves the sequence forward.
   await sql(
-    `SELECT setval('store_id_seq', GREATEST((SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '\D', '', 'g'), '')::bigint), 0) FROM stores), 1))`
+    `SELECT setval('store_id_seq', GREATEST((SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '[^0-9]', '', 'g'), '')::bigint), 0) FROM stores), 1))`
   );
 
   console.log(`  stores: ${rows.length} rows imported or updated`);

@@ -1,13 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { guardProductRequest } from '@/server/apiAuth';
 import { productRepository, toPublicProduct } from '@/server/products';
+import {
+  BARCODE_RULE,
+  isValidBarcode,
+  normaliseBarcode,
+} from '@/server/products/barcodeFormat';
 import { recordEvent } from '@/server/analytics';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-/** Barcodes are digits only (EAN/UPC). Validating up front keeps junk out of the index lookup. */
-const BARCODE_PATTERN = /^\d{6,14}$/;
 
 /**
  * Single-product lookup — the R3 hot path, and the only way a customer can read product
@@ -19,10 +21,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ bar
   const guard = await guardProductRequest(request);
   if (!guard.ok) return guard.response;
 
-  const { barcode } = await context.params;
-  if (!BARCODE_PATTERN.test(barcode)) {
+  const { barcode: rawBarcode } = await context.params;
+  // Folded before validating and before the lookup, so one definition of the format
+  // serves both — see `products/barcodeFormat.ts`.
+  const barcode = normaliseBarcode(rawBarcode);
+  if (!isValidBarcode(barcode)) {
     return NextResponse.json(
-      { error: { code: 'invalid_barcode', message: 'Barcode must be 6-14 digits.' } },
+      { error: { code: 'invalid_barcode', message: BARCODE_RULE } },
       { status: 400, headers: { 'cache-control': 'no-store' } }
     );
   }
