@@ -46,6 +46,7 @@ export default function CheckoutPage() {
     method: string;
   } | null>(null);
   const storeName = useSessionStore((state) => state.storeName);
+  const setLocked = useCartStore((state) => state.setLocked);
   const [pendingUpiQr, setPendingUpiQr] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -63,6 +64,10 @@ export default function CheckoutPage() {
 
   /** Prices the basket server-side. One order per attempt; reused once it exists. */
   async function ensureOrder(): Promise<ServerOrder | null> {
+    // Frozen while the server prices it. The server prices what it was sent, so an item
+    // scanned between the request and the response is an item in the trolley and not on
+    // the bill.
+    setLocked(true);
     if (order) return order;
 
     setBusy(true);
@@ -81,6 +86,9 @@ export default function CheckoutPage() {
       return null;
     } finally {
       setBusy(false);
+      // Released whichever way it went. A basket left frozen by a failed pricing call is
+      // a customer who cannot add anything and has no idea why.
+      setLocked(false);
     }
   }
 
@@ -118,6 +126,10 @@ export default function CheckoutPage() {
   }
 
   async function confirm(method: 'upi_attested' | 'in_store') {
+    // §3: no second attempt while the first result is unknown. `busy` already disables
+    // the buttons, but a double tap can land two calls before React re-renders, and the
+    // second would be a second payment against the same basket.
+    if (busy || settled) return;
     const priced = await ensureOrder();
     if (!priced) return;
 

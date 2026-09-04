@@ -19,6 +19,19 @@ interface CartState {
   totalPrice: number;
   totalExpectedWeight: number;
   guestSessionId: string;
+  /**
+   * True while checkout is pricing the basket server-side.
+   *
+   * §3 asks for cart mutation to be frozen during checkout validation, and the reason is
+   * concrete: the server prices what it was sent, so an item added between the request
+   * and the response is an item the customer sees in their trolley and not on their
+   * bill. The lock is a UX guarantee, not a security one — the server would simply
+   * re-price a changed basket — but it is the difference between a correct total and an
+   * argument at the exit.
+   */
+  locked: boolean;
+  setLocked: (locked: boolean) => void;
+
   addProduct: (product: Product) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   removeProduct: (productId: string) => void;
@@ -65,7 +78,13 @@ export const useCartStore = create<CartState>()(
       totalExpectedWeight: 0,
       guestSessionId: createGuestSessionId(),
 
+      locked: false,
+      setLocked: (locked) => set({ locked }),
+
       addProduct: (product) => {
+        // Refused rather than queued. A scan that silently lands after checkout has
+        // priced the basket would put an item in the trolley that nobody charged for.
+        if (get().locked) return;
         set((state) => {
           const existingIndex = state.items.findIndex((item) => item.id === product.id);
           const updatedItems = [...state.items];
@@ -85,6 +104,7 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: (productId, quantity) => {
+        if (get().locked) return;
         if (quantity <= 0) {
           get().removeProduct(productId);
           return;

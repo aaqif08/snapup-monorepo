@@ -151,6 +151,67 @@ export async function startSession(qrToken: string): Promise<void> {
   });
 }
 
+/**
+ * Ask the server to extend the session.
+ *
+ * ## Guarded against itself
+ *
+ * A module-level promise, not a React ref. The scan screen mounts and unmounts as the
+ * customer moves around the app, and a ref would reset with it — two mounts inside the
+ * renewal window would each fire a request, and the second would mint a session the first
+ * had already replaced. Sharing one in-flight promise makes concurrent callers await the
+ * same answer instead of racing for a different one.
+ *
+ * The server is the authority regardless: it re-checks presence itself and refuses when the
+ * customer has left. This guard exists to avoid pointless work and a confusing log, not to
+ * enforce anything.
+ */
+let renewalInFlight: Promise<RenewalResult> | null = null;
+
+export interface RenewalResult {
+  renewed: boolean;
+  expiresAt?: number;
+  reason?: string;
+}
+
+export async function renewSession(): Promise<RenewalResult> {
+  if (renewalInFlight) return renewalInFlight;
+
+  const token = useSessionStore.getState().token;
+  if (!token) return { renewed: false, reason: 'no_session' };
+
+  renewalInFlight = (async () => {
+    try {
+      const response = await fetch('/api/session/renew', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) return { renewed: false, reason: 'request_failed' };
+
+      const body = await response.json();
+      if (!body.renewed) return { renewed: false, reason: body.reason as string };
+
+      // Written only after the server confirmed. The timer never advances its own expiry —
+      // a client that extended itself would keep showing time remaining on a session the
+      // server had already stopped honouring.
+      useSessionStore.getState().setSession({
+        token: body.session_token,
+        storeId: body.store.id,
+        storeName: body.store.name,
+        expiresAt: body.expires_at,
+      });
+
+      return { renewed: true, expiresAt: body.expires_at as number };
+    } catch {
+      return { renewed: false, reason: 'network_error' };
+    } finally {
+      renewalInFlight = null;
+    }
+  })();
+
+  return renewalInFlight;
+}
+
 export interface HeartbeatResult {
   active: boolean;
   expiresInSeconds?: number;
