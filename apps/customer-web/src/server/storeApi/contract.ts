@@ -1,6 +1,6 @@
 import 'server-only';
 import type { InternalProduct, ProductDraft } from '../products/types';
-import { NO_STATED_HOURS, NO_STORED_API_KEY } from '../stores/types';
+import { NO_STATED_HOURS, NO_WIFI_CREDENTIALS, NO_STORED_API_KEY } from '../stores/types';
 import type { StoreDraft, StoreRecord } from '../stores/types';
 import { NOT_YET_AT_THE_EXIT, NO_WEIGHT_CHECK } from '../orders/types';
 import type { OrderRecord, PaymentConfirmation } from '../orders/types';
@@ -176,6 +176,7 @@ export function toStoreRecord(dto: StoreDto): StoreRecord {
     // here lives in SnapUp's store table, not theirs.
     ...NO_STORED_API_KEY,
     ...NO_STATED_HOURS,
+    ...NO_WIFI_CREDENTIALS,
     id: dto.id,
     name: dto.name,
     address: dto.address,

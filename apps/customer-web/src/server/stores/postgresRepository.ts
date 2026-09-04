@@ -1,5 +1,5 @@
 import 'server-only';
-import { credentialFieldsFor } from './credentials';
+import { credentialFieldsFor, wifiFieldsFor } from './credentials';
 import { db } from '../db/client';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
 
@@ -88,6 +88,16 @@ function toRecord(row: StoreRow): StoreRecord {
     apiKeySetAt: row.api_key_set_at === null || row.api_key_set_at === undefined
       ? null
       : Number(row.api_key_set_at),
+    wifiPasswordSealed: (row.wifi_password_sealed as string | null) ?? null,
+    wifiPasswordSetAt:
+      row.wifi_password_set_at === null || row.wifi_password_set_at === undefined
+        ? null
+        : Number(row.wifi_password_set_at),
+    networkUpdatedAt:
+      row.network_updated_at === null || row.network_updated_at === undefined
+        ? null
+        : Number(row.network_updated_at),
+    networkUpdatedBy: (row.network_updated_by as string | null) ?? null,
     isActive: row.is_active as boolean,
     isOpen: row.is_open as boolean,
     // `Number(null)` is 0, which is a real time — midnight — so each is checked rather
@@ -141,13 +151,15 @@ class PostgresStoreRepository implements StoreRepository {
     // Sealed here, never by the caller — the route hands over the key in the clear and
     // this is the last point before it reaches storage.
     const credential = credentialFieldsFor(draft.apiKey);
+    const wifi = wifiFieldsFor(draft.wifiPassword);
     const rows = (await sql`
       INSERT INTO stores (
         id, name, address, latitude, longitude, authorized_egress_cidrs,
         advertised_ssid, merchant_vpa, merchant_display_name,
         api_base_url, api_key_ref, is_active, is_open,
         opens_at_minutes, closes_at_minutes,
-        api_key_sealed, api_key_masked, api_key_fingerprint, api_key_set_at
+        api_key_sealed, api_key_masked, api_key_fingerprint, api_key_set_at,
+        wifi_password_sealed, wifi_password_set_at, network_updated_at, network_updated_by
       ) VALUES (
         'store_' || nextval('store_id_seq'),
         ${draft.name},
@@ -167,7 +179,11 @@ class PostgresStoreRepository implements StoreRepository {
         ${credential.apiKeySealed},
         ${credential.apiKeyMasked},
         ${credential.apiKeyFingerprint},
-        ${credential.apiKeySetAt}
+        ${credential.apiKeySetAt},
+        ${wifi.wifiPasswordSealed},
+        ${wifi.wifiPasswordSetAt},
+        ${Date.now()},
+        ${draft.networkUpdatedBy ?? null}
       )
       RETURNING *
     `) as StoreRow[];
@@ -202,6 +218,13 @@ class PostgresStoreRepository implements StoreRepository {
     // credential is carried through. Without this, editing a branch's opening hours
     // would wipe its API key.
     const credential = credentialFieldsFor(patch.apiKey, existing);
+    const wifi = wifiFieldsFor(patch.wifiPassword, existing);
+    // Stamped whenever a network field is touched, so "who changed our Wi-Fi settings"
+    // has an answer. Only these fields count — renaming a shop is not a network change.
+    const networkTouched =
+      patch.advertisedSsid !== undefined ||
+      patch.authorizedEgressCidrs !== undefined ||
+      patch.wifiPassword !== undefined;
     const rows = (await sql`
       UPDATE stores SET
         name                    = ${merged.name},
@@ -221,7 +244,11 @@ class PostgresStoreRepository implements StoreRepository {
         api_key_sealed          = ${credential.apiKeySealed},
         api_key_masked          = ${credential.apiKeyMasked},
         api_key_fingerprint     = ${credential.apiKeyFingerprint},
-        api_key_set_at          = ${credential.apiKeySetAt}
+        api_key_set_at          = ${credential.apiKeySetAt},
+        wifi_password_sealed    = ${wifi.wifiPasswordSealed},
+        wifi_password_set_at    = ${wifi.wifiPasswordSetAt},
+        network_updated_at      = ${networkTouched ? Date.now() : existing.networkUpdatedAt},
+        network_updated_by      = ${networkTouched ? (patch.networkUpdatedBy ?? existing.networkUpdatedBy) : existing.networkUpdatedBy}
       WHERE id = ${id}
       RETURNING *
     `) as StoreRow[];

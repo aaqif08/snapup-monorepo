@@ -1,5 +1,5 @@
 import 'server-only';
-import { NO_STATED_HOURS, NO_STORED_API_KEY, type StoreRecord } from './types';
+import { NO_STATED_HOURS, NO_WIFI_CREDENTIALS, NO_STORED_API_KEY, type StoreRecord } from './types';
 
 /**
  * Initial store registry — Kurinji Metro Bazaar, the pilot retailer.
@@ -57,6 +57,7 @@ const AWAITING_SURVEY = {
   merchantDisplayName: null,
   ...NO_STORED_API_KEY,
   ...NO_STATED_HOURS,
+  ...NO_WIFI_CREDENTIALS,
 } as const;
 
 export const STORE_SEED: StoreRecord[] = [

@@ -41,6 +41,14 @@ export function toAdminStore(store: StoreRecord) {
     // Sent as "09:00" rather than 540: the console renders them into time inputs, and a
     // number that has to be divided by sixty before a human can read it is a number that
     // will eventually be shown to one by mistake.
+    // Whether a Wi-Fi password is on file, and when it was set — never the password, and
+    // deliberately not even a mask. A mask helps an operator tell two API keys apart;
+    // nobody needs to tell two Wi-Fi passwords apart, and the last characters of a short
+    // domestic password give away more than they are worth.
+    wifi_password_set: store.wifiPasswordSealed !== null,
+    wifi_password_set_at: store.wifiPasswordSetAt,
+    network_updated_at: store.networkUpdatedAt,
+    network_updated_by: store.networkUpdatedBy,
     opens_at: store.opensAtMinutes === null ? null : formatClockTime(store.opensAtMinutes),
     closes_at: store.closesAtMinutes === null ? null : formatClockTime(store.closesAtMinutes),
   };

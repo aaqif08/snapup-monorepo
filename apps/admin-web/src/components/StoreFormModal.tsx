@@ -31,6 +31,8 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
    */
   const [opensAt, setOpensAt] = useState(initial?.opens_at ?? '');
   const [closesAt, setClosesAt] = useState(initial?.closes_at ?? '');
+  const [wifiPassword, setWifiPassword] = useState('');
+  const [clearWifiPassword, setClearWifiPassword] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [clearApiKey, setClearApiKey] = useState(false);
   const [isActive, setIsActive] = useState(initial?.is_active ?? true);
@@ -111,6 +113,11 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
         // running one central system.
         // Empty clears the hours, which reads as "not stated" rather than as closed —
         // the directory then falls back to the manual open flag.
+        ...(clearWifiPassword
+          ? { wifiPassword: null }
+          : wifiPassword
+            ? { wifiPassword }
+            : {}),
         opensAt: opensAt || null,
         closesAt: closesAt || null,
         apiBaseUrl: apiBaseUrl.trim() || null,
@@ -217,6 +224,37 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
               placeholder="e.g. DMart-Guest"
             />
           </Field>
+
+          <Field label="Customer Wi-Fi password">
+            {initial?.wifi_password_set && !clearWifiPassword && !wifiPassword ? (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-bg px-3 py-2.5">
+                <p className="text-[12px] text-muted">
+                  On file{' '}
+                  {initial.wifi_password_set_at
+                    ? `since ${new Date(initial.wifi_password_set_at).toLocaleDateString()}`
+                    : ''}
+                </p>
+                <div className="flex shrink-0 gap-2">
+                  <button type="button" onClick={() => setWifiPassword(' ')} className="rounded-lg border border-border px-2.5 py-1.5 text-[11px] font-extrabold text-ink">Replace</button>
+                  <button type="button" onClick={() => setClearWifiPassword(true)} className="rounded-lg border border-danger/40 px-2.5 py-1.5 text-[11px] font-extrabold text-danger">Remove</button>
+                </div>
+              </div>
+            ) : (
+              <input
+                value={wifiPassword.trim() === '' ? wifiPassword.replace(' ', '') : wifiPassword}
+                onChange={(e) => { setWifiPassword(e.target.value); setClearWifiPassword(false); }}
+                type="password"
+                autoComplete="off"
+                className={`${inputClass} font-mono`}
+                placeholder={clearWifiPassword ? 'Will be removed on save' : 'Shop Wi-Fi password'}
+              />
+            )}
+          </Field>
+          <p className="-mt-1 text-[11px] leading-relaxed text-muted">
+            Stored encrypted and never shown again — not to customers, and not here. It is
+            kept so staff stop passing it around on paper. Connecting a shopper to the
+            network is still done by the shop, not by the app.
+          </p>
 
           <Field label="Authorized network ranges (one per line)">
             <textarea

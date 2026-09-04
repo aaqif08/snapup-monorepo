@@ -39,6 +39,11 @@ export interface AdminStore {
   /** `"09:00"`, or null when the branch has not stated hours. */
   opens_at: string | null;
   closes_at: string | null;
+  /** Whether a Wi-Fi password is on file. Never the password itself, and not even a mask. */
+  wifi_password_set: boolean;
+  wifi_password_set_at: number | null;
+  network_updated_at: number | null;
+  network_updated_by: string | null;
 }
 
 export interface StoreDraft {
@@ -62,6 +67,8 @@ export interface StoreDraft {
    * there is no field it can ever be read back out of.
    */
   apiKey?: string | null;
+  /** Write-only. Omitted keeps it, null clears it, a string sets it. */
+  wifiPassword?: string | null;
 }
 
 export class RegistryError extends Error {

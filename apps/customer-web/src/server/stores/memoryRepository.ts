@@ -1,5 +1,5 @@
 import 'server-only';
-import { credentialFieldsFor } from './credentials';
+import { credentialFieldsFor, wifiFieldsFor } from './credentials';
 import { STORE_SEED } from './seed';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
 
@@ -57,6 +57,9 @@ class InMemoryStoreRepository implements StoreRepository {
 
     const record: StoreRecord = {
       ...credentialFieldsFor(draft.apiKey),
+      ...wifiFieldsFor(draft.wifiPassword),
+      networkUpdatedAt: Date.now(),
+      networkUpdatedBy: draft.networkUpdatedBy ?? null,
       opensAtMinutes: draft.opensAtMinutes ?? null,
       closesAtMinutes: draft.closesAtMinutes ?? null,
       id,

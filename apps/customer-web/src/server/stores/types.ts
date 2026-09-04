@@ -113,6 +113,20 @@ export interface StoreRecord {
   apiKeyFingerprint: string | null;
   apiKeySetAt: number | null;
 
+  /**
+   * The shop Wi-Fi password, sealed. Never returned by any API — customer or admin.
+   *
+   * Held so staff stop passing it around on paper, not so the app can show it. A
+   * password that renders in a browser is a password in that browser's cache, history
+   * and screenshots. The console shows only that one is set, and when.
+   */
+  wifiPasswordSealed: string | null;
+  wifiPasswordSetAt: number | null;
+
+  /** Who last changed the network settings, and when. Required by §8. */
+  networkUpdatedAt: number | null;
+  networkUpdatedBy: string | null;
+
   /** Whether SnapUp is currently offered here. Inactive stores are hidden and refused. */
   isActive: boolean;
 
@@ -178,6 +192,10 @@ export interface StoreDraft {
    * the field must do. `null` clears it. A string sets it.
    */
   apiKey?: string | null;
+  /** Write-only, like `apiKey`. Undefined keeps it, null clears it, a string sets it. */
+  wifiPassword?: string | null;
+  /** Stamped by the route from the signed session, never accepted from the client. */
+  networkUpdatedBy?: string | null;
   isActive: boolean;
   isOpen: boolean;
   opensAtMinutes?: number | null;
@@ -220,4 +238,12 @@ export const NO_STORED_API_KEY = {
   apiKeyMasked: null,
   apiKeyFingerprint: null,
   apiKeySetAt: null,
+} as const;
+
+/** A branch whose network credentials have never been set. */
+export const NO_WIFI_CREDENTIALS = {
+  wifiPasswordSealed: null,
+  wifiPasswordSetAt: null,
+  networkUpdatedAt: null,
+  networkUpdatedBy: null,
 } as const;

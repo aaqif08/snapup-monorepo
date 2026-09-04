@@ -614,3 +614,25 @@ ALTER TABLE orders ADD COLUMN IF NOT EXISTS inventory_finalised_at bigint;
 CREATE INDEX IF NOT EXISTS orders_user_exit_idx
   ON orders (user_id, exit_approved_at DESC)
   WHERE user_id IS NOT NULL AND exit_approved_at IS NOT NULL;
+
+-- ---------------------------------------------------------------------------
+-- Per-store Wi-Fi credentials, and who changed them
+-- ---------------------------------------------------------------------------
+--
+-- The SSID is already here and is not a secret — it is broadcast to the whole car park.
+-- The password is, so it is sealed with the same AES-256-GCM machinery as a branch API key
+-- (`stores/credentials.ts`) rather than stored in the clear beside it.
+--
+-- It is never returned by any customer API and never by the admin API either: the console
+-- shows a mask and the fact that one is set. The pilot spec asks for the field so staff
+-- stop passing the password around on paper, not so the app can display it — a password
+-- that renders in a browser is a password in that browser's cache, history and screenshots.
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS wifi_password_sealed text;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS wifi_password_set_at bigint;
+
+-- Configuration changes carry an actor and a timestamp, as §8 requires. Kept on the store
+-- rather than in a general audit log because it answers one specific question a shop owner
+-- asks — "who changed our network settings, and when" — and a row that has to be joined to
+-- three others to answer it is a row nobody consults.
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS network_updated_at bigint;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS network_updated_by text REFERENCES users (id);

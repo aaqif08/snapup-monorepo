@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { guardAdminRequest } from '@/server/adminAuth';
+import { readAccount } from '@/server/accounts/session';
 import { storeRepository } from '@/server/stores';
 import { validateStoreDraft } from '@/server/stores/validation';
 import { toAdminStore, warningsFor } from '@/server/stores/adminProjection';
@@ -40,10 +41,21 @@ export async function POST(request: NextRequest) {
     return badRequest(['Expected a JSON body.']);
   }
 
+  // Who is making the change, from the signed account cookie. §8 asks for network
+
+  // configuration changes to carry an actor, and an actor the client could supply
+
+  // would be an actor the client could invent.
+
+  const actor = await readAccount(request);
+
   const validated = validateStoreDraft(body, { partial: false });
   if (!validated.ok) return badRequest(validated.errors);
 
-  const created = await storeRepository.create(validated.value as StoreDraft);
+  const created = await storeRepository.create({
+    ...(validated.value as StoreDraft),
+    networkUpdatedBy: actor.ok ? actor.user.id : null,
+  });
 
   return NextResponse.json(
     { store: toAdminStore(created), warnings: warningsFor(created) },

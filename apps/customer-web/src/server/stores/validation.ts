@@ -272,6 +272,22 @@ export function validateStoreDraft(
     }
   }
 
+  // The Wi-Fi password. Write-only, like `apiKey`: sealed on the way in, with no field it
+  // can be read back out of. Undefined keeps what is stored — otherwise editing a branch's
+  // opening hours would wipe its network password.
+  if (body.wifiPassword === undefined) {
+    // Absent means absent.
+  } else if (body.wifiPassword === null || body.wifiPassword === '') {
+    draft.wifiPassword = null;
+  } else if (typeof body.wifiPassword !== 'string') {
+    errors.push('wifiPassword must be a string or null.');
+  } else if (body.wifiPassword.length > 128) {
+    // WPA2 tops out at 63 characters; 128 is generous and still bounds what reaches storage.
+    errors.push('wifiPassword is longer than any Wi-Fi network accepts. Check the paste.');
+  } else {
+    draft.wifiPassword = body.wifiPassword;
+  }
+
   // ---- flags ----
   for (const flag of ['isActive', 'isOpen'] as const) {
     if (body[flag] === undefined) {

@@ -216,3 +216,28 @@ export function credentialFieldsFor(
     apiKeySetAt: Date.now(),
   };
 }
+
+/**
+ * Seals a Wi-Fi password for storage, using the same vault as a branch API key.
+ *
+ * Same three-way contract as `credentialFieldsFor`: `undefined` keeps what is stored,
+ * `null` or empty clears it, a string replaces it. Collapsing the first two would wipe a
+ * branch's Wi-Fi password every time somebody edited its opening hours.
+ *
+ * There is no `masked` counterpart on purpose. A branch API key is masked so an operator
+ * can tell two keys apart; nobody needs to tell two Wi-Fi passwords apart, and the last
+ * four characters of a short domestic password give away more than they are worth.
+ */
+export function wifiFieldsFor(
+  password: string | null | undefined,
+  existing?: { wifiPasswordSealed: string | null; wifiPasswordSetAt: number | null }
+): { wifiPasswordSealed: string | null; wifiPasswordSetAt: number | null } {
+  if (password === undefined) {
+    return existing ?? { wifiPasswordSealed: null, wifiPasswordSetAt: null };
+  }
+
+  const trimmed = (password ?? '').trim();
+  if (!trimmed) return { wifiPasswordSealed: null, wifiPasswordSetAt: null };
+
+  return { wifiPasswordSealed: seal(trimmed).sealed, wifiPasswordSetAt: Date.now() };
+}
