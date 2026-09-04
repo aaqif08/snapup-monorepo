@@ -15,6 +15,7 @@ export interface AccountUser {
   id: string;
   role: Role;
   phone: string | null;
+  username: string | null;
   email: string | null;
   name: string | null;
   storeId: string | null;
@@ -77,6 +78,28 @@ export function requestOtp(phone: string): Promise<OtpRequestResult> {
 
 export function verifyOtp(phone: string, code: string, name?: string): Promise<{ user: AccountUser }> {
   return post<{ user: AccountUser }>('/api/auth/otp/verify', { phone, code, name });
+}
+
+/**
+ * Register a shopper.
+ *
+ * The pilot uses a username and a password; OTP is excluded, and the request endpoints
+ * behind it stay in place for staff rather than being deleted for a temporary product
+ * decision.
+ */
+export function register(input: {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  email?: string;
+  name?: string;
+}): Promise<{ user: AccountUser }> {
+  return post<{ user: AccountUser }>('/api/auth/register', input);
+}
+
+/** Sign a shopper in. Every failure returns the same message by design. */
+export function signIn(username: string, password: string): Promise<{ user: AccountUser }> {
+  return post<{ user: AccountUser }>('/api/auth/signin', { username, password });
 }
 
 export function consoleLogin(email: string, password: string): Promise<{ user: AccountUser }> {

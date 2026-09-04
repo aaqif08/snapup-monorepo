@@ -1,4 +1,5 @@
 import 'server-only';
+import { fold } from './username';
 import { db } from '../db/client';
 import { randomNonce } from '../crypto';
 import type {
@@ -26,6 +27,8 @@ function toUser(row: Row): UserRecord {
     id: row.id as string,
     role: row.role as UserRecord['role'],
     phone: (row.phone as string | null) ?? null,
+    username: (row.username as string | null) ?? null,
+    usernameFolded: (row.username_folded as string | null) ?? null,
     email: (row.email as string | null) ?? null,
     passwordHash: (row.password_hash as string | null) ?? null,
     name: (row.name as string | null) ?? null,
@@ -86,6 +89,16 @@ class PostgresUserRepository implements UserRepository {
     return rows.length > 0 ? toUser(rows[0]) : null;
   }
 
+  async findByUsername(username: string): Promise<UserRecord | null> {
+    const sql = db();
+    // Matched on the folded column, which is what the unique index covers. Folding the
+    // input here rather than in SQL keeps one definition of what folding means.
+    const rows = (await sql`
+      SELECT * FROM users WHERE username_folded = ${fold(username)}
+    `) as Row[];
+    return rows.length > 0 ? toUser(rows[0]) : null;
+  }
+
   async findByEmail(email: string): Promise<UserRecord | null> {
     const sql = db();
     // Compared lowercased on both sides. Email is case-insensitive in practice, and an
@@ -113,11 +126,16 @@ class PostgresUserRepository implements UserRepository {
   async create(draft: UserDraft): Promise<UserRecord> {
     const sql = db();
     const rows = (await sql`
-      INSERT INTO users (id, role, phone, email, password_hash, name, store_id, is_active)
+      INSERT INTO users (
+        id, role, phone, username, username_folded, email, password_hash, name,
+        store_id, is_active
+      )
       VALUES (
         ${`usr_${randomNonce(9)}`},
         ${draft.role},
         ${draft.phone},
+        ${draft.username ?? null},
+        ${draft.username ? fold(draft.username) : null},
         ${draft.email},
         ${draft.passwordHash},
         ${draft.name},

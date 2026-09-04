@@ -92,3 +92,34 @@ export function passwordProblem(password: string): string | null {
   }
   return null;
 }
+
+/**
+ * A hash of nothing anyone knows, used to spend the same time on a missing account.
+ *
+ * Computed once, lazily, so the cost lands on the first failed sign-in rather than on every
+ * cold start of every route bundle that imports this module.
+ */
+let decoyHash: Promise<string> | null = null;
+
+/**
+ * Verify a password, doing the same work whether or not the account exists.
+ *
+ * `verifyPassword` returns immediately when there is no stored hash, which is correct for
+ * its own purposes and wrong for sign-in: scrypt takes around a tenth of a second, so
+ * "unknown username" answers in a millisecond while "known username, wrong password" takes
+ * a hundred. That difference is a username oracle that no amount of careful wording in the
+ * error message can close.
+ *
+ * Hashing the supplied password against a decoy costs the same tenth of a second and makes
+ * the two indistinguishable.
+ */
+export async function verifyPasswordConstantTime(
+  password: string,
+  stored: string | null
+): Promise<boolean> {
+  if (stored) return verifyPassword(password, stored);
+
+  decoyHash ??= hashPassword('decoy-password-for-timing-equalisation');
+  await verifyPassword(password, await decoyHash);
+  return false;
+}

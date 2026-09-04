@@ -503,3 +503,33 @@ SELECT setval(
     1
   )
 );
+
+-- ---------------------------------------------------------------------------
+-- Customer identity: username and password
+-- ---------------------------------------------------------------------------
+--
+-- The pilot spec excludes OTP and asks for basic username/password sign-in, so a customer
+-- now needs an identifier that is neither a phone number nor a work email. `username` is
+-- that identifier.
+--
+-- Stored case-folded in a separate column rather than lower-cased in place, because the
+-- name a person typed is the one they should see on their own account. `username_folded`
+-- is what uniqueness and lookup use, so "Dharsan" and "dharsan" cannot both be registered
+-- while the display keeps whichever was chosen.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS username        text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS username_folded text;
+
+CREATE UNIQUE INDEX IF NOT EXISTS users_username_folded_idx
+  ON users (username_folded) WHERE username_folded IS NOT NULL;
+
+-- The original constraint predates usernames and required a phone or an email. A pilot
+-- customer now has neither: the specification excludes OTP, so they register with a
+-- username and a password and are asked for nothing else. Widened rather than dropped —
+-- an account reachable by nothing at all still cannot sign in, and that is worth refusing
+-- at the table rather than discovering as a support call.
+DO $$ BEGIN
+  ALTER TABLE users DROP CONSTRAINT IF EXISTS users_have_an_identifier;
+  ALTER TABLE users ADD CONSTRAINT users_have_an_identifier
+    CHECK (phone IS NOT NULL OR email IS NOT NULL OR username_folded IS NOT NULL);
+EXCEPTION WHEN others THEN NULL;
+END $$;

@@ -52,6 +52,16 @@ export interface UserRecord {
    */
   phone: string | null;
 
+  /**
+   * A shopper's sign-in name. Null for accounts that predate it and for staff, who sign
+   * in by email.
+   *
+   * Stored as typed; `usernameFolded` is what uniqueness and lookup use. See
+   * `accounts/username.ts` for why both exist.
+   */
+  username: string | null;
+  usernameFolded: string | null;
+
   /** Console identity. Unique when present. Customers normally have none. */
   email: string | null;
 
@@ -91,6 +101,7 @@ export interface PublicUser {
   id: string;
   role: Role;
   phone: string | null;
+  username: string | null;
   email: string | null;
   name: string | null;
   storeId: string | null;
@@ -102,6 +113,8 @@ export interface PublicUser {
 export interface UserDraft {
   role: Role;
   phone: string | null;
+  username?: string | null;
+  usernameFolded?: string | null;
   email: string | null;
   passwordHash: string | null;
   name: string | null;
@@ -131,6 +144,8 @@ export interface UserRepository {
   findById(id: string): Promise<UserRecord | null>;
   findByPhone(phone: string): Promise<UserRecord | null>;
   findByEmail(email: string): Promise<UserRecord | null>;
+  /** Looks up by the folded form, so case never decides whether an account is found. */
+  findByUsername(username: string): Promise<UserRecord | null>;
   /** Every account with a console role. Customers are excluded. */
   listStaff(): Promise<UserRecord[]>;
   countStaff(): Promise<number>;

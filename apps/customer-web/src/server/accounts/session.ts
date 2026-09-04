@@ -140,6 +140,9 @@ export function toPublicUser(user: UserRecord): PublicUser {
     id: user.id,
     role: user.role,
     phone: user.phone,
+    // The typed form, never the folded one — the folded value is a lookup key, not
+    // something a person should ever be shown as their own name.
+    username: user.username,
     email: user.email,
     name: user.name,
     storeId: user.storeId,

@@ -1,204 +1,222 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import OtpInput from '@/components/OtpInput';
+import ScreenHeader from '@/components/ScreenHeader';
+import { AuthError, register, signIn } from '@/lib/authClient';
 import { useAuthStore } from '@/store/useAuthStore';
-import { AuthError, requestOtp, verifyOtp, type OtpRequestResult } from '@/lib/authClient';
 
-const OTP_LENGTH = 6;
-const RESEND_SECONDS = 30;
-
+/**
+ * Customer sign-in and registration.
+ *
+ * ## Why there is no OTP here any more
+ *
+ * The pilot specification excludes it. The practical reason is delivery: an SMS in India
+ * needs a registered DLT template and a live MSG91 account, and a credential that cannot be
+ * delivered is not a credential. A username and a password work on day one.
+ *
+ * The OTP endpoints remain and the console still uses them for staff. Deleting a working
+ * mechanism to satisfy a decision the spec itself calls a pilot choice would only mean
+ * building it again afterwards.
+ *
+ * ## Why one page rather than two
+ *
+ * Registration is three fields and sign-in is two. Splitting them across routes means a
+ * customer who guessed wrong has to go and find the other page — and the guess is common,
+ * because most people cannot remember whether they registered on a previous visit.
+ * Switching here keeps whatever they have already typed.
+ */
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') ?? '/';
+  const params = useSearchParams();
   const setUser = useAuthStore((state) => state.setUser);
 
-  const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
-  const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
-  const [sent, setSent] = useState<OtpRequestResult | null>(null);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'signin' | 'register'>('signin');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  const [resendIn, setResendIn] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  // Resend cooldown. Without one, an impatient customer taps "resend" three times, burns
-  // the per-number rate limit, and is then locked out for minutes — having done nothing
-  // wrong. The server limit still exists; this stops people walking into it.
-  useEffect(() => {
-    if (resendIn <= 0) return;
-    const timer = window.setTimeout(() => setResendIn((n) => n - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [resendIn]);
+  /**
+   * Only ever a path on this origin.
+   *
+   * The usual way in is a checkout that wants the discount applied, so returning to where
+   * they came from matters. An absolute URL would make this page an open redirect, which is
+   * a phishing primitive given away for free — and especially cheap to abuse on a screen
+   * where someone is already typing a password.
+   */
+  const requested = params.get('redirect') ?? '/';
+  const redirect = requested.startsWith('/') && !requested.startsWith('//') ? requested : '/';
 
-  async function send(isResend = false) {
-    if (phone.length !== 10) {
-      setFormError('Enter your 10-digit mobile number.');
+  const registering = mode === 'register';
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setError(null);
+
+    if (!username.trim() || !password) {
+      setError('Enter your username and password.');
       return;
     }
-    setBusy(true);
-    setFormError(null);
-    try {
-      const result = await requestOtp(phone);
-      setSent(result);
-      setStep('otp');
-      setResendIn(RESEND_SECONDS);
-      if (isResend) setOtp('');
-    } catch (error) {
-      setFormError(error instanceof AuthError ? error.message : 'Could not send a code.');
-    } finally {
-      setBusy(false);
+    if (registering && password !== confirmPassword) {
+      setError('Both passwords must match.');
+      return;
     }
-  }
 
-  async function verify(code: string) {
     setBusy(true);
-    setFormError(null);
     try {
-      const { user } = await verifyOtp(phone, code, name.trim() || undefined);
+      const { user } = registering
+        ? await register({ username: username.trim(), password, confirmPassword })
+        : await signIn(username.trim(), password);
+
       setUser(user);
-      router.push(redirectTo);
-    } catch (error) {
-      setFormError(error instanceof AuthError ? error.message : 'Could not verify that code.');
-      setOtp('');
+      router.replace(redirect);
+    } catch (exc) {
+      setError(exc instanceof AuthError ? exc.message : 'Something went wrong. Please try again.');
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] items-end bg-primary">
-      <div className="w-full animate-fade-in-up rounded-t-[32px] bg-surface p-7 pb-12">
-        <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-primary">
-          Snap Up In-Store
+    <div className="mx-auto min-h-[100dvh] max-w-lg bg-bg">
+      <ScreenHeader title="" onBack={() => router.push('/')} />
+
+      <div className="px-6 pt-2">
+        <h1 className="text-2xl font-extrabold text-ink">
+          {registering ? 'Create your account' : 'Welcome back'}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          {registering
+            ? 'You can shop without an account. Sign up to redeem the Snap Up discount and keep your bills.'
+            : 'Sign in to redeem your discount and see your past bills.'}
         </p>
 
-        <h1 className="mb-1.5 mt-3 text-2xl font-extrabold text-ink">
-          {step === 'phone' ? 'Scan, Pay & Skip the Line' : 'Verify your number'}
-        </h1>
-        <p className="mb-7 text-sm text-muted">
-          {step === 'phone' ? (
-            'Enter your mobile number to continue'
+        <form onSubmit={handleSubmit} className="mt-7 space-y-4" noValidate>
+          <Field label="Username">
+            <input
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              autoComplete="username"
+              placeholder="dharsan.k"
+              className={inputClass}
+            />
+          </Field>
+
+          <Field label="Password">
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete={registering ? 'new-password' : 'current-password'}
+              placeholder="••••••••"
+              className={inputClass}
+            />
+          </Field>
+
+          {registering && (
+            <Field label="Re-enter password">
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+                placeholder="••••••••"
+                className={inputClass}
+              />
+            </Field>
+          )}
+
+          {!registering && (
+            <div className="flex justify-end">
+              <Link
+                href="/forgot-password"
+                className="text-[11px] font-extrabold uppercase tracking-wide text-primary"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          )}
+
+          {error && (
+            <p
+              role="alert"
+              className="rounded-2xl bg-danger/10 px-4 py-3 text-sm font-bold text-danger"
+            >
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition hover:opacity-90 disabled:opacity-50"
+          >
+            {busy
+              ? registering
+                ? 'Creating your account…'
+                : 'Signing in…'
+              : registering
+                ? 'Create account'
+                : 'Sign in'}
+          </button>
+        </form>
+
+        {/* Keeps whatever is already typed. Someone who picked the wrong mode has usually
+            typed the right credentials. */}
+        <button
+          type="button"
+          onClick={() => {
+            setMode(registering ? 'signin' : 'register');
+            setConfirmPassword('');
+            setError(null);
+          }}
+          className="mt-6 w-full text-center text-sm text-muted"
+        >
+          {registering ? (
+            <>
+              Already have an account? <span className="font-extrabold text-primary">Sign in</span>
+            </>
           ) : (
             <>
-              We sent a {OTP_LENGTH}-digit code to{' '}
-              <span className="font-bold text-ink">{sent?.phone_masked}</span>
+              New to Snap Up?{' '}
+              <span className="font-extrabold text-primary">Create an account</span>
             </>
           )}
-        </p>
-
-        {step === 'phone' ? (
-          <>
-            <div className="mb-3 flex h-14 items-center rounded-2xl border border-border bg-bg px-4 transition-colors duration-200 focus-within:border-primary">
-              <span className="mr-3 font-bold text-ink">+91</span>
-              <input
-                type="tel"
-                inputMode="numeric"
-                maxLength={10}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                onKeyDown={(e) => e.key === 'Enter' && void send()}
-                placeholder="Enter Mobile Number"
-                autoFocus
-                autoComplete="tel"
-                className="flex-1 bg-transparent text-base font-semibold text-ink outline-none placeholder:text-muted"
-              />
-            </div>
-
-            {/* Optional, and only used if this number has never signed in before. Asking
-                for it up front beats a second screen after verification. */}
-            <div className="mb-2 flex h-14 items-center rounded-2xl border border-border bg-bg px-4 transition-colors duration-200 focus-within:border-primary">
-              <input
-                type="text"
-                value={name}
-                maxLength={80}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && void send()}
-                placeholder="Your name (optional)"
-                autoComplete="name"
-                className="flex-1 bg-transparent text-base font-semibold text-ink outline-none placeholder:text-muted"
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <OtpInput
-              value={otp}
-              length={OTP_LENGTH}
-              disabled={busy}
-              onChange={setOtp}
-              onComplete={(code) => void verify(code)}
-            />
-
-            {/* Shown only when the server is writing codes to its own log instead of
-                sending an SMS. Loud and ugly on purpose — this must never be mistaken for
-                normal behaviour, and the server refuses log delivery in production. */}
-            {sent?.dev_code && (
-              <div className="mb-3 rounded-xl border border-warning/40 bg-warning/10 px-3 py-2">
-                <p className="text-[11px] font-extrabold uppercase tracking-wide text-warning">
-                  Dev mode — no SMS configured
-                </p>
-                <p className="mt-0.5 text-sm font-bold text-warning">
-                  Your code is <span className="font-mono tracking-widest">{sent.dev_code}</span>
-                </p>
-              </div>
-            )}
-
-            <div className="mb-2 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => {
-                  setStep('phone');
-                  setOtp('');
-                  setFormError(null);
-                }}
-                className="text-xs font-bold text-muted underline-offset-2 hover:text-ink hover:underline"
-              >
-                Change number
-              </button>
-
-              <button
-                type="button"
-                disabled={resendIn > 0 || busy}
-                onClick={() => void send(true)}
-                className="text-xs font-bold text-primary disabled:text-muted"
-              >
-                {resendIn > 0 ? `Resend in ${resendIn}s` : 'Resend code'}
-              </button>
-            </div>
-          </>
-        )}
-
-        {formError && (
-          <p role="alert" className="mb-3 text-sm font-semibold text-danger">
-            {formError}
-          </p>
-        )}
-
-        <button
-          onClick={() => (step === 'phone' ? void send() : void verify(otp))}
-          disabled={busy || (step === 'phone' ? phone.length !== 10 : otp.length !== OTP_LENGTH)}
-          className="mt-4 h-14 w-full rounded-2xl bg-accent text-base font-extrabold text-onAccent transition duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-40"
-        >
-          {busy ? 'Please wait…' : step === 'phone' ? 'Send code' : 'Verify & Proceed'}
         </button>
 
-        <p className="mt-5 text-center text-[11px] leading-relaxed text-muted">
-          By continuing, you agree to our Terms of Service &amp; Privacy Policy.
-          <br />
-          You&apos;ll stay signed in until you log out.
+        <p className="mt-8 text-center text-[12px] leading-relaxed text-muted">
+          You can scan and pay without signing in. An account is only needed to redeem the
+          discount and keep your bills. You stay signed in until you log out.
         </p>
       </div>
     </div>
   );
 }
 
+const inputClass =
+  'w-full rounded-2xl border border-border bg-surface px-4 py-3.5 text-base text-ink outline-none transition focus:border-primary';
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-[11px] font-extrabold uppercase tracking-wide text-muted">
+        {label}
+      </span>
+      {children}
+    </label>
+  );
+}
+
 export default function LoginPage() {
   // useSearchParams requires a Suspense boundary in the App Router.
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div className="min-h-[60vh] bg-bg" />}>
       <LoginForm />
     </Suspense>
   );

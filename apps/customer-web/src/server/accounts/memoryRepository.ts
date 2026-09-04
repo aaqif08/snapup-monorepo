@@ -1,4 +1,5 @@
 import 'server-only';
+import { fold } from './username';
 import { randomNonce } from '../crypto';
 import type {
   OtpChallenge,
@@ -40,6 +41,14 @@ class InMemoryUserRepository implements UserRepository {
     return null;
   }
 
+  async findByUsername(username: string): Promise<UserRecord | null> {
+    const wanted = fold(username);
+    for (const user of this.users.values()) {
+      if (user.usernameFolded === wanted) return { ...user };
+    }
+    return null;
+  }
+
   async findByEmail(email: string): Promise<UserRecord | null> {
     const wanted = email.toLowerCase();
     for (const user of this.users.values()) {
@@ -64,6 +73,8 @@ class InMemoryUserRepository implements UserRepository {
       id: `usr_${randomNonce(9)}`,
       role: draft.role,
       phone: draft.phone,
+      username: draft.username ?? null,
+      usernameFolded: draft.username ? fold(draft.username) : null,
       email: draft.email,
       passwordHash: draft.passwordHash,
       name: draft.name,
