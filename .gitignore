@@ -10,3 +10,6 @@ next-env.d.ts
 # Embedded Postgres data directory (PGlite). Real database contents — accounts, password
 # hashes, orders. Never committed.
 /.data/
+
+# Scratch space for one-off scripts. Never part of the product.
+/.tmp/
