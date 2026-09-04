@@ -582,3 +582,35 @@ END $$;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS product_savings_paise integer NOT NULL DEFAULT 0;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS service_fee_paise     integer NOT NULL DEFAULT 0;
 ALTER TABLE orders ADD COLUMN IF NOT EXISTS gst_paise             integer NOT NULL DEFAULT 0;
+
+-- ---------------------------------------------------------------------------
+-- The exit gate: Deny, and delayed inventory finalisation
+-- ---------------------------------------------------------------------------
+--
+-- Payment being confirmed is not the end of the journey. The customer receives an exit QR,
+-- a member of staff scans it, and only Proceed releases the final bill and moves stock.
+-- Sections 6 and 7 of the pilot specification both turn on that delay, and both call the
+-- alternatives — a bill released early, stock decremented at payment — incomplete.
+--
+-- `exit_approved_at` already exists and is the authorisation. These are its counterparts:
+--
+--   exit_denied_at / _by / _reason   staff refused. An auditable exception, not a deletion:
+--                                    the money was taken and the basket is disputed, so the
+--                                    record has to say who refused it and why.
+--   inventory_finalised_at           the idempotency guard for the stock write. Without it a
+--                                    second Proceed on the same order decrements twice, and
+--                                    the shop's count drifts down every time somebody taps
+--                                    a button they think did nothing.
+--
+-- Denial and approval are deliberately separate columns rather than one status. An order
+-- that was denied and later approved has to retain both facts; a single column would lose
+-- the refusal the moment it was overturned, which is exactly the history worth keeping.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS exit_denied_at        bigint;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS exit_denied_by        text REFERENCES users (id);
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS exit_denial_reason    text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS inventory_finalised_at bigint;
+
+-- Bills are read by exit authorisation, and a shopper with a long history reads them often.
+CREATE INDEX IF NOT EXISTS orders_user_exit_idx
+  ON orders (user_id, exit_approved_at DESC)
+  WHERE user_id IS NOT NULL AND exit_approved_at IS NOT NULL;

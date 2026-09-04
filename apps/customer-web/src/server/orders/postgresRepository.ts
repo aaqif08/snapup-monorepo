@@ -37,6 +37,19 @@ function toLine(row: LineRow): OrderLine {
   };
 }
 
+/**
+ * A nullable bigint timestamp, read without inventing a value.
+ *
+ * `Number(null)` is 0, which as a timestamp is 1 January 1970 — a real instant, and one
+ * that would read as "this order was authorised at the exit" for every order that never
+ * was. Each column is checked rather than coerced.
+ */
+function readTimestamp(value: unknown): number | null {
+  if (value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function toOrder(row: OrderRow): OrderRecord {
   return {
     id: row.id as string,
@@ -59,6 +72,11 @@ function toOrder(row: OrderRow): OrderRecord {
         ? null
         : Number(row.weight_checked_at),
     weightOverrideBy: (row.weight_override_by as string | null) ?? null,
+    exitApprovedAt: readTimestamp(row.exit_approved_at),
+    exitDeniedAt: readTimestamp(row.exit_denied_at),
+    exitDeniedBy: (row.exit_denied_by as string | null) ?? null,
+    exitDenialReason: (row.exit_denial_reason as string | null) ?? null,
+    inventoryFinalisedAt: readTimestamp(row.inventory_finalised_at),
 
     subtotalPaise: Number(row.subtotal_paise),
     productSavingsPaise: Number(row.product_savings_paise ?? 0),
@@ -255,6 +273,73 @@ class PostgresOrderRepository implements OrderRepository {
 
     if (rows.length === 0) return null;
     return this.findById(id);
+  }
+
+  /**
+   * Authorise the exit, release the bill, and move the stock — once.
+   *
+   * The guard is inside the UPDATE rather than a read-then-write. Two staff scanning the
+   * same exit QR at a busy gate is entirely plausible, and a check-then-act would let both
+   * pass: the bill would be released twice, harmlessly, and the stock decremented twice,
+   * which is not harmless — the shop's count drifts down every time somebody taps a button
+   * they think did nothing.
+   *
+   * The stock write is conditioned on this order's own `inventory_finalised_at` having just
+   * been set, so it can only ever run on the transaction that won the race.
+   */
+  async approveExit(orderId: string, staffId: string, at: number): Promise<OrderRecord | null> {
+    const sql = db();
+
+    const rows = (await sql(
+      `UPDATE orders
+          SET exit_approved_at = $2,
+              inventory_finalised_at = COALESCE(inventory_finalised_at, $2),
+              verified_by = COALESCE(verified_by, $3)
+        WHERE id = $1
+          AND exit_approved_at IS NULL
+          AND exit_denied_at IS NULL
+        RETURNING id`,
+      [orderId, at, staffId]
+    )) as OrderRow[];
+
+    // Lost the race, already authorised, or previously denied. Either way this call must
+    // not move stock.
+    if (rows.length === 0) return null;
+
+    // Section 7: the product master is never deleted, only its count reduced, and only
+    // here — at Proceed, not at payment. `GREATEST(...,0)` keeps a miscounted shelf from
+    // producing a negative quantity that would then read as a phantom restock.
+    await sql(
+      `UPDATE products AS p
+          SET stock_quantity = GREATEST(p.stock_quantity - l.quantity, 0)
+         FROM order_lines AS l
+        WHERE l.order_id = $1
+          AND l.product_id = p.id`,
+      [orderId]
+    );
+
+    return this.findById(orderId);
+  }
+
+  async denyExit(
+    orderId: string,
+    staffId: string,
+    reason: string,
+    at: number
+  ): Promise<OrderRecord | null> {
+    const sql = db();
+    // Guarded on approval rather than on denial: refusing twice is harmless and honest,
+    // but a basket already cleared to leave cannot be retrospectively refused.
+    const rows = (await sql(
+      `UPDATE orders
+          SET exit_denied_at = $2, exit_denied_by = $3, exit_denial_reason = $4
+        WHERE id = $1 AND exit_approved_at IS NULL
+        RETURNING id`,
+      [orderId, at, staffId, reason]
+    )) as OrderRow[];
+
+    if (rows.length === 0) return null;
+    return this.findById(orderId);
   }
 
   async recordWeightCheck(input: {

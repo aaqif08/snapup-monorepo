@@ -113,6 +113,20 @@ class ApiOrderRepository implements OrderRepository {
    * would see an approval that recorded nothing, and an override nobody can attribute
    * is the one outcome the audit column exists to prevent.
    */
+  /**
+   * Not supported against a retailer order book: their schema has no concept of a Snap Up
+   * exit authorisation, and silently succeeding would release a bill nothing had cleared.
+   */
+  async approveExit(): Promise<OrderRecord | null> {
+    throw new Error(
+      'Exit authorisation requires SnapUp-owned orders. Leave SNAPUP_STORE_API_BASE unset.'
+    );
+  }
+
+  async denyExit(): Promise<OrderRecord | null> {
+    throw new Error('Exit denial requires SnapUp-owned orders. See approveExit.');
+  }
+
   async recordWeightCheck(): Promise<void> {
     throw new Error(
       'The exit weight check requires SnapUp-owned orders. Leave SNAPUP_STORE_API_BASE ' +

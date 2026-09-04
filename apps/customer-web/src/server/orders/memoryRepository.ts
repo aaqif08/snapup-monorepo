@@ -86,6 +86,34 @@ class InMemoryOrderRepository implements OrderRepository {
     return null;
   }
 
+  async approveExit(orderId: string, staffId: string, at: number): Promise<OrderRecord | null> {
+    const order = this.byId.get(orderId);
+    // Already authorised: a replayed exit QR must not succeed a second time, and must
+    // not finalise inventory again.
+    if (!order || order.exitApprovedAt !== null) return null;
+
+    order.exitApprovedAt = at;
+    order.inventoryFinalisedAt = at;
+    order.verifiedBy ??= staffId;
+    return { ...order };
+  }
+
+  async denyExit(
+    orderId: string,
+    staffId: string,
+    reason: string,
+    at: number
+  ): Promise<OrderRecord | null> {
+    const order = this.byId.get(orderId);
+    // A basket already cleared to leave cannot be retrospectively refused.
+    if (!order || order.exitApprovedAt !== null) return null;
+
+    order.exitDeniedAt = at;
+    order.exitDeniedBy = staffId;
+    order.exitDenialReason = reason;
+    return { ...order };
+  }
+
   async recordWeightCheck(input: {
     orderId: string;
     observedGrams: number;

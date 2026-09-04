@@ -26,7 +26,24 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const orders = await orderRepository.listForUser(account.user.id, 50);
+  const all = await orderRepository.listForUser(account.user.id, 50);
+
+  // **The bill is withheld until staff authorise the exit.**
+  //
+  // Section 6 puts this in the flow explicitly and section 11 names premature bill release
+  // as incomplete, and the reason is not ceremony: between paying and being cleared to
+  // leave, the basket is still disputable. Handing over a final bill in that window says
+  // the transaction is settled when a member of staff has not yet agreed that it is.
+  //
+  // Filtered rather than flagged. A bill listed with `released: false` is a bill the client
+  // decides whether to show, and that decision does not belong on the client.
+  const orders = all.filter((order) => order.exitApprovedAt !== null);
+
+  // Orders paid but not yet cleared: reported as a count, with no line detail. The customer
+  // is standing at the gate and needs to know the app has not lost their purchase.
+  const awaitingExit = all.filter(
+    (order) => order.exitApprovedAt === null && order.exitDeniedAt === null
+  ).length;
 
   // One store lookup per distinct store rather than per order: a regular at one shop would
   // otherwise trigger fifty identical reads to render one list.
@@ -39,6 +56,8 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(
     {
       signed_in: true,
+      /** Paid, but not yet cleared to leave. Their bills are not in `bills` yet. */
+      awaiting_exit: awaitingExit,
       bills: orders.map((order) => ({
         id: order.id,
         store_id: order.storeId,

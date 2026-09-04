@@ -2,7 +2,7 @@ import 'server-only';
 import type { InternalProduct, ProductDraft } from '../products/types';
 import { NO_STATED_HOURS, NO_STORED_API_KEY } from '../stores/types';
 import type { StoreDraft, StoreRecord } from '../stores/types';
-import { NO_WEIGHT_CHECK } from '../orders/types';
+import { NOT_YET_AT_THE_EXIT, NO_WEIGHT_CHECK } from '../orders/types';
 import type { OrderRecord, PaymentConfirmation } from '../orders/types';
 import type { StoreEvent } from '../analytics/types';
 
@@ -233,6 +233,7 @@ export function toOrderRecord(dto: OrderDto): OrderRecord {
   return {
     // The retailer's order book has no SnapUp weight check in it.
     ...NO_WEIGHT_CHECK,
+    ...NOT_YET_AT_THE_EXIT,
     id: dto.id,
     storeId: dto.store_id,
     sessionId: dto.session_id,

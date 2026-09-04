@@ -130,6 +130,27 @@ export interface OrderRecord {
    */
   weightOverrideBy: string | null;
 
+  /**
+   * When staff authorised the exit. **This is what releases the final bill.**
+   *
+   * Null means paid but not yet cleared to leave: the customer holds an exit QR and the
+   * bill does not exist for them yet. Section 11 names premature bill release as
+   * incomplete, and this column is the difference.
+   */
+  exitApprovedAt: number | null;
+
+  /**
+   * Staff refused the exit. Kept alongside approval rather than as one status, because
+   * an order denied and later approved must retain both facts — a single column would
+   * lose the refusal the moment it was overturned.
+   */
+  exitDeniedAt: number | null;
+  exitDeniedBy: string | null;
+  exitDenialReason: string | null;
+
+  /** Set once stock has been moved for this order. The guard against decrementing twice. */
+  inventoryFinalisedAt: number | null;
+
   payment: {
     /** Merchant VPA money was directed to. Per-store under the phase-1 model. */
     payeeVpa: string | null;
@@ -202,6 +223,23 @@ export interface OrderRepository {
    * other. Keeping them apart means a shop with no scale is a missing row rather than
    * a special case threaded through the payment path.
    */
+  /**
+   * Authorise the exit: release the bill and move the stock, once.
+   *
+   * Returns null when the order was already authorised, so a second scan of the same
+   * exit QR cannot finalise inventory twice. The spec asks for exactly that — a replayed
+   * exit QR must not succeed a second time.
+   */
+  approveExit(orderId: string, staffId: string, at: number): Promise<OrderRecord | null>;
+
+  /** Refuse the exit. Records who and why; releases nothing and moves no stock. */
+  denyExit(
+    orderId: string,
+    staffId: string,
+    reason: string,
+    at: number
+  ): Promise<OrderRecord | null>;
+
   recordWeightCheck(input: {
     orderId: string;
     observedGrams: number;
@@ -222,4 +260,18 @@ export const NO_WEIGHT_CHECK = {
   weightCheckedBy: null,
   weightCheckedAt: null,
   weightOverrideBy: null,
+} as const;
+
+/**
+ * The exit fields of an order nobody has presented at the gate yet.
+ *
+ * Every order starts here — paid is not cleared-to-leave — so this is spread at creation
+ * rather than repeated at each call site.
+ */
+export const NOT_YET_AT_THE_EXIT = {
+  exitApprovedAt: null,
+  exitDeniedAt: null,
+  exitDeniedBy: null,
+  exitDenialReason: null,
+  inventoryFinalisedAt: null,
 } as const;

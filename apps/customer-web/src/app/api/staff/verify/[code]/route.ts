@@ -164,7 +164,46 @@ export async function POST(request: NextRequest, { params }: Params) {
   const body = (await request.json().catch(() => ({}))) as {
     observed_weight_grams?: unknown;
     override?: unknown;
+    /** `proceed` releases the bill and moves stock; `deny` does neither. */
+    action?: unknown;
+    reason?: unknown;
   };
+
+  // ---- Deny ----
+  //
+  // Handled before anything else, and before the weight gate: refusing a basket is not a
+  // failed approval, it is a decision, and it must be possible on a basket that never
+  // reached the scale. Releases no bill, moves no stock, and records who and why.
+  if (body.action === 'deny') {
+    const reason =
+      typeof body.reason === 'string' && body.reason.trim()
+        ? body.reason.trim().slice(0, 300)
+        : 'No reason given';
+
+    const denied = await orderRepository.denyExit(found.id, actor.id, reason, Date.now());
+    if (!denied) {
+      return fail(409, 'already_authorised', 'That basket has already been cleared to leave.');
+    }
+
+    console.warn(
+      `[exit] ${actor.email ?? actor.id} DENIED ${denied.id} (${normalised}) ` +
+        `for ${(denied.totalPaise / 100).toFixed(2)} at ${denied.storeId}: ${reason}`
+    );
+
+    return NextResponse.json(
+      {
+        verified: false,
+        denied: true,
+        order_id: denied.id,
+        denied_by: actor.name ?? actor.email,
+        reason,
+        // Stated rather than implied. The customer's money is not refunded by this — the
+        // basket is held for someone to sort out at the counter.
+        bill_released: false,
+      },
+      { status: 200, headers: NO_STORE }
+    );
+  }
 
   let comparison: ReturnType<typeof compareWeight> | null = null;
 
@@ -235,9 +274,25 @@ export async function POST(request: NextRequest, { params }: Params) {
     })),
   });
 
-  const exit = mayExit(verified.status, verified.payment.confirmation)
-    ? issueExitToken(verified)
+  // ---- Proceed ----
+  //
+  // Authorising the exit is what releases the bill and moves the stock, and it happens here
+  // rather than at payment. `approveExit` returns null when the order was already
+  // authorised, which is how a replayed exit QR is refused: the second scan finalises no
+  // inventory and issues no token.
+  const authorised = mayExit(verified.status, verified.payment.confirmation)
+    ? await orderRepository.approveExit(verified.id, actor.id, Date.now())
     : null;
+
+  if (mayExit(verified.status, verified.payment.confirmation) && !authorised) {
+    return fail(
+      409,
+      'already_authorised',
+      'That basket has already been cleared to leave, or was denied.'
+    );
+  }
+
+  const exit = authorised ? issueExitToken(authorised) : null;
 
   if (comparison) {
     await orderRepository.recordWeightCheck({
@@ -264,6 +319,10 @@ export async function POST(request: NextRequest, { params }: Params) {
   return NextResponse.json(
     {
       verified: true,
+      // Only true once the exit is authorised. The customer's bill appears in their
+      // history at this moment and not before.
+      bill_released: authorised !== null,
+      inventory_finalised: authorised?.inventoryFinalisedAt !== null && authorised !== null,
       order_id: verified.id,
       total_rupees: (verified.totalPaise / 100).toFixed(2),
       verified_by: actor.name ?? actor.email,
