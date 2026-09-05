@@ -636,3 +636,31 @@ ALTER TABLE stores ADD COLUMN IF NOT EXISTS wifi_password_set_at bigint;
 -- three others to answer it is a row nobody consults.
 ALTER TABLE stores ADD COLUMN IF NOT EXISTS network_updated_at bigint;
 ALTER TABLE stores ADD COLUMN IF NOT EXISTS network_updated_by text REFERENCES users (id);
+
+-- ---------------------------------------------------------------------------
+-- Products: GST already inside the price
+-- ---------------------------------------------------------------------------
+--
+-- Indian retail prices are GST-inclusive: the MRP on the packet already contains the tax,
+-- and the customer never pays it on top. The bill still has to *show* it — that is a
+-- regulatory expectation, not a charge — so the figure is stored per SKU and summed onto
+-- the bill as an informational line.
+--
+-- Pre-computed upstream rather than derived here. The retailer's `product_pricing` table
+-- carries `gst_amount` alongside `taxable_value`, `cgst_amount` and `sgst_amount`, all of
+-- which have to agree for a GSTR filing. Recomputing one of them from a rate in this
+-- application would eventually disagree with the other three by a paisa, and the filing is
+-- the thing that has to be right.
+--
+-- Only `gst_amount` and `gst_rate` are held here. CGST, SGST, the taxable value and the HSN
+-- code are the retailer's compliance records and have no business in a customer-facing
+-- store — see the bill generation guide's list of fields that must never reach a client.
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gst_amount_paise integer NOT NULL DEFAULT 0;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS gst_rate_bp      integer;
+
+DO $$ BEGIN
+  ALTER TABLE products DROP CONSTRAINT IF EXISTS products_gst_not_negative;
+  ALTER TABLE products ADD CONSTRAINT products_gst_not_negative
+    CHECK (gst_amount_paise >= 0 AND (gst_rate_bp IS NULL OR gst_rate_bp >= 0));
+EXCEPTION WHEN others THEN NULL;
+END $$;

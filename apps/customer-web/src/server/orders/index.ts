@@ -4,7 +4,7 @@ export { orderRepository } from './repository';
 export {
   priceOrder,
   SERVICE_FEE_RATE,
-  gstRate,
+  serviceFeeFor,
   MAX_LINE_QUANTITY,
   MAX_DISTINCT_LINES,
 } from './pricing';

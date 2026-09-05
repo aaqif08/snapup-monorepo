@@ -503,17 +503,26 @@ function PaymentSummary({ order }: { order: ServerOrder }) {
           </dd>
         </div>
 
-        {/* Hidden entirely while the rate is zero. A tax line of ₹0.00 invites a question
-            about why it is zero, and the honest answer — no HSN codes in the catalogue yet
-            — does not belong on a customer's checkout. */}
-        {order.gst > 0 && <SummaryRow label="GST & Other Charges" value={rupees(order.gst)} />}
-
         <div className="flex items-baseline justify-between gap-3 border-t border-border pt-2.5">
           <dt className="font-extrabold text-ink">Total to Pay</dt>
           <dd className="text-lg font-extrabold tabular-nums text-ink">
             {rupees(order.total)}
           </dd>
         </div>
+
+        {/* Below the total, and worded as "of which" — because it is not a charge.
+            Indian retail prices are GST-inclusive, so this tax was already inside the item
+            total and is shown because the customer is entitled to see what they bore, not
+            because anything is being added. Putting it above the total, in the run of
+            charges, would read as a fifth thing being billed. */}
+        {order.gst > 0 && (
+          <div className="flex items-baseline justify-between gap-3 pt-1">
+            <dt className="text-[12px] text-muted">of which GST &amp; Other Charges</dt>
+            <dd className="text-[12px] font-semibold tabular-nums text-muted">
+              {rupees(order.gst)}
+            </dd>
+          </div>
+        )}
       </dl>
 
       {order.product_savings > 0 && (

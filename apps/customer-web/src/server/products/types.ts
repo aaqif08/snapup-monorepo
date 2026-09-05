@@ -35,6 +35,18 @@ export interface InternalProduct {
    */
   discount_paise?: number;
   brand?: string | null;
+
+  /**
+   * GST already contained in `unit_price`, in paise. Never added on top.
+   *
+   * Pre-computed by the retailer rather than derived from a rate here: their
+   * `product_pricing` row carries this alongside the taxable value, CGST and SGST, and
+   * all four have to agree for a GSTR filing. Recomputing one would eventually disagree
+   * with the other three by a paisa, and the filing is the thing that has to be right.
+   */
+  gst_amount_paise?: number;
+  /** Slab in basis points — 1800 is 18.00%. Optional badge on the item. */
+  gst_rate_bp?: number | null;
   expected_weight_grams: number;
 
   /**
@@ -55,13 +67,32 @@ export interface InternalProduct {
 }
 
 /** Exactly the fields Requirement 2 permits a customer to receive. */
+/**
+ * What a customer's browser is allowed to see about a product.
+ *
+ * The bill generation guide divides the retailer's pricing row in two, and this is the
+ * safe half. The other half — `taxable_value`, `cgst_amount`, `sgst_amount`, `cgst_rate`,
+ * `sgst_rate`, `gst_hsn_code` — is the compliance record behind a GSTR filing and is
+ * absent by construction: it is not on this type, so it cannot be added by accident in a
+ * projection someone writes later.
+ */
 export interface PublicProduct {
   id: string;
   barcode: string;
   name: string;
+  /** GST-inclusive, as every Indian retail price is. */
   unit_price: number;
   image_url: string;
   expected_weight_grams: number;
+
+  brand: string | null;
+  /** Printed maximum, for a struck-through 'was' price. Null when not stated. */
+  mrp_paise: number | null;
+  discount_paise: number;
+  /** GST already inside `unit_price`. Shown on the bill; never added to it. */
+  gst_amount_paise: number;
+  /** Slab in basis points — 1800 is 18.00%. Optional badge. */
+  gst_rate_bp: number | null;
 }
 
 export interface PageMeta {

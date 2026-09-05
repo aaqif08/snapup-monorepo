@@ -11,32 +11,29 @@ import type { OrderDraftLine, OrderLine } from './types';
  */
 
 /**
- * The service fee: one tenth of the item total, and the whole of the membership offer.
+ * Where the service fee comes from.
  *
- * A guest pays it. A signed-in customer does not — the checkout strikes it through and
- * prints FREE, and the "Snap Up Discount" line carries the same figure back off the bill.
- * That is why there is no separate discount rate: the benefit *is* the waiver, so a second
- * percentage would be a second number that has to agree with this one forever.
+ * Two shapes, because the pilot has been described both ways: the bill generation guide
+ * specifies a fixed amount hardcoded in the app, and the fee was separately described as a
+ * tenth of the basket, waived on sign-in. Both are expressible here, and neither is a
+ * database value — a fee is a business rule, not a product attribute, so changing it is one
+ * edit rather than a migration.
  *
- * Rounded half-up on the subtotal. On ₹500 the fee is ₹50.
+ * `SNAPUP_SERVICE_FEE_PAISE` sets a flat fee. Absent, the rate below applies: one tenth
+ * of the item total, which a guest pays and a signed-in customer does not — the checkout
+ * strikes it through and prints FREE, and the Snap Up Discount line carries the same
+ * figure back off. That is why there is no separate discount percentage: the benefit
+ * *is* the waiver, and a second rate would be a second number to keep in agreement
+ * forever.
  */
 export const SERVICE_FEE_RATE = 0.1;
 
-/**
- * Tax on the bill, as a fraction.
- *
- * Zero by default, and deliberately so. Real GST is per-HSN — 0% on most staples, then 5,
- * 12, 18 — and the supplied catalogue carries neither an HSN code nor a rate. Inventing a
- * blended figure would put a number on a customer's tax invoice that no return could
- * justify, which is worse than showing nothing.
- *
- * `SNAPUP_GST_RATE` sets it for the pilot (e.g. `0.05`). The line is hidden entirely while
- * it is zero rather than printed as ₹0.00, because a tax line of zero invites the question
- * this comment exists to answer.
- */
-export function gstRate(): number {
-  const raw = Number(process.env.SNAPUP_GST_RATE ?? '0');
-  return Number.isFinite(raw) && raw >= 0 && raw < 1 ? raw : 0;
+export function serviceFeeFor(subtotalPaise: number): number {
+  const flat = Number(process.env.SNAPUP_SERVICE_FEE_PAISE ?? '');
+  if (Number.isFinite(flat) && flat >= 0 && process.env.SNAPUP_SERVICE_FEE_PAISE) {
+    return Math.round(flat);
+  }
+  return Math.round(subtotalPaise * SERVICE_FEE_RATE);
 }
 
 export const MAX_LINE_QUANTITY = 99;
@@ -133,6 +130,7 @@ export function priceOrder(
   const lines: OrderLine[] = [];
   let subtotalPaise = 0;
   let productSavingsPaise = 0;
+  let gstPaise = 0;
   let totalCostPaise = 0;
   let expectedWeightGrams = 0;
 
@@ -181,23 +179,33 @@ export function priceOrder(
 
     subtotalPaise += linePaise;
     productSavingsPaise += promotionPaise * cappedQuantity;
+    // SUM(gst_amount × qty), exactly as the bill guide specifies. Summed from what each
+    // item already carries rather than applied to the basket, because different slabs sit
+    // in one trolley — a 0% staple beside an 18% shampoo — and one basket-level rate
+    // could not be right for both.
+    gstPaise += Math.max(0, product.gst_amount_paise ?? 0) * cappedQuantity;
     totalCostPaise += lineCostPaise;
     expectedWeightGrams += product.expected_weight_grams * cappedQuantity;
   }
 
   const isVerified = context.verifiedCustomerId !== null;
 
-  const serviceFeePaise = Math.round(subtotalPaise * SERVICE_FEE_RATE);
+  const serviceFeePaise = serviceFeeFor(subtotalPaise);
 
   // The membership benefit, in full. A member is charged the fee and then credited exactly
   // the same amount, so the bill shows both lines and nets to the goods plus tax. Expressing
   // it as a waiver rather than as "no fee" is what lets the checkout say what was saved.
   const discountPaise = isVerified ? serviceFeePaise : 0;
 
-  // Tax on what is actually payable — goods plus any fee that survives the waiver. Charging
-  // it on a fee the customer is not paying would overstate the bill for every member.
-  const taxablePaise = subtotalPaise + serviceFeePaise - discountPaise;
-  const gstPaise = Math.round(taxablePaise * gstRate());
+  // **GST is not added. It is already inside the item total.**
+  //
+  // Indian retail prices are GST-inclusive: the figure on the packet contains the tax and
+  // the customer never pays it on top. The bill shows it because a customer is entitled to
+  // see what tax they bore, not because anything is being charged — so this is a sum of
+  // what was already collected, and it does not appear in `totalPaise` below.
+  //
+  // Adding it, as this did before the bill generation guide arrived, would have charged
+  // every customer their tax twice the moment a rate was configured.
 
   const discountReason: PricedOrder['discountReason'] = isVerified
     ? 'applied'
@@ -215,7 +223,9 @@ export function priceOrder(
       discountPaise,
       gstPaise,
       platformFeePaise: serviceFeePaise,
-      totalPaise: subtotalPaise + serviceFeePaise - discountPaise + gstPaise,
+      // Item Total + Service Fee − Discount. GST is deliberately absent: it is inside
+      // `subtotalPaise` already.
+      totalPaise: subtotalPaise + serviceFeePaise - discountPaise,
       totalCostPaise,
       expectedWeightGrams,
       discountReason,

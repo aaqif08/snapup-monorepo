@@ -173,6 +173,12 @@ async function main() {
       price_rupees: Number(sell).toFixed(2),
       mrp_rupees: Number(mrp).toFixed(2),
       discount_rupees: (discountPaise / 100).toFixed(2),
+      // Not stated in the supplied catalogue. Left blank rather than derived from a
+      // guessed slab: the retailer's own `product_pricing.gst_amount` is the figure that
+      // has to agree with their taxable value, CGST and SGST for a GSTR filing, and a
+      // number invented here would eventually contradict it.
+      gst_amount_rupees: '',
+      gst_rate: '',
       weight_grams: grams ?? '',
       stock: qty,
       cost_rupees: '',

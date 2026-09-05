@@ -40,6 +40,12 @@ function toProduct(row: ProductRow): InternalProduct {
     supplier_name: row.supplier_name as string,
     supplier_contact: row.supplier_contact as string,
     stock_quantity: Number(row.stock_quantity),
+    brand: (row.brand as string | null) ?? null,
+    mrp_paise: row.mrp_paise === null || row.mrp_paise === undefined ? null : Number(row.mrp_paise),
+    discount_paise: Number(row.discount_paise ?? 0),
+    gst_amount_paise: Number(row.gst_amount_paise ?? 0),
+    gst_rate_bp:
+      row.gst_rate_bp === null || row.gst_rate_bp === undefined ? null : Number(row.gst_rate_bp),
     internal_sku: row.internal_sku as string,
     purchase_history: (row.purchase_history as InternalProduct['purchase_history']) ?? [],
   };

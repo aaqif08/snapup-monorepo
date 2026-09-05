@@ -168,11 +168,11 @@ async function importProducts(sql, file) {
          unit_price, expected_weight_grams, is_active,
          cost_price, profit_margin_pct, supplier_name, supplier_contact,
          stock_quantity, internal_sku, purchase_history,
-         brand, mrp_paise, discount_paise
+         brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
        ) VALUES (
          'prod_' || nextval('product_id_seq'), $1, $2, $3, $4, NULLIF($5, ''), $6,
          $7, $8, true, $9, $10, $11, '', $12, $13, '[]'::jsonb,
-         NULLIF($14, ''), $15, $16
+         NULLIF($14, ''), $15, $16, $17, $18
        )
        ON CONFLICT (store_id, barcode) DO UPDATE SET
          name = EXCLUDED.name,
@@ -188,6 +188,8 @@ async function importProducts(sql, file) {
          brand = EXCLUDED.brand,
          mrp_paise = EXCLUDED.mrp_paise,
          discount_paise = EXCLUDED.discount_paise,
+         gst_amount_paise = EXCLUDED.gst_amount_paise,
+         gst_rate_bp = EXCLUDED.gst_rate_bp,
          is_active = true`,
       [
         storeId,
@@ -209,6 +211,12 @@ async function importProducts(sql, file) {
         // discount must never be inferred from the price.
         row.mrp_rupees ? toPaise(row.mrp_rupees, 'mrp_rupees', line) : null,
         row.discount_rupees ? toPaise(row.discount_rupees, 'discount_rupees', line) : 0,
+        // GST already inside the price. Zero when the sheet does not state it — never
+        // derived from a rate here, because the retailer's taxable value, CGST and SGST
+        // all have to agree with it for a GSTR filing.
+        row.gst_amount_rupees ? toPaise(row.gst_amount_rupees, 'gst_amount_rupees', line) : 0,
+        // Basis points, so 18.00% is 1800 and no float ever reaches the column.
+        row.gst_rate ? Math.round(Number(row.gst_rate) * 100) : null,
       ]
     );
     count += 1;
