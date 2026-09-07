@@ -208,7 +208,23 @@ async function main() {
     });
   }
 
-  const headers = Object.keys(rows[0] ?? {});
+  // An empty parse is a failure, not a result.
+  //
+  // The updated catalogue matched zero of its 547 records the first time it was run —
+  // Word writes the ampersand in "GST & Other Charges" as `&amp;`, so a pattern with a
+  // bare `&` matched nothing — and this script cheerfully reported success and wrote a
+  // header-only file. Fed to the importer, that would have deactivated nothing and
+  // upserted nothing while looking like a clean run; fed to a fresh database, it would
+  // have produced a shop with empty shelves. A document that yields no products means
+  // the format moved, and the only safe response is to stop.
+  if (rows.length === 0) {
+    throw new Error(
+      `No products matched in ${docxPath}. The document format has probably changed — ` +
+        `check the record line against RECORD in this file. Refusing to write an empty catalogue.`
+    );
+  }
+
+  const headers = Object.keys(rows[0]);
   const csv = [
     headers.join(','),
     ...rows.map((row) => headers.map((h) => cell(row[h])).join(',')),

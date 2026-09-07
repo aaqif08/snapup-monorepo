@@ -11,27 +11,35 @@ import type { OrderDraftLine, OrderLine } from './types';
  */
 
 /**
- * Where the service fee comes from.
+ * The service fee: one tenth of the item total, and the whole of the membership offer.
  *
- * Two shapes, because the pilot has been described both ways: the bill generation guide
- * specifies a fixed amount hardcoded in the app, and the fee was separately described as a
- * tenth of the basket, waived on sign-in. Both are expressible here, and neither is a
- * database value — a fee is a business rule, not a product attribute, so changing it is one
- * edit rather than a migration.
+ * A guest pays it. A signed-in customer does not — the checkout strikes it through, prints
+ * FREE beside it, and the Snap Up Discount line carries the same figure back off the bill.
  *
- * `SNAPUP_SERVICE_FEE_PAISE` sets a flat fee. Absent, the rate below applies: one tenth
- * of the item total, which a guest pays and a signed-in customer does not — the checkout
- * strikes it through and prints FREE, and the Snap Up Discount line carries the same
- * figure back off. That is why there is no separate discount percentage: the benefit
- * *is* the waiver, and a second rate would be a second number to keep in agreement
- * forever.
+ * That is why there is no separate discount rate. The benefit *is* the waiver, so a second
+ * percentage would be a second number obliged to agree with this one forever, and the first
+ * time they disagreed a customer would see a total they could not account for.
+ *
+ * ## Why the fee is still shown to a member
+ *
+ * Struck through rather than removed. "You are not paying this" only lands if the customer
+ * can see what they are not paying — a member who has never seen the fee has no idea the
+ * account is worth anything.
+ *
+ * ## Not a database value
+ *
+ * A fee is a business rule, not a product attribute. Changing it is one edit here rather
+ * than a migration and a re-query per order. `SNAPUP_SERVICE_FEE_PAISE` overrides the rate
+ * with a flat amount if a deployment ever needs one — the bill generation guide describes
+ * the fee that way — but the pilot rule is the rate below.
  */
 export const SERVICE_FEE_RATE = 0.1;
 
 export function serviceFeeFor(subtotalPaise: number): number {
-  const flat = Number(process.env.SNAPUP_SERVICE_FEE_PAISE ?? '');
-  if (Number.isFinite(flat) && flat >= 0 && process.env.SNAPUP_SERVICE_FEE_PAISE) {
-    return Math.round(flat);
+  const override = process.env.SNAPUP_SERVICE_FEE_PAISE;
+  if (override) {
+    const flat = Number(override);
+    if (Number.isFinite(flat) && flat >= 0) return Math.round(flat);
   }
   return Math.round(subtotalPaise * SERVICE_FEE_RATE);
 }
