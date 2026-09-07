@@ -3,8 +3,15 @@
 import { useEffect, useState } from 'react';
 import BarcodeScanner from '@snapup/ui/BarcodeScanner';
 
-/** Same rule the customer lookup route enforces — EAN/UPC are digits only. */
-const BARCODE_PATTERN = /^\d{6,14}$/;
+/**
+ * The default: the same rule the customer lookup route enforces.
+ *
+ * No longer digits-only. That described EAN and UPC and was applied as though it
+ * described every symbology — the pilot catalogue uses Code 128 codes like
+ * `SNAP0000000001`, and this modal would have rejected every one of them while a
+ * manager stood there scanning stock.
+ */
+const DEFAULT_PATTERN = /^[A-Z0-9-]{6,32}$/;
 
 interface BarcodeScanModalProps {
   title: string;
@@ -12,6 +19,17 @@ interface BarcodeScanModalProps {
   hint: string;
   onDetected: (barcode: string) => void;
   onClose: () => void;
+  /**
+   * What counts as a usable read, when it is not a product barcode.
+   *
+   * The exit desk scans a customer's six-character code, whose alphabet deliberately
+   * excludes O, 0, I and 1 — a different shape entirely. Passing the rule in keeps one
+   * modal serving both jobs rather than forking it, and keeps each caller's definition
+   * of "valid" next to the thing it is scanning for.
+   */
+  accepts?: (value: string) => boolean;
+  /** Applied before validation — folds case, or pulls a code out of a QR payload. */
+  normalise?: (value: string) => string;
 }
 
 /**
@@ -33,6 +51,8 @@ export default function BarcodeScanModal({
   hint,
   onDetected,
   onClose,
+  accepts,
+  normalise,
 }: BarcodeScanModalProps) {
   const [manualEntry, setManualEntry] = useState('');
   const [rejected, setRejected] = useState<string | null>(null);
@@ -49,8 +69,12 @@ export default function BarcodeScanModal({
   }, [onClose]);
 
   const accept = (barcode: string) => {
-    const trimmed = barcode.trim();
-    if (!BARCODE_PATTERN.test(trimmed)) {
+    // Normalised before validating, so a caller that extracts a code from a QR payload is
+    // judged on what it extracted rather than on the raw scan.
+    const trimmed = (normalise ? normalise(barcode) : barcode).trim();
+    const usable = accepts ? accepts(trimmed) : DEFAULT_PATTERN.test(trimmed.toUpperCase());
+
+    if (!usable) {
       setRejected(trimmed);
       return;
     }

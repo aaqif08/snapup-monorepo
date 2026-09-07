@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import BarcodeScanModal from '@/components/BarcodeScanModal';
 import { useAdminAuthStore } from '@/store/useAdminAuthStore';
 import { listStores, type AdminStore } from '@/lib/storesClient';
 
@@ -80,7 +81,8 @@ type Screen =
       message: string;
       explanation: GapExplanation | null;
     }
-  | { kind: 'done'; total: string; by: string | null; weight: WeightResult | null; overridden: boolean };
+  | { kind: 'done'; total: string; by: string | null; weight: WeightResult | null; overridden: boolean }
+  | { kind: 'denied'; reason: string; by: string | null };
 
 export default function VerifyPage() {
   const user = useAdminAuthStore((state) => state.user);
@@ -91,6 +93,7 @@ export default function VerifyPage() {
   const [busy, setBusy] = useState(false);
   /** The scale reading, in grams, as typed. Kept as a string so the field can be empty. */
   const [observed, setObserved] = useState('');
+  const [scanning, setScanning] = useState(false);
 
   // Owners and managers are not tied to a branch, so they have to say which exit they are
   // standing at. A staff account carries its own store and never sees this.
@@ -149,6 +152,52 @@ export default function VerifyPage() {
    * either way — this screen shows it, it does not decide it — so a first tap can never
    * wave through a basket that is a kilo heavy.
    */
+  /**
+   * Refuse the exit.
+   *
+   * A decision, not a failed approval — which is why it is available on the basket screen
+   * and not only after a weight mismatch. Staff refuse for reasons the app cannot see: an
+   * item with no barcode, a payment that is not in the shop's UPI app, a customer who
+   * cannot produce what the basket says they bought.
+   *
+   * Releases no bill and moves no stock. The reason is recorded against the staff member,
+   * because an unattributable refusal is as much a problem as an unattributable approval.
+   */
+  async function deny(lookupResult: VerifyLookup) {
+    const reason = window.prompt(
+      'Why is this basket being refused? This is recorded against your account.'
+    );
+    // Cancelled. A denial recorded with no reason is worse than no denial, so nothing
+    // happens rather than writing "No reason given" on somebody's behalf.
+    if (reason === null) return;
+
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `/api/verify/${encodeURIComponent(lookupResult.order.code)}${storeQuery()}`,
+        {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ action: 'deny', reason: reason.trim() || 'No reason given' }),
+        }
+      );
+      const body = await response.json();
+      if (!response.ok) {
+        setError(body?.error?.message ?? 'Could not record that refusal.');
+        return;
+      }
+      setScreen({ kind: 'denied', reason: body.reason ?? reason, by: body.denied_by ?? null });
+      setCode('');
+      setObserved('');
+    } catch {
+      setError('Could not reach SnapUp. Nothing was recorded.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function confirm(lookupResult: VerifyLookup, override = false) {
     setBusy(true);
     setError(null);
@@ -282,7 +331,46 @@ export default function VerifyPage() {
           <p className="mt-3 text-center text-[11px] leading-relaxed text-muted">
             The code has no O, 0, I or 1 — if you see one of those, it is a misread.
           </p>
+
+          {/* Scanning is offered alongside typing, not instead of it.
+              A camera is faster when it works, and it is the phone in the customer's hand
+              that decides whether it does — screen brightness, a cracked protector, a
+              customer holding it at an angle. Keeping the keypad means a scan that will not
+              read costs seconds rather than blocking the gate, and the six-character code
+              was designed to be read aloud for exactly this reason. */}
+          <div className="mt-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-muted">or</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setScanning(true)}
+            disabled={busy || (needsStore && !storeId)}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-sm font-extrabold text-onPrimary transition duration-200 ease-snap active:scale-[0.98] disabled:opacity-50"
+          >
+            <ScanGlyph />
+            Scan the customer&apos;s code
+          </button>
         </div>
+      )}
+
+      {scanning && (
+        <BarcodeScanModal
+          title="Scan the customer's code"
+          hint="Point the camera at the code on the customer's phone. You can still type it instead."
+          onClose={() => setScanning(false)}
+          // The customer's screen may show a QR carrying the exit token or the printed
+          // six-character code, and a scanner reports what it sees without knowing which.
+          normalise={normaliseScanned}
+          accepts={(value) => /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/.test(value)}
+          onDetected={(value) => {
+            setScanning(false);
+            setCode(value);
+            void lookup(value);
+          }}
+        />
       )}
 
       {screen.kind === 'found' && (
@@ -413,11 +501,11 @@ export default function VerifyPage() {
 
           <div className="flex gap-3 border-t border-border p-4">
             <button
-              onClick={reset}
+              onClick={() => void deny(screen.lookup)}
               disabled={busy}
-              className="flex-1 rounded-xl border border-border py-3.5 text-sm font-extrabold text-ink disabled:opacity-50"
+              className="flex-1 rounded-xl border border-danger/50 py-3.5 text-sm font-extrabold text-danger transition duration-150 ease-snap active:scale-95 disabled:opacity-50"
             >
-              Not paid — cancel
+              Deny exit
             </button>
             <button
               onClick={() => void confirm(screen.lookup)}
@@ -516,6 +604,36 @@ export default function VerifyPage() {
         </div>
       )}
 
+      {screen.kind === 'denied' && (
+        <div className="rounded-3xl border border-danger/40 bg-danger/5 p-8 text-center">
+          <p className="text-5xl" aria-hidden>
+            ⃠
+          </p>
+          <p className="mt-3 text-2xl font-extrabold text-ink">Exit refused</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            No bill has been released and no stock has moved. The basket is held for someone
+            to settle at the counter.
+          </p>
+
+          <div className="mt-5 rounded-2xl border border-border bg-surface p-4 text-left">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+              Recorded reason
+            </p>
+            <p className="mt-1 text-sm font-semibold text-ink">{screen.reason}</p>
+            <p className="mt-2 text-[12px] text-muted">
+              Against {screen.by ?? 'your account'}.
+            </p>
+          </div>
+
+          <button
+            onClick={reset}
+            className="mt-6 w-full rounded-xl bg-accent py-3.5 text-sm font-extrabold text-onAccent transition duration-200 ease-snap active:scale-[0.98]"
+          >
+            Next customer
+          </button>
+        </div>
+      )}
+
       {screen.kind === 'done' && (
         <div className="rounded-3xl border border-primary/40 bg-primary/5 p-8 text-center">
           <p className="text-5xl" aria-hidden>
@@ -572,5 +690,32 @@ function Reading({
         {value}
       </p>
     </div>
+  );
+}
+
+/**
+ * Turn whatever the camera read into a six-character code.
+ *
+ * The customer's screen can show either an exit-token QR or the printed code, and a
+ * scanner reports what it sees without knowing which. Rather than branch on the shape,
+ * this pulls the first six-character run of the code alphabet out of the payload — the
+ * alphabet excludes O, 0, I and 1 precisely so it cannot be confused with surrounding
+ * text, which is what makes the extraction safe.
+ *
+ * Falls back to the raw value, so an unexpected payload still reaches the server and is
+ * refused there with a message, rather than being silently discarded here.
+ */
+function normaliseScanned(raw: string): string {
+  const upper = raw.trim().toUpperCase();
+  const match = /[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}/.exec(upper);
+  return match ? match[0] : upper.slice(0, 6);
+}
+
+function ScanGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" />
+      <path d="M4 12h16" />
+    </svg>
   );
 }
