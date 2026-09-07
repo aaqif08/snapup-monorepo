@@ -1,0 +1,2 @@
+store_id,name,address,latitude,longitude,ssid,egress_cidr,merchant_vpa,merchant_display_name,is_active
+store_1,Kurinji Metro Bazaar — Kumbakonam,"Kumbakonam, Thanjavur District, Tamil Nadu",10.960012397744165,79.37967349325342,KMB-Kumbakonam-Guest,,,Kurinji Metro Bazaar Kumbakonam,true
