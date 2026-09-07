@@ -227,6 +227,16 @@ export default function ScanPage() {
               <Pill tone="danger">
                 Session <strong className="font-extrabold">Expired</strong>, Scan again to continue
               </Pill>
+              {/* The reassurance is the point. A customer with a full trolley who reads
+                  "session expired" assumes they have lost it and starts again — or walks
+                  out. The cart is persisted and untouched by an ended session, so saying so
+                  is the difference between someone rescanning and someone abandoning. */}
+              {itemCount > 0 && (
+                <p className="text-center text-[12px] font-semibold text-muted">
+                  Your {itemCount} item{itemCount === 1 ? '' : 's'} {itemCount === 1 ? 'is' : 'are'}{' '}
+                  still in your cart — nothing has been lost.
+                </p>
+              )}
             </>
           ) : (
             // The design shows "Wifi Connected Successfully" here, and this reports what is

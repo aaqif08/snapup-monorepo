@@ -664,3 +664,22 @@ DO $$ BEGIN
     CHECK (gst_amount_paise >= 0 AND (gst_rate_bp IS NULL OR gst_rate_bp >= 0));
 EXCEPTION WHEN others THEN NULL;
 END $$;
+
+-- ---------------------------------------------------------------------------
+-- Stores: how close a customer must be
+-- ---------------------------------------------------------------------------
+--
+-- Metres from the surveyed coordinates. 50 by default, which is roughly the footprint of
+-- a supermarket floor plus its entrance.
+--
+-- Null means no geofence — the branch relies on the network check alone, which is the
+-- right behaviour for a shop that has not been surveyed. A radius around coordinates that
+-- do not exist would refuse everybody.
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS geofence_radius_m integer DEFAULT 50;
+
+DO $$ BEGIN
+  ALTER TABLE stores DROP CONSTRAINT IF EXISTS stores_geofence_sane;
+  ALTER TABLE stores ADD CONSTRAINT stores_geofence_sane
+    CHECK (geofence_radius_m IS NULL OR (geofence_radius_m >= 10 AND geofence_radius_m <= 5000));
+EXCEPTION WHEN others THEN NULL;
+END $$;

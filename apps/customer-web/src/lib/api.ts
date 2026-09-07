@@ -130,11 +130,56 @@ export async function fetchNearbyStores(
 // Session lifecycle (Requirement 1)
 // ---------------------------------------------------------------------------
 
+/**
+ * Read the device position, if it is willing and quick about it.
+ *
+ * Never blocks entry. A refused permission, a timeout, a browser with no geolocation, or a
+ * phone that cannot see a satellite all resolve to null — and the server treats null as
+ * "cannot say" rather than "outside", so the customer gets in on the network check alone.
+ *
+ * Six seconds because this sits between scanning the entrance code and shopping. A shopper
+ * holding a phone at a doorway will not wait longer, and the position is a secondary signal
+ * — it is not worth making the primary flow feel broken to obtain.
+ */
+async function currentPosition(): Promise<
+  { latitude: number; longitude: number; accuracyM: number } | null
+> {
+  if (typeof navigator === 'undefined' || !navigator.geolocation) return null;
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (value: Parameters<typeof resolve>[0]) => {
+      if (!settled) {
+        settled = true;
+        resolve(value);
+      }
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        done({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          accuracyM: pos.coords.accuracy,
+        }),
+      () => done(null),
+      { enableHighAccuracy: true, timeout: 6000, maximumAge: 30_000 }
+    );
+
+    // Belt and braces: some browsers never invoke either callback when permission is in an
+    // odd state, and a promise that never settles would hang the entrance screen.
+    setTimeout(() => done(null), 6500);
+  });
+}
+
 export async function startSession(qrToken: string): Promise<void> {
+  // Gathered before the request so the server can judge both factors in one round trip.
+  const position = await currentPosition();
+
   const response = await fetch('/api/session/start', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ qr_token: qrToken }),
+    body: JSON.stringify({ qr_token: qrToken, position }),
   });
 
   if (!response.ok) {
@@ -215,21 +260,62 @@ export async function renewSession(): Promise<RenewalResult> {
 export interface HeartbeatResult {
   active: boolean;
   expiresInSeconds?: number;
+  /** The server could not be reached. The session is left alone, not ended. */
+  unknown?: boolean;
 }
 
+/**
+ * Confirm the session is still valid.
+ *
+ * ## A dropped connection is not a departure
+ *
+ * The distinction this function has to keep straight is between *the server said no* and
+ * *I could not reach the server*. Only the first means the customer has left the shop.
+ *
+ * Wi-Fi in a supermarket drops constantly — a customer walks behind a freezer, an access
+ * point hands over, a phone sleeps in a pocket. If every failed heartbeat ended the
+ * session, shopping would be interrupted every few minutes by a screen saying they had
+ * left a building they are standing in, and they would have to find the entrance QR again
+ * with a full trolley.
+ *
+ * So a network error, a timeout and a 5xx all return "unknown" and leave the session
+ * exactly as it was. The session is only torn down when the server explicitly reports it
+ * inactive, which it does having re-checked presence itself.
+ *
+ * This is safe because the heartbeat is not the security boundary. Every product request
+ * re-checks presence independently, so a customer who really has left gets nothing from a
+ * session this function declined to end — their next scan is refused regardless.
+ *
+ * **The cart is never touched here, in any branch.** It is persisted separately and
+ * survives an ended session on purpose: a shopper whose session lapsed by the milk aisle
+ * scans the entrance code again and finds their trolley intact.
+ */
 export async function sendHeartbeat(): Promise<HeartbeatResult> {
   const token = useSessionStore.getState().token;
   if (!token) return { active: false };
 
-  const response = await fetch('/api/session/heartbeat', {
-    method: 'POST',
-    headers: { authorization: `Bearer ${token}` },
-  });
+  let response: Response;
+  try {
+    response = await fetch('/api/session/heartbeat', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token}` },
+      // Without this a heartbeat can outlive the interval that fired it, and requests pile
+      // up behind a stalled connection until the tab has a queue of them.
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Unreachable. Says nothing about where the customer is standing.
+    return { active: true, unknown: true };
+  }
 
-  if (!response.ok) return { active: false };
+  // A server error is the server's problem, not evidence the customer left.
+  if (!response.ok) return { active: true, unknown: true };
 
-  const body = await response.json();
+  const body = await response.json().catch(() => null);
+  if (!body) return { active: true, unknown: true };
+
   if (!body.active) {
+    // The one branch that ends a session: the server checked and said no.
     const status = statusForCode(body.reason) ?? 'ended';
     useSessionStore.getState().invalidate(status);
     return { active: false };

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { validateEntryQr } from '@/server/qr';
 import { getEgressIp, verifyNetworkPresence } from '@/server/network';
+import { checkGeofence, type DevicePosition } from '@/server/stores/geofence';
 import { createSession } from '@/server/session';
 import { getStore } from '@/server/stores';
 import { consumeToken } from '@/server/rateLimit';
@@ -66,6 +67,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // ---- Presence factor 3: proximity ----
+  //
+  // Checked after the network, and deliberately weaker than it. The position is supplied by
+  // the browser, so anyone with developer tools can claim to be standing at the till — this
+  // narrows the honest cases, it does not stop the dishonest ones. The Wi-Fi check above is
+  // the control that holds, because the server observes the egress IP on the connection
+  // itself and the page cannot assert it.
+  //
+  // A verdict of `null` — unsurveyed branch, no position offered, or a reading whose own
+  // accuracy is worse than the fence — defers rather than refuses. A phone inside a concrete
+  // supermarket routinely reports ±30 m or worse, and turning away a customer standing at
+  // the entrance because their GPS is vague would be the app's fault, not theirs.
+  const fence = checkGeofence(store, readPosition(body));
+
+  if (fence.inside === false) {
+    return fail(
+      403,
+      'outside_store',
+      `You appear to be about ${fence.distanceM} m from ${store.name}. ` +
+        `Move inside the shop and scan the code again.`
+    );
+  }
+
   const session = createSession(store.id, presence.egressIp);
 
   // Footfall. This is the only place a session can be created, so it is the only place
@@ -105,4 +129,34 @@ function qrFailureMessage(reason: string): string {
     default:
       return 'This entrance code is not valid.';
   }
+}
+
+/**
+ * The device position, if the browser offered one.
+ *
+ * Every field is validated rather than trusted: this arrives from a client, and a latitude
+ * of 200 or an accuracy of `-1` would otherwise reach the distance calculation and produce
+ * a confident, meaningless answer.
+ */
+function readPosition(body: unknown): DevicePosition | null {
+  if (typeof body !== 'object' || body === null) return null;
+  const raw = (body as { position?: unknown }).position;
+  if (typeof raw !== 'object' || raw === null) return null;
+
+  const { latitude, longitude, accuracyM } = raw as Record<string, unknown>;
+  if (typeof latitude !== 'number' || !Number.isFinite(latitude) || Math.abs(latitude) > 90) {
+    return null;
+  }
+  if (typeof longitude !== 'number' || !Number.isFinite(longitude) || Math.abs(longitude) > 180) {
+    return null;
+  }
+
+  return {
+    latitude,
+    longitude,
+    accuracyM:
+      typeof accuracyM === 'number' && Number.isFinite(accuracyM) && accuracyM >= 0
+        ? accuracyM
+        : undefined,
+  };
 }

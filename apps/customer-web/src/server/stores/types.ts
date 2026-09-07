@@ -142,6 +142,16 @@ export interface StoreRecord {
    */
   opensAtMinutes: number | null;
   closesAtMinutes: number | null;
+
+  /**
+   * How close a device must be to the surveyed coordinates, in metres.
+   *
+   * Null means no geofence. That is the correct state for an unsurveyed branch — a
+   * radius around coordinates that do not exist would refuse everybody. See
+   * `stores/geofence.ts` for why this narrows honest cases rather than stopping
+   * dishonest ones.
+   */
+  geofenceRadiusM: number | null;
 }
 
 /**
@@ -200,6 +210,7 @@ export interface StoreDraft {
   isOpen: boolean;
   opensAtMinutes?: number | null;
   closesAtMinutes?: number | null;
+  geofenceRadiusM?: number | null;
 }
 
 /**
@@ -232,6 +243,9 @@ export const NO_STATED_HOURS = {
   opensAtMinutes: null,
   closesAtMinutes: null,
 } as const;
+
+/** A branch with no geofence — unsurveyed, or relying on the network check alone. */
+export const NO_GEOFENCE = { geofenceRadiusM: null } as const;
 
 export const NO_STORED_API_KEY = {
   apiKeySealed: null,

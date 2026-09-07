@@ -1,4 +1,5 @@
 import 'server-only';
+import { DEFAULT_GEOFENCE_RADIUS_M } from './geofence';
 import { credentialFieldsFor, wifiFieldsFor } from './credentials';
 import { STORE_SEED } from './seed';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
@@ -60,6 +61,7 @@ class InMemoryStoreRepository implements StoreRepository {
       ...wifiFieldsFor(draft.wifiPassword),
       networkUpdatedAt: Date.now(),
       networkUpdatedBy: draft.networkUpdatedBy ?? null,
+      geofenceRadiusM: draft.geofenceRadiusM ?? DEFAULT_GEOFENCE_RADIUS_M,
       opensAtMinutes: draft.opensAtMinutes ?? null,
       closesAtMinutes: draft.closesAtMinutes ?? null,
       id,

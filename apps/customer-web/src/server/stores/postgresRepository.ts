@@ -1,5 +1,6 @@
 import 'server-only';
 import { credentialFieldsFor, wifiFieldsFor } from './credentials';
+import { DEFAULT_GEOFENCE_RADIUS_M } from './geofence';
 import { db } from '../db/client';
 import type { StoreDraft, StoreRecord, StoreRepository } from './types';
 
@@ -103,6 +104,10 @@ function toRecord(row: StoreRow): StoreRecord {
     // `Number(null)` is 0, which is a real time — midnight — so each is checked rather
     // than coerced. A branch with no stated hours must read as unstated, not as opening
     // and closing at 00:00.
+    geofenceRadiusM:
+      row.geofence_radius_m === null || row.geofence_radius_m === undefined
+        ? null
+        : Number(row.geofence_radius_m),
     opensAtMinutes:
       row.opens_at_minutes === null || row.opens_at_minutes === undefined
         ? null
@@ -157,7 +162,7 @@ class PostgresStoreRepository implements StoreRepository {
         id, name, address, latitude, longitude, authorized_egress_cidrs,
         advertised_ssid, merchant_vpa, merchant_display_name,
         api_base_url, api_key_ref, is_active, is_open,
-        opens_at_minutes, closes_at_minutes,
+        opens_at_minutes, closes_at_minutes, geofence_radius_m,
         api_key_sealed, api_key_masked, api_key_fingerprint, api_key_set_at,
         wifi_password_sealed, wifi_password_set_at, network_updated_at, network_updated_by
       ) VALUES (
@@ -176,6 +181,7 @@ class PostgresStoreRepository implements StoreRepository {
         ${draft.isOpen},
         ${draft.opensAtMinutes ?? null},
         ${draft.closesAtMinutes ?? null},
+        ${draft.geofenceRadiusM ?? DEFAULT_GEOFENCE_RADIUS_M},
         ${credential.apiKeySealed},
         ${credential.apiKeyMasked},
         ${credential.apiKeyFingerprint},
@@ -241,6 +247,7 @@ class PostgresStoreRepository implements StoreRepository {
         is_open                 = ${merged.isOpen},
         opens_at_minutes        = ${merged.opensAtMinutes ?? null},
         closes_at_minutes       = ${merged.closesAtMinutes ?? null},
+        geofence_radius_m       = ${merged.geofenceRadiusM ?? null},
         api_key_sealed          = ${credential.apiKeySealed},
         api_key_masked          = ${credential.apiKeyMasked},
         api_key_fingerprint     = ${credential.apiKeyFingerprint},
