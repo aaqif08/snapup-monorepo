@@ -1,0 +1,2 @@
+store_id,name,address,latitude,longitude,ssid,egress_cidr,merchant_vpa,merchant_display_name,is_active
+store_2,SnapUp Demo — Test Network,"Demo store on the current network, for pilot testing",10.960012397744165,79.37967349325342,Demo-Test-WiFi,49.37.208.93/32,ASTRADYNEGLOBAL1789@iob,Astra Dyne Global,true
