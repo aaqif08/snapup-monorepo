@@ -308,10 +308,12 @@ export default function ScanPage() {
                 {storeName ?? 'Your shop'}
               </p>
               <p
-                className={`text-base font-extrabold text-ink transition-transform ${
-                  counterPulse ? 'scale-110 text-primary' : 'scale-100'
+                // A keyframed overshoot rather than a scale that eases back. Scanning is
+                // the one moment the app has to confirm it heard something, and a symmetric
+                // transition is too polite to notice with a trolley in the other hand.
+                className={`text-base font-extrabold transition-colors duration-200 ${
+                  counterPulse ? 'animate-pop text-primary' : 'text-ink'
                 }`}
-                style={{ transitionDuration: counterPulse ? '120ms' : '200ms' }}
               >
                 {itemCount} item{itemCount === 1 ? '' : 's'} in cart
               </p>

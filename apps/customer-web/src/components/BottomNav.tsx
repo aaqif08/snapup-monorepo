@@ -54,7 +54,7 @@ export default function BottomNav() {
             className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-5 flex-col items-center"
           >
             <span
-              className={`flex h-16 w-16 items-center justify-center rounded-full shadow-pop ring-4 ring-surface transition-colors duration-200 ${
+              className={`flex h-16 w-16 items-center justify-center rounded-full shadow-pop ring-4 ring-surface transition duration-200 ease-snap active:scale-90 ${
                 scanActive ? 'bg-primaryDark' : 'bg-primary'
               }`}
             >
@@ -97,15 +97,37 @@ function Tab({
         active ? 'text-primary' : 'text-muted hover:text-ink'
       }`}
     >
-      <span className="relative">
+      {/* The icon lifts on the active tab, the label does not move. Shifting text in a
+          five-item bar makes the whole row look unsteady as someone navigates. */}
+      <span
+        className={`relative transition-transform duration-200 ease-snap ${
+          active ? '-translate-y-0.5' : ''
+        }`}
+      >
         <Icon className="h-6 w-6" />
         {badge > 0 && (
-          <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-extrabold text-onPrimary">
+          // Keyed on the count so React remounts it when the number changes, which is what
+          // replays the animation. Without the key it animates once and never again, and a
+          // badge that only ever pops for the first item is worse than one that never does.
+          <span
+            key={badge}
+            className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] animate-pop items-center justify-center rounded-full bg-primary px-1 text-[10px] font-extrabold text-onPrimary shadow-card"
+          >
             {badge > 99 ? '99+' : badge}
           </span>
         )}
       </span>
       <span className="text-[11px] font-bold">{label}</span>
+
+      {/* A short rule under the active tab. Five icons in one bar are hard to tell apart at
+          a glance on a small screen; colour alone is not enough for anyone who cannot
+          easily distinguish the primary from the muted tone. */}
+      <span
+        aria-hidden
+        className={`absolute bottom-1 h-0.5 rounded-full bg-primary transition-all duration-300 ease-snap ${
+          active ? 'w-5 opacity-100' : 'w-0 opacity-0'
+        }`}
+      />
     </Link>
   );
 }

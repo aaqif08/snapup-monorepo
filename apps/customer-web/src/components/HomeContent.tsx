@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ThemeToggle from '@snapup/ui/ThemeToggle';
+import Skeleton from '@/components/Skeleton';
 import { fetchNearbyStores, type NearbyStore } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -184,23 +185,25 @@ export default function HomeContent() {
         <h2 className="px-4 pb-3 text-base font-extrabold text-ink">Nearby Shops</h2>
 
         {isLoading ? (
-          <div className="flex gap-3 overflow-hidden px-4">
+          // Same size and rhythm as the real cards, so nothing shifts under a thumb when
+          // the shops arrive.
+          <div className="flex gap-3 overflow-hidden px-4" role="status" aria-label="Loading shops">
             {[0, 1, 2].map((n) => (
-              <div key={n} className="h-36 w-36 shrink-0 animate-pulse rounded-2xl bg-surface" />
+              <Skeleton key={n} className="h-36 w-36 shrink-0" />
             ))}
           </div>
         ) : loadError ? (
-          <div className="mx-4 rounded-2xl border border-border bg-surface p-5 text-center">
+          <div className="mx-4 animate-fade-in-up rounded-2xl border border-border bg-surface p-5 text-center shadow-card">
             <p className="text-sm font-semibold text-danger">{loadError}</p>
             <button
               onClick={() => void load()}
-              className="mt-3 rounded-xl border border-border px-4 py-2 text-xs font-extrabold text-ink"
+              className="mt-3 rounded-xl border border-border px-4 py-2 text-xs font-extrabold text-ink transition duration-150 ease-snap hover:bg-bg active:scale-95"
             >
               Try again
             </button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="mx-4 rounded-2xl border border-border bg-surface px-5 py-10 text-center">
+          <div className="mx-4 animate-fade-in-up rounded-2xl border border-border bg-surface px-5 py-10 text-center">
             <p className="text-sm font-bold text-ink">
               {query.trim() ? 'No shops match that' : 'No shops available yet'}
             </p>
@@ -213,8 +216,15 @@ export default function HomeContent() {
         ) : (
           // Horizontal scroll with snap, so a half-visible card always settles cleanly.
           <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {filtered.map((store) => (
-              <li key={store.id} className="snap-start">
+            {filtered.map((store, position) => (
+              <li
+                key={store.id}
+                className="animate-fade-in-up snap-start"
+                // A short stagger, capped: the cards arrive as a wave rather than all at
+                // once, which makes a horizontal row read left-to-right. Capped at six so a
+                // long list never leaves the last card visibly waiting.
+                style={{ animationDelay: `${Math.min(position, 5) * 45}ms` }}
+              >
                 <StoreCard store={store} />
               </li>
             ))}
@@ -229,7 +239,9 @@ function StoreCard({ store }: { store: NearbyStore }) {
   return (
     <Link
       href={`/store/${store.id}`}
-      className="flex h-full w-36 flex-col rounded-2xl border border-border bg-surface p-3 transition-transform active:scale-[0.98]"
+      // Shadow and scale move together. A card that only scales looks like it is being
+      // squashed; one that also loses elevation reads as being pressed into the page.
+      className="flex h-full w-36 flex-col rounded-2xl border border-border bg-surface p-3 shadow-card transition duration-200 ease-snap hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0 active:scale-[0.97] active:shadow-none"
     >
       <div className="flex h-16 items-center justify-center rounded-xl bg-bg">
         <span className="text-lg font-extrabold tracking-tight text-ink">
@@ -270,8 +282,13 @@ function Shortcut({
   tone: string;
 }) {
   return (
-    <Link href={href} className="flex flex-col items-center gap-1.5">
-      <span className={`flex h-12 w-12 items-center justify-center rounded-full ${tone}`}>
+    <Link href={href} className="group flex flex-col items-center gap-1.5">
+      {/* The circle responds, not the label. Scaling text is the thing that makes a tap
+          feel cheap — it reflows and the letters shimmer. Moving only the icon keeps the
+          row's rhythm intact while still acknowledging the touch. */}
+      <span
+        className={`flex h-12 w-12 items-center justify-center rounded-full transition duration-200 ease-snap group-hover:-translate-y-0.5 group-hover:shadow-card group-active:scale-90 group-active:shadow-none ${tone}`}
+      >
         {icon}
       </span>
       <span className="text-[11px] font-bold text-ink">{label}</span>
@@ -382,7 +399,12 @@ function PromoCarousel() {
             href={banner.href}
             aria-label={banner.alt}
             aria-roledescription="slide"
-            className="w-full shrink-0 snap-center overflow-hidden rounded-2xl"
+            // The hairline matters more than it looks. Three posters with three
+            // different background colours sit on one page background, and the pale
+            // green one has almost no edge against a light page — without a border it
+            // reads as artwork bleeding into the screen rather than as a card. In dark
+            // mode the same border keeps a bright poster from glowing at the edges.
+            className="w-full shrink-0 snap-center overflow-hidden rounded-2xl border border-border shadow-card transition duration-200 ease-snap active:scale-[0.985]"
             style={{ backgroundColor: banner.background }}
           >
             <Image
@@ -405,8 +427,11 @@ function PromoCarousel() {
         {BANNERS.map((banner, position) => (
           <span
             key={banner.src}
-            className={`h-1.5 rounded-full transition-all duration-200 ${
-              position === index ? 'w-5 bg-ink' : 'w-1.5 bg-border'
+            // Width and colour both ease, so the active dot appears to stretch into place
+            // rather than one dot switching off as another switches on. `ease-snap`
+            // overshoots very slightly, which is what makes it feel attached to the swipe.
+            className={`h-1.5 rounded-full transition-all duration-300 ease-snap ${
+              position === index ? 'w-6 bg-primary' : 'w-1.5 bg-border'
             }`}
           />
         ))}

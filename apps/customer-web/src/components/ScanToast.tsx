@@ -14,8 +14,14 @@ export default function ScanToast({ productName, priceLabel, onDismiss }: ScanTo
   return (
     <div
       role="status"
-      className="toast-enter absolute inset-x-4 top-4 z-30 rounded-2xl border border-border bg-surface p-4 shadow-pop sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2"
+      // Positioning only. The entrance animates a wrapper *inside* this, because the
+      // keyframe sets `transform` and would otherwise fight `sm:-translate-x-1/2` — the
+      // toast centred itself correctly, then jumped left for the 260ms it was animating,
+      // then snapped back. Only visible from the `sm` breakpoint up, which is exactly
+      // where nobody was testing it.
+      className="absolute inset-x-4 top-4 z-30 sm:inset-x-auto sm:left-1/2 sm:w-96 sm:-translate-x-1/2"
     >
+      <div className="toast-enter rounded-2xl border border-border bg-surface p-4 shadow-pop">
       <div className="mb-1 flex items-center gap-2">
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-extrabold text-onPrimary">
           ✓
@@ -30,6 +36,8 @@ export default function ScanToast({ productName, priceLabel, onDismiss }: ScanTo
       >
         Continue Scanning
       </button>
+
+      </div>
 
       <style jsx>{`
         .toast-enter {

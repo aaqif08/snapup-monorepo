@@ -314,9 +314,12 @@ function DiscountOffer({
       role="dialog"
       aria-modal="true"
       aria-labelledby="offer-title"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4 sm:items-center"
+      // The backdrop fades and the sheet rises. A dialog that simply exists on the next
+      // frame reads as a page navigation, and someone mid-checkout then has to work out
+      // whether they left the cart.
+      className="fixed inset-0 z-50 flex animate-fade-in-up items-end justify-center bg-black/40 p-4 backdrop-blur-[2px] sm:items-center"
     >
-      <div className="w-full max-w-sm rounded-3xl bg-surface p-6 text-center shadow-pop">
+      <div className="w-full max-w-sm animate-slide-up rounded-3xl border border-border bg-surface p-6 text-center shadow-pop">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-tint">
           <svg viewBox="0 0 24 24" className="h-7 w-7 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M20.6 8.6L12 2 3.4 8.6 6.7 19h10.6z" />
@@ -334,7 +337,7 @@ function DiscountOffer({
 
         <button
           onClick={onLogin}
-          className="mt-6 w-full rounded-2xl bg-primary py-3.5 text-base font-extrabold text-onPrimary transition hover:opacity-90"
+          className="mt-6 w-full rounded-2xl bg-primary py-3.5 text-base font-extrabold text-onPrimary transition duration-200 ease-snap hover:opacity-90 active:scale-[0.98]"
         >
           Login &amp; save ₹{(savingPaise / 100).toFixed(2)}
         </button>

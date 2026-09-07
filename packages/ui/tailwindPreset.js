@@ -59,10 +59,35 @@ module.exports = {
           from: { opacity: '0', transform: 'scale(0.97)' },
           to: { opacity: '1', transform: 'scale(1)' },
         },
+        /**
+         * A band of light travelling across a placeholder.
+         *
+         * Preferred over a pulsing opacity for skeletons because it has a direction:
+         * movement across the block reads as "content is arriving", where a fade in and
+         * out reads as "something here is broken". It also keeps the placeholder's
+         * contrast steady, so the layout does not appear to breathe.
+         */
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
+        /** A sheet or toast arriving from the bottom edge. */
+        'slide-up': {
+          from: { opacity: '0', transform: 'translateY(12px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        /** A count changing. Overshoots slightly so the eye catches it. */
+        pop: {
+          '0%': { transform: 'scale(1)' },
+          '40%': { transform: 'scale(1.18)' },
+          '100%': { transform: 'scale(1)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 220ms cubic-bezier(0.22, 1, 0.36, 1) both',
         'scale-in': 'scale-in 160ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        shimmer: 'shimmer 1.6s infinite',
+        'slide-up': 'slide-up 260ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        pop: 'pop 320ms cubic-bezier(0.22, 1, 0.36, 1)',
       },
     },
   },
