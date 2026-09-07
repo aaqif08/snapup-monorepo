@@ -35,14 +35,15 @@ INSERT INTO products (
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000001', 'India Gate Classic Basmati Rice 1 kg',
   'General', NULL, '',
   21000, 1000, true,
   21000, 0, '', '',
   20, 'SMSKU-000001', '[]'::jsonb,
-  'India Gate', 22000, 1000
+  'India Gate', 22000, 1000,
+  952, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -50,21 +51,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000002', 'India Gate Classic Basmati Rice 5 kg',
   'General', NULL, '',
   99900, 5000, true,
   99900, 0, '', '',
   12, 'SMSKU-000002', '[]'::jsonb,
-  'India Gate', 105000, 5100
+  'India Gate', 105000, 5100,
+  4514, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -72,21 +76,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000003', 'Daawat Rozana Basmati Rice 1 kg',
   'General', NULL, '',
   14000, 1000, true,
   14000, 0, '', '',
   18, 'SMSKU-000003', '[]'::jsonb,
-  'Daawat', 15000, 1000
+  'Daawat', 15000, 1000,
+  619, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -94,21 +101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000004', 'Daawat Rozana Basmati Rice 5 kg',
   'General', NULL, '',
   68000, 5000, true,
   68000, 0, '', '',
   10, 'SMSKU-000004', '[]'::jsonb,
-  'Daawat', 72000, 4000
+  'Daawat', 72000, 4000,
+  3048, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -116,21 +126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000005', 'Fortune Everyday Basmati Rice 1 kg',
   'General', NULL, '',
   12500, 1000, true,
   12500, 0, '', '',
   22, 'SMSKU-000005', '[]'::jsonb,
-  'Fortune', 13000, 481
+  'Fortune', 13000, 481,
+  572, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -138,21 +151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000006', 'Fortune Everyday Basmati Rice 5 kg',
   'General', NULL, '',
   59900, 5000, true,
   59900, 0, '', '',
   8, 'SMSKU-000006', '[]'::jsonb,
-  'Fortune', 62500, 2600
+  'Fortune', 62500, 2600,
+  2729, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -160,21 +176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000007', 'Sona Masoori HMT Sona Masoori Rice 1 kg',
   'General', NULL, '',
   5800, 1000, true,
   5800, 0, '', '',
   30, 'SMSKU-000007', '[]'::jsonb,
-  'Sona Masoori', 6000, 200
+  'Sona Masoori', 6000, 200,
+  267, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -182,21 +201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000008', 'Sona Masoori HMT Sona Masoori Rice 5 kg',
   'General', NULL, '',
   26500, 5000, true,
   26500, 0, '', '',
   14, 'SMSKU-000008', '[]'::jsonb,
-  'Sona Masoori', 28000, 1500
+  'Sona Masoori', 28000, 1500,
+  1190, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -204,21 +226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000009', 'Sona Masoori HMT Sona Masoori Rice 10 kg',
   'General', NULL, '',
   52000, 10000, true,
   52000, 0, '', '',
   6, 'SMSKU-000009', '[]'::jsonb,
-  'Sona Masoori', 54000, 2000
+  'Sona Masoori', 54000, 2000,
+  2381, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -226,21 +251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000010', '24 Mantra Organic Sonamasuri Brown Rice 1 kg',
   'General', NULL, '',
   13800, 1000, true,
   13800, 0, '', '',
   15, 'SMSKU-000010', '[]'::jsonb,
-  '24 Mantra Organic', 14500, 667
+  '24 Mantra Organic', 14500, 667,
+  625, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -248,21 +276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000011', 'Kohinoor Super Silver Aged Basmati Rice 1 kg',
   'General', NULL, '',
   24500, 1000, true,
   24500, 0, '', '',
   10, 'SMSKU-000011', '[]'::jsonb,
-  'Kohinoor', 26000, 1500
+  'Kohinoor', 26000, 1500,
+  1095, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -270,21 +301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000012', 'Kohinoor Super Silver Aged Basmati Rice 5 kg',
   'General', NULL, '',
   119000, 5000, true,
   119000, 0, '', '',
   5, 'SMSKU-000012', '[]'::jsonb,
-  'Kohinoor', 125000, 6000
+  'Kohinoor', 125000, 6000,
+  5381, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -292,21 +326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000013', 'BB Royal Ponni Boiled Rice 1 kg',
   'General', NULL, '',
   5200, 1000, true,
   5200, 0, '', '',
   35, 'SMSKU-000013', '[]'::jsonb,
-  'BB Royal', 5500, 300
+  'BB Royal', 5500, 300,
+  233, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -314,21 +351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000014', 'BB Royal Ponni Boiled Rice 5 kg',
   'General', NULL, '',
   24500, 5000, true,
   24500, 0, '', '',
   12, 'SMSKU-000014', '[]'::jsonb,
-  'BB Royal', 26000, 1500
+  'BB Royal', 26000, 1500,
+  1095, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -336,21 +376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000015', 'Fortune Biryani Special Basmati Rice 1 kg',
   'General', NULL, '',
   18000, 1000, true,
   18000, 0, '', '',
   14, 'SMSKU-000015', '[]'::jsonb,
-  'Fortune', 19000, 1000
+  'Fortune', 19000, 1000,
+  810, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -358,21 +401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000016', 'Dawat Brown Basmati Rice 1 kg',
   'General', NULL, '',
   17000, 1000, true,
   17000, 0, '', '',
   8, 'SMSKU-000016', '[]'::jsonb,
-  'Dawat', 18000, 1000
+  'Dawat', 18000, 1000,
+  762, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -380,21 +426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000017', 'Sri Lalitha Idli Rice 1 kg',
   'General', NULL, '',
   5500, 1000, true,
   5500, 0, '', '',
   25, 'SMSKU-000017', '[]'::jsonb,
-  'Sri Lalitha', 5800, 300
+  'Sri Lalitha', 5800, 300,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -402,21 +451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000018', 'Sri Lalitha Idli Rice 5 kg',
   'General', NULL, '',
   26000, 5000, true,
   26000, 0, '', '',
   10, 'SMSKU-000018', '[]'::jsonb,
-  'Sri Lalitha', 27500, 1500
+  'Sri Lalitha', 27500, 1500,
+  1167, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -424,21 +476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000019', 'Tata Sampann Toor Dal 500 g',
   'General', NULL, '',
   7500, 500, true,
   7500, 0, '', '',
   25, 'SMSKU-000019', '[]'::jsonb,
-  'Tata Sampann', 8000, 500
+  'Tata Sampann', 8000, 500,
+  333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -446,21 +501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000020', 'Tata Sampann Toor Dal 1 kg',
   'General', NULL, '',
   14500, 1000, true,
   14500, 0, '', '',
   15, 'SMSKU-000020', '[]'::jsonb,
-  'Tata Sampann', 15500, 1000
+  'Tata Sampann', 15500, 1000,
+  643, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -468,21 +526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000021', 'Tata Sampann Moong Dal 500 g',
   'General', NULL, '',
   8800, 500, true,
   8800, 0, '', '',
   20, 'SMSKU-000021', '[]'::jsonb,
-  'Tata Sampann', 9500, 700
+  'Tata Sampann', 9500, 700,
+  386, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -490,21 +551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000022', 'Tata Sampann Moong Dal 1 kg',
   'General', NULL, '',
   17500, 1000, true,
   17500, 0, '', '',
   12, 'SMSKU-000022', '[]'::jsonb,
-  'Tata Sampann', 18500, 1000
+  'Tata Sampann', 18500, 1000,
+  786, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -512,21 +576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000023', 'Tata Sampann Chana Dal 500 g',
   'General', NULL, '',
   6500, 500, true,
   6500, 0, '', '',
   22, 'SMSKU-000023', '[]'::jsonb,
-  'Tata Sampann', 7000, 500
+  'Tata Sampann', 7000, 500,
+  286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -534,21 +601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000024', 'Tata Sampann Chana Dal 1 kg',
   'General', NULL, '',
   12800, 1000, true,
   12800, 0, '', '',
   14, 'SMSKU-000024', '[]'::jsonb,
-  'Tata Sampann', 13500, 700
+  'Tata Sampann', 13500, 700,
+  576, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -556,21 +626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000025', 'Tata Sampann Masoor Dal 500 g',
   'General', NULL, '',
   7000, 500, true,
   7000, 0, '', '',
   18, 'SMSKU-000025', '[]'::jsonb,
-  'Tata Sampann', 7500, 500
+  'Tata Sampann', 7500, 500,
+  310, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -578,21 +651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000026', 'Tata Sampann Masoor Dal 1 kg',
   'General', NULL, '',
   13800, 1000, true,
   13800, 0, '', '',
   10, 'SMSKU-000026', '[]'::jsonb,
-  'Tata Sampann', 14500, 700
+  'Tata Sampann', 14500, 700,
+  624, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -600,21 +676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000027', 'Tata Sampann Urad Dal 500 g',
   'General', NULL, '',
   8500, 500, true,
   8500, 0, '', '',
   16, 'SMSKU-000027', '[]'::jsonb,
-  'Tata Sampann', 9000, 473
+  'Tata Sampann', 9000, 473,
+  382, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -622,21 +701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000028', 'Tata Sampann Urad Dal 1 kg',
   'General', NULL, '',
   16500, 1000, true,
   16500, 0, '', '',
   8, 'SMSKU-000028', '[]'::jsonb,
-  'Tata Sampann', 17500, 1000
+  'Tata Sampann', 17500, 1000,
+  738, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -644,21 +726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000029', '24 Mantra Organic Organic Toor Dal 500 g',
   'General', NULL, '',
   10500, 500, true,
   10500, 0, '', '',
   10, 'SMSKU-000029', '[]'::jsonb,
-  '24 Mantra Organic', 11000, 478
+  '24 Mantra Organic', 11000, 478,
+  477, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -666,21 +751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000030', 'BB Royal Rajma (Red Kidney Beans) 500 g',
   'General', NULL, '',
   8000, 500, true,
   8000, 0, '', '',
   14, 'SMSKU-000030', '[]'::jsonb,
-  'BB Royal', 8500, 500
+  'BB Royal', 8500, 500,
+  357, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -688,21 +776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000031', 'BB Royal Rajma (Red Kidney Beans) 1 kg',
   'General', NULL, '',
   15500, 1000, true,
   15500, 0, '', '',
   8, 'SMSKU-000031', '[]'::jsonb,
-  'BB Royal', 16500, 1000
+  'BB Royal', 16500, 1000,
+  690, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -710,21 +801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000032', 'BB Royal Kabuli Chana 500 g',
   'General', NULL, '',
   9000, 500, true,
   9000, 0, '', '',
   12, 'SMSKU-000032', '[]'::jsonb,
-  'BB Royal', 9500, 500
+  'BB Royal', 9500, 500,
+  405, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -732,21 +826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000033', 'BB Royal Kabuli Chana 1 kg',
   'General', NULL, '',
   17500, 1000, true,
   17500, 0, '', '',
   7, 'SMSKU-000033', '[]'::jsonb,
-  'BB Royal', 18500, 1000
+  'BB Royal', 18500, 1000,
+  786, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -754,21 +851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000034', 'BB Royal Black Urad Whole 500 g',
   'General', NULL, '',
   8200, 500, true,
   8200, 0, '', '',
   15, 'SMSKU-000034', '[]'::jsonb,
-  'BB Royal', 8800, 600
+  'BB Royal', 8800, 600,
+  362, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -776,21 +876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000035', 'Fortune Arhar Dal 1 kg',
   'General', NULL, '',
   15000, 1000, true,
   15000, 0, '', '',
   11, 'SMSKU-000035', '[]'::jsonb,
-  'Fortune', 16000, 1000
+  'Fortune', 16000, 1000,
+  667, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -798,21 +901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000036', 'Aashirvaad Whole Wheat Atta 1 kg',
   'General', NULL, '',
   5800, 1000, true,
   5800, 0, '', '',
   30, 'SMSKU-000036', '[]'::jsonb,
-  'Aashirvaad', 6200, 400
+  'Aashirvaad', 6200, 400,
+  257, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -820,21 +926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000037', 'Aashirvaad Whole Wheat Atta 5 kg',
   'General', NULL, '',
   27900, 5000, true,
   27900, 0, '', '',
   15, 'SMSKU-000037', '[]'::jsonb,
-  'Aashirvaad', 29500, 1600
+  'Aashirvaad', 29500, 1600,
+  1252, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -842,21 +951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000038', 'Aashirvaad Whole Wheat Atta 10 kg',
   'General', NULL, '',
   54500, 10000, true,
   54500, 0, '', '',
   8, 'SMSKU-000038', '[]'::jsonb,
-  'Aashirvaad', 57000, 2500
+  'Aashirvaad', 57000, 2500,
+  2476, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -864,21 +976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000039', 'Aashirvaad Multigrains Atta 1 kg',
   'General', NULL, '',
   7000, 1000, true,
   7000, 0, '', '',
   20, 'SMSKU-000039', '[]'::jsonb,
-  'Aashirvaad', 7500, 500
+  'Aashirvaad', 7500, 500,
+  310, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -886,21 +1001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000040', 'Aashirvaad Multigrains Atta 5 kg',
   'General', NULL, '',
   33500, 5000, true,
   33500, 0, '', '',
   10, 'SMSKU-000040', '[]'::jsonb,
-  'Aashirvaad', 35500, 2000
+  'Aashirvaad', 35500, 2000,
+  1500, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -908,21 +1026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000041', 'Pillsbury Chakki Fresh Atta 1 kg',
   'General', NULL, '',
   5600, 1000, true,
   5600, 0, '', '',
   25, 'SMSKU-000041', '[]'::jsonb,
-  'Pillsbury', 6000, 400
+  'Pillsbury', 6000, 400,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -930,21 +1051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000042', 'Pillsbury Chakki Fresh Atta 5 kg',
   'General', NULL, '',
   27000, 5000, true,
   27000, 0, '', '',
   12, 'SMSKU-000042', '[]'::jsonb,
-  'Pillsbury', 28500, 1500
+  'Pillsbury', 28500, 1500,
+  1214, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -952,21 +1076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000043', 'Fortune Chakki Atta 1 kg',
   'General', NULL, '',
   5500, 1000, true,
   5500, 0, '', '',
   22, 'SMSKU-000043', '[]'::jsonb,
-  'Fortune', 5800, 300
+  'Fortune', 5800, 300,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -974,21 +1101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000044', 'Fortune Chakki Atta 5 kg',
   'General', NULL, '',
   26000, 5000, true,
   26000, 0, '', '',
   10, 'SMSKU-000044', '[]'::jsonb,
-  'Fortune', 27500, 1500
+  'Fortune', 27500, 1500,
+  1167, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -996,21 +1126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000045', 'Rajdhani Besan (Gram Flour) 500 g',
   'General', NULL, '',
   6000, 500, true,
   6000, 0, '', '',
   18, 'SMSKU-000045', '[]'::jsonb,
-  'Rajdhani', 6500, 500
+  'Rajdhani', 6500, 500,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1018,21 +1151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000046', 'Rajdhani Besan (Gram Flour) 1 kg',
   'General', NULL, '',
   11800, 1000, true,
   11800, 0, '', '',
   12, 'SMSKU-000046', '[]'::jsonb,
-  'Rajdhani', 12500, 700
+  'Rajdhani', 12500, 700,
+  529, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1040,21 +1176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000047', 'BB Royal Maida (All Purpose Flour) 500 g',
   'General', NULL, '',
   3200, 500, true,
   3200, 0, '', '',
   20, 'SMSKU-000047', '[]'::jsonb,
-  'BB Royal', 3500, 300
+  'BB Royal', 3500, 300,
+  138, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1062,21 +1201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000048', 'BB Royal Maida (All Purpose Flour) 1 kg',
   'General', NULL, '',
   6000, 1000, true,
   6000, 0, '', '',
   14, 'SMSKU-000048', '[]'::jsonb,
-  'BB Royal', 6500, 500
+  'BB Royal', 6500, 500,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1084,21 +1226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000049', 'BB Royal Rava (Semolina) 500 g',
   'General', NULL, '',
   3800, 500, true,
   3800, 0, '', '',
   22, 'SMSKU-000049', '[]'::jsonb,
-  'BB Royal', 4000, 200
+  'BB Royal', 4000, 200,
+  171, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1106,21 +1251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000050', 'BB Royal Rava (Semolina) 1 kg',
   'General', NULL, '',
   7000, 1000, true,
   7000, 0, '', '',
   15, 'SMSKU-000050', '[]'::jsonb,
-  'BB Royal', 7500, 500
+  'BB Royal', 7500, 500,
+  310, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1128,21 +1276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000051', 'Fortune Sunlite Refined Sunflower Oil 1 L',
   'General', NULL, '',
   15000, 1000, true,
   15000, 0, '', '',
   25, 'SMSKU-000051', '[]'::jsonb,
-  'Fortune', 16000, 1000
+  'Fortune', 16000, 1000,
+  667, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1150,21 +1301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000052', 'Fortune Sunlite Refined Sunflower Oil 2 L',
   'General', NULL, '',
   29500, 2000, true,
   29500, 0, '', '',
   12, 'SMSKU-000052', '[]'::jsonb,
-  'Fortune', 31000, 1500
+  'Fortune', 31000, 1500,
+  1333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1172,21 +1326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000053', 'Fortune Sunlite Refined Sunflower Oil 5 L',
   'General', NULL, '',
   71000, 5000, true,
   71000, 0, '', '',
   6, 'SMSKU-000053', '[]'::jsonb,
-  'Fortune', 74500, 3500
+  'Fortune', 74500, 3500,
+  3214, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1194,21 +1351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000054', 'Saffola Gold Refined Oil 1 L',
   'General', NULL, '',
   19800, 1000, true,
   19800, 0, '', '',
   20, 'SMSKU-000054', '[]'::jsonb,
-  'Saffola', 21000, 1200
+  'Saffola', 21000, 1200,
+  886, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1216,21 +1376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000055', 'Saffola Gold Refined Oil 2 L',
   'General', NULL, '',
   39000, 2000, true,
   39000, 0, '', '',
   10, 'SMSKU-000055', '[]'::jsonb,
-  'Saffola', 41000, 2000
+  'Saffola', 41000, 2000,
+  1762, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1238,21 +1401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000056', 'Saffola Gold Refined Oil 5 L',
   'General', NULL, '',
   95000, 5000, true,
   95000, 0, '', '',
   5, 'SMSKU-000056', '[]'::jsonb,
-  'Saffola', 99000, 4000
+  'Saffola', 99000, 4000,
+  4333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1260,21 +1426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000057', 'Sundrop Heart Lite Sunflower Oil 1 L',
   'General', NULL, '',
   16500, 1000, true,
   16500, 0, '', '',
   18, 'SMSKU-000057', '[]'::jsonb,
-  'Sundrop', 17500, 1000
+  'Sundrop', 17500, 1000,
+  738, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1282,21 +1451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000058', 'Sundrop Heart Lite Sunflower Oil 2 L',
   'General', NULL, '',
   32000, 2000, true,
   32000, 0, '', '',
   8, 'SMSKU-000058', '[]'::jsonb,
-  'Sundrop', 34000, 2000
+  'Sundrop', 34000, 2000,
+  1429, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1304,21 +1476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000059', 'Nature Fresh Kachi Ghani Mustard Oil 1 L',
   'General', NULL, '',
   18000, 1000, true,
   18000, 0, '', '',
   15, 'SMSKU-000059', '[]'::jsonb,
-  'Nature Fresh', 19000, 1000
+  'Nature Fresh', 19000, 1000,
+  810, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1326,21 +1501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000060', 'Nature Fresh Kachi Ghani Mustard Oil 5 L',
   'General', NULL, '',
   87000, 5000, true,
   87000, 0, '', '',
   4, 'SMSKU-000060', '[]'::jsonb,
-  'Nature Fresh', 91000, 4000
+  'Nature Fresh', 91000, 4000,
+  3952, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1348,21 +1526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000061', 'Dhara Refined Groundnut Oil 1 L',
   'General', NULL, '',
   21000, 1000, true,
   21000, 0, '', '',
   12, 'SMSKU-000061', '[]'::jsonb,
-  'Dhara', 22000, 1000
+  'Dhara', 22000, 1000,
+  952, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1370,21 +1551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000062', 'Dhara Refined Groundnut Oil 5 L',
   'General', NULL, '',
   100000, 5000, true,
   100000, 0, '', '',
   4, 'SMSKU-000062', '[]'::jsonb,
-  'Dhara', 105000, 5000
+  'Dhara', 105000, 5000,
+  4524, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1392,21 +1576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000063', 'KLF Coconad Pure Coconut Oil 500 ml',
   'General', NULL, '',
   12200, 500, true,
   12200, 0, '', '',
   20, 'SMSKU-000063', '[]'::jsonb,
-  'KLF Coconad', 13000, 800
+  'KLF Coconad', 13000, 800,
+  543, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1414,21 +1601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000064', 'KLF Coconad Pure Coconut Oil 1 L',
   'General', NULL, '',
   23800, 1000, true,
   23800, 0, '', '',
   10, 'SMSKU-000064', '[]'::jsonb,
-  'KLF Coconad', 25000, 1200
+  'KLF Coconad', 25000, 1200,
+  1076, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1436,21 +1626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000065', 'Figaro Olive Oil 250 ml',
   'General', NULL, '',
   30500, 250, true,
   30500, 0, '', '',
   8, 'SMSKU-000065', '[]'::jsonb,
-  'Figaro', 32000, 1430
+  'Figaro', 32000, 1430,
+  1384, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1458,21 +1651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000066', 'Figaro Olive Oil 500 ml',
   'General', NULL, '',
   57000, 500, true,
   57000, 0, '', '',
   5, 'SMSKU-000066', '[]'::jsonb,
-  'Figaro', 60000, 3000
+  'Figaro', 60000, 3000,
+  2571, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1480,21 +1676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000067', 'Fortune Rice Bran Health Oil 1 L',
   'General', NULL, '',
   17500, 1000, true,
   17500, 0, '', '',
   14, 'SMSKU-000067', '[]'::jsonb,
-  'Fortune', 18500, 1000
+  'Fortune', 18500, 1000,
+  786, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1502,21 +1701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000068', 'Fortune Rice Bran Health Oil 5 L',
   'General', NULL, '',
   84000, 5000, true,
   84000, 0, '', '',
   5, 'SMSKU-000068', '[]'::jsonb,
-  'Fortune', 88000, 4000
+  'Fortune', 88000, 4000,
+  3810, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1524,21 +1726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000069', 'MDH Garam Masala 50 g',
   'General', NULL, '',
   5500, 50, true,
   5500, 0, '', '',
   30, 'SMSKU-000069', '[]'::jsonb,
-  'MDH', 5800, 300
+  'MDH', 5800, 300,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1546,21 +1751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000070', 'MDH Garam Masala 100 g',
   'General', NULL, '',
   10500, 100, true,
   10500, 0, '', '',
   20, 'SMSKU-000070', '[]'::jsonb,
-  'MDH', 11000, 478
+  'MDH', 11000, 478,
+  477, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1568,21 +1776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000071', 'MDH Chana Masala 100 g',
   'General', NULL, '',
   6500, 100, true,
   6500, 0, '', '',
   22, 'SMSKU-000071', '[]'::jsonb,
-  'MDH', 7000, 500
+  'MDH', 7000, 500,
+  286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1590,21 +1801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000072', 'MDH Kitchen King Masala 100 g',
   'General', NULL, '',
   9000, 100, true,
   9000, 0, '', '',
   18, 'SMSKU-000072', '[]'::jsonb,
-  'MDH', 9500, 500
+  'MDH', 9500, 500,
+  405, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1612,21 +1826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000073', 'MDH Pav Bhaji Masala 100 g',
   'General', NULL, '',
   6800, 100, true,
   6800, 0, '', '',
   15, 'SMSKU-000073', '[]'::jsonb,
-  'MDH', 7200, 400
+  'MDH', 7200, 400,
+  305, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1634,21 +1851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000074', 'MDH Sambhar Masala 100 g',
   'General', NULL, '',
   6400, 100, true,
   6400, 0, '', '',
   20, 'SMSKU-000074', '[]'::jsonb,
-  'MDH', 6800, 400
+  'MDH', 6800, 400,
+  286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1656,21 +1876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000075', 'Everest Turmeric Powder 100 g',
   'General', NULL, '',
   4000, 100, true,
   4000, 0, '', '',
   35, 'SMSKU-000075', '[]'::jsonb,
-  'Everest', 4200, 200
+  'Everest', 4200, 200,
+  181, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1678,21 +1901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000076', 'Everest Turmeric Powder 200 g',
   'General', NULL, '',
   7500, 200, true,
   7500, 0, '', '',
   20, 'SMSKU-000076', '[]'::jsonb,
-  'Everest', 8000, 500
+  'Everest', 8000, 500,
+  333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1700,21 +1926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000077', 'Everest Turmeric Powder 500 g',
   'General', NULL, '',
   18000, 500, true,
   18000, 0, '', '',
   10, 'SMSKU-000077', '[]'::jsonb,
-  'Everest', 19000, 1000
+  'Everest', 19000, 1000,
+  810, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1722,21 +1951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000078', 'Everest Red Chilli Powder 100 g',
   'General', NULL, '',
   5200, 100, true,
   5200, 0, '', '',
   30, 'SMSKU-000078', '[]'::jsonb,
-  'Everest', 5500, 300
+  'Everest', 5500, 300,
+  233, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1744,21 +1976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000079', 'Everest Red Chilli Powder 200 g',
   'General', NULL, '',
   10000, 200, true,
   10000, 0, '', '',
   18, 'SMSKU-000079', '[]'::jsonb,
-  'Everest', 10500, 500
+  'Everest', 10500, 500,
+  452, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1766,21 +2001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000080', 'Everest Red Chilli Powder 500 g',
   'General', NULL, '',
   23800, 500, true,
   23800, 0, '', '',
   8, 'SMSKU-000080', '[]'::jsonb,
-  'Everest', 25000, 1200
+  'Everest', 25000, 1200,
+  1076, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1788,21 +2026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000081', 'Everest Coriander Powder 100 g',
   'General', NULL, '',
   3500, 100, true,
   3500, 0, '', '',
   28, 'SMSKU-000081', '[]'::jsonb,
-  'Everest', 3800, 300
+  'Everest', 3800, 300,
+  152, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1810,21 +2051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000082', 'Everest Coriander Powder 200 g',
   'General', NULL, '',
   6800, 200, true,
   6800, 0, '', '',
   15, 'SMSKU-000082', '[]'::jsonb,
-  'Everest', 7200, 400
+  'Everest', 7200, 400,
+  305, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1832,21 +2076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000083', 'Everest Cumin Powder 100 g',
   'General', NULL, '',
   8000, 100, true,
   8000, 0, '', '',
   20, 'SMSKU-000083', '[]'::jsonb,
-  'Everest', 8500, 500
+  'Everest', 8500, 500,
+  357, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1854,21 +2101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000084', 'Everest Cumin Powder 200 g',
   'General', NULL, '',
   15500, 200, true,
   15500, 0, '', '',
   10, 'SMSKU-000084', '[]'::jsonb,
-  'Everest', 16500, 1000
+  'Everest', 16500, 1000,
+  690, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1876,21 +2126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000085', 'Catch Black Pepper Powder 50 g',
   'General', NULL, '',
   8500, 50, true,
   8500, 0, '', '',
   15, 'SMSKU-000085', '[]'::jsonb,
-  'Catch', 9000, 500
+  'Catch', 9000, 500,
+  381, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1898,21 +2151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000086', 'Catch Black Pepper Powder 100 g',
   'General', NULL, '',
   16500, 100, true,
   16500, 0, '', '',
   10, 'SMSKU-000086', '[]'::jsonb,
-  'Catch', 17500, 1000
+  'Catch', 17500, 1000,
+  738, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1920,21 +2176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000087', 'Catch Sprinklers Table Salt 200 g',
   'General', NULL, '',
   2500, 200, true,
   2500, 0, '', '',
   40, 'SMSKU-000087', '[]'::jsonb,
-  'Catch', 2800, 300
+  'Catch', 2800, 300,
+  105, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1942,21 +2201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000088', 'Tata Iodised Salt 1 kg',
   'General', NULL, '',
   2200, 1000, true,
   2200, 0, '', '',
   50, 'SMSKU-000088', '[]'::jsonb,
-  'Tata', 2400, 200
+  'Tata', 2400, 200,
+  95, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1964,21 +2226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000089', 'Sakthi Chicken Masala 50 g',
   'General', NULL, '',
   3300, 50, true,
   3300, 0, '', '',
   25, 'SMSKU-000089', '[]'::jsonb,
-  'Sakthi', 3500, 200
+  'Sakthi', 3500, 200,
+  148, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -1986,21 +2251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000090', 'Sakthi Chicken Masala 100 g',
   'General', NULL, '',
   6000, 100, true,
   6000, 0, '', '',
   18, 'SMSKU-000090', '[]'::jsonb,
-  'Sakthi', 6500, 500
+  'Sakthi', 6500, 500,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2008,21 +2276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000091', 'Sakthi Fish Curry Powder 50 g',
   'General', NULL, '',
   3000, 50, true,
   3000, 0, '', '',
   22, 'SMSKU-000091', '[]'::jsonb,
-  'Sakthi', 3200, 200
+  'Sakthi', 3200, 200,
+  133, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2030,21 +2301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000092', 'Sakthi Fish Curry Powder 100 g',
   'General', NULL, '',
   5600, 100, true,
   5600, 0, '', '',
   14, 'SMSKU-000092', '[]'::jsonb,
-  'Sakthi', 6000, 400
+  'Sakthi', 6000, 400,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2052,21 +2326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000093', 'Eastern Biryani Masala 50 g',
   'General', NULL, '',
   5600, 50, true,
   5600, 0, '', '',
   16, 'SMSKU-000093', '[]'::jsonb,
-  'Eastern', 6000, 400
+  'Eastern', 6000, 400,
+  248, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2074,21 +2351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000094', 'Eastern Rasam Powder 100 g',
   'General', NULL, '',
   4800, 100, true,
   4800, 0, '', '',
   20, 'SMSKU-000094', '[]'::jsonb,
-  'Eastern', 5200, 400
+  'Eastern', 5200, 400,
+  210, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2096,21 +2376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000095', 'Tata Rock Salt 1 kg',
   'General', NULL, '',
   3200, 1000, true,
   3200, 0, '', '',
   30, 'SMSKU-000095', '[]'::jsonb,
-  'Tata', 3500, 300
+  'Tata', 3500, 300,
+  138, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2118,21 +2401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000096', 'Nutrela Soya Chunks 200 g',
   'General', NULL, '',
   7500, 200, true,
   7500, 0, '', '',
   20, 'SMSKU-000096', '[]'::jsonb,
-  'Nutrela', 8000, 500
+  'Nutrela', 8000, 500,
+  333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2140,21 +2426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000097', 'Nutrela Soya Chunks 500 g',
   'General', NULL, '',
   17500, 500, true,
   17500, 0, '', '',
   10, 'SMSKU-000097', '[]'::jsonb,
-  'Nutrela', 18500, 1000
+  'Nutrela', 18500, 1000,
+  786, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2162,21 +2451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000098', 'Maggi Coconut Milk 200 ml',
   'General', NULL, '',
   5000, 200, true,
   5000, 0, '', '',
   15, 'SMSKU-000098', '[]'::jsonb,
-  'Maggi', 5500, 500
+  'Maggi', 5500, 500,
+  214, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2184,21 +2476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000099', 'MTR Vermicelli 440 g',
   'General', NULL, '',
   4500, 440, true,
   4500, 0, '', '',
   18, 'SMSKU-000099', '[]'::jsonb,
-  'MTR', 4800, 300
+  'MTR', 4800, 300,
+  200, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2206,21 +2501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000100', 'Bambino Vermicelli 850 g',
   'General', NULL, '',
   6000, 850, true,
   6000, 0, '', '',
   12, 'SMSKU-000100', '[]'::jsonb,
-  'Bambino', 6500, 500
+  'Bambino', 6500, 500,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2228,21 +2526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000101', 'Aachi Jaggery Powder 500 g',
   'General', NULL, '',
   6500, 500, true,
   6500, 0, '', '',
   16, 'SMSKU-000101', '[]'::jsonb,
-  'Aachi', 7000, 500
+  'Aachi', 7000, 500,
+  286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2250,21 +2551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000102', 'Manna Barnyard Millet 500 g',
   'General', NULL, '',
   11200, 500, true,
   11200, 0, '', '',
   10, 'SMSKU-000102', '[]'::jsonb,
-  'Manna', 12000, 800
+  'Manna', 12000, 800,
+  495, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2272,21 +2576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000103', 'Manna Foxtail Millet 500 g',
   'General', NULL, '',
   10800, 500, true,
   10800, 0, '', '',
   12, 'SMSKU-000103', '[]'::jsonb,
-  'Manna', 11500, 700
+  'Manna', 11500, 700,
+  481, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2294,21 +2601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000104', 'Manna Ragi Flour 500 g',
   'General', NULL, '',
   8800, 500, true,
   8800, 0, '', '',
   14, 'SMSKU-000104', '[]'::jsonb,
-  'Manna', 9500, 700
+  'Manna', 9500, 700,
+  386, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2316,21 +2626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000105', '24 Mantra Organic Jaggery 500 g',
   'General', NULL, '',
   10500, 500, true,
   10500, 0, '', '',
   8, 'SMSKU-000105', '[]'::jsonb,
-  '24 Mantra Organic', 11000, 478
+  '24 Mantra Organic', 11000, 478,
+  477, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2338,21 +2651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000106', 'Sri Sri Tattva Poha (Flattened Rice) Thick 500 g',
   'General', NULL, '',
   5000, 500, true,
   5000, 0, '', '',
   20, 'SMSKU-000106', '[]'::jsonb,
-  'Sri Sri Tattva', 5500, 500
+  'Sri Sri Tattva', 5500, 500,
+  214, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2360,21 +2676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000107', 'BB Royal Sugar Sulphurless 1 kg',
   'General', NULL, '',
   4500, 1000, true,
   4500, 0, '', '',
   35, 'SMSKU-000107', '[]'::jsonb,
-  'BB Royal', 4800, 300
+  'BB Royal', 4800, 300,
+  200, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2382,21 +2701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000108', 'BB Royal Sugar Sulphurless 5 kg',
   'General', NULL, '',
   22000, 5000, true,
   22000, 0, '', '',
   12, 'SMSKU-000108', '[]'::jsonb,
-  'BB Royal', 23000, 1000
+  'BB Royal', 23000, 1000,
+  1000, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2404,21 +2726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000109', 'Aachi Tamarind Block 200 g',
   'General', NULL, '',
   3700, 200, true,
   3700, 0, '', '',
   18, 'SMSKU-000109', '[]'::jsonb,
-  'Aachi', 4000, 300
+  'Aachi', 4000, 300,
+  162, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2426,21 +2751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000110', 'Aachi Tamarind Block 500 g',
   'General', NULL, '',
   8500, 500, true,
   8500, 0, '', '',
   10, 'SMSKU-000110', '[]'::jsonb,
-  'Aachi', 9000, 500
+  'Aachi', 9000, 500,
+  381, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2448,21 +2776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000111', 'Eastern Papad – Cumin 200 g',
   'General', NULL, '',
   6000, 200, true,
   6000, 0, '', '',
   15, 'SMSKU-000111', '[]'::jsonb,
-  'Eastern', 6500, 500
+  'Eastern', 6500, 500,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2470,21 +2801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000112', 'Lay&apos;s Classic Salted Chips 28 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000112', 'Lay''s Classic Salted Chips 28 g',
   'General', NULL, '',
   2000, 28, true,
   2000, 0, '', '',
   40, 'SMSKU-000112', '[]'::jsonb,
-  'Lay&apos;s', 2000, 0
+  'Lay''s', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2492,21 +2826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000113', 'Lay&apos;s Classic Salted Chips 52 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000113', 'Lay''s Classic Salted Chips 52 g',
   'General', NULL, '',
   3000, 52, true,
   3000, 0, '', '',
   30, 'SMSKU-000113', '[]'::jsonb,
-  'Lay&apos;s', 3000, 0
+  'Lay''s', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2514,21 +2851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000114', 'Lay&apos;s Classic Salted Chips 90 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000114', 'Lay''s Classic Salted Chips 90 g',
   'General', NULL, '',
   5000, 90, true,
   5000, 0, '', '',
   20, 'SMSKU-000114', '[]'::jsonb,
-  'Lay&apos;s', 5000, 0
+  'Lay''s', 5000, 0,
+  536, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2536,21 +2876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000115', 'Lay&apos;s Classic Salted Chips 180 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000115', 'Lay''s Classic Salted Chips 180 g',
   'General', NULL, '',
   9500, 180, true,
   9500, 0, '', '',
   10, 'SMSKU-000115', '[]'::jsonb,
-  'Lay&apos;s', 9900, 400
+  'Lay''s', 9900, 400,
+  975, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2558,21 +2901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000116', 'Lay&apos;s Magic Masala Chips 28 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000116', 'Lay''s Magic Masala Chips 28 g',
   'General', NULL, '',
   2000, 28, true,
   2000, 0, '', '',
   40, 'SMSKU-000116', '[]'::jsonb,
-  'Lay&apos;s', 2000, 0
+  'Lay''s', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2580,21 +2926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000117', 'Lay&apos;s Magic Masala Chips 52 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000117', 'Lay''s Magic Masala Chips 52 g',
   'General', NULL, '',
   3000, 52, true,
   3000, 0, '', '',
   30, 'SMSKU-000117', '[]'::jsonb,
-  'Lay&apos;s', 3000, 0
+  'Lay''s', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2602,21 +2951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000118', 'Lay&apos;s Magic Masala Chips 90 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000118', 'Lay''s Magic Masala Chips 90 g',
   'General', NULL, '',
   5000, 90, true,
   5000, 0, '', '',
   18, 'SMSKU-000118', '[]'::jsonb,
-  'Lay&apos;s', 5000, 0
+  'Lay''s', 5000, 0,
+  536, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2624,21 +2976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000119', 'Lay&apos;s American Style Cream &amp; Onion 52 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000119', 'Lay''s American Style Cream & Onion 52 g',
   'General', NULL, '',
   3000, 52, true,
   3000, 0, '', '',
   28, 'SMSKU-000119', '[]'::jsonb,
-  'Lay&apos;s', 3000, 0
+  'Lay''s', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2646,21 +3001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000120', 'Lay&apos;s American Style Cream &amp; Onion 90 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000120', 'Lay''s American Style Cream & Onion 90 g',
   'General', NULL, '',
   5000, 90, true,
   5000, 0, '', '',
   15, 'SMSKU-000120', '[]'::jsonb,
-  'Lay&apos;s', 5000, 0
+  'Lay''s', 5000, 0,
+  536, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2668,21 +3026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000121', 'Kurkure Masala Munch 30 g',
   'General', NULL, '',
   1000, 30, true,
   1000, 0, '', '',
   45, 'SMSKU-000121', '[]'::jsonb,
-  'Kurkure', 1000, 0
+  'Kurkure', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2690,21 +3051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000122', 'Kurkure Masala Munch 75 g',
   'General', NULL, '',
   2000, 75, true,
   2000, 0, '', '',
   30, 'SMSKU-000122', '[]'::jsonb,
-  'Kurkure', 2000, 0
+  'Kurkure', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2712,21 +3076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000123', 'Kurkure Masala Munch 115 g',
   'General', NULL, '',
   3000, 115, true,
   3000, 0, '', '',
   22, 'SMSKU-000123', '[]'::jsonb,
-  'Kurkure', 3000, 0
+  'Kurkure', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2734,21 +3101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000124', 'Kurkure Puffcorn Yummy Cheese 32 g',
   'General', NULL, '',
   1000, 32, true,
   1000, 0, '', '',
   35, 'SMSKU-000124', '[]'::jsonb,
-  'Kurkure', 1000, 0
+  'Kurkure', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2756,21 +3126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000125', 'Kurkure Puffcorn Yummy Cheese 68 g',
   'General', NULL, '',
   2000, 68, true,
   2000, 0, '', '',
   20, 'SMSKU-000125', '[]'::jsonb,
-  'Kurkure', 2000, 0
+  'Kurkure', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2778,21 +3151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000126', 'Bingo Mad Angles Achari Masti 36 g',
   'General', NULL, '',
   1000, 36, true,
   1000, 0, '', '',
   35, 'SMSKU-000126', '[]'::jsonb,
-  'Bingo', 1000, 0
+  'Bingo', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2800,21 +3176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000127', 'Bingo Mad Angles Achari Masti 72 g',
   'General', NULL, '',
   2000, 72, true,
   2000, 0, '', '',
   22, 'SMSKU-000127', '[]'::jsonb,
-  'Bingo', 2000, 0
+  'Bingo', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2822,21 +3201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000128', 'Bingo Tedhe Medhe Masala Tadka 35 g',
   'General', NULL, '',
   1000, 35, true,
   1000, 0, '', '',
   32, 'SMSKU-000128', '[]'::jsonb,
-  'Bingo', 1000, 0
+  'Bingo', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2844,21 +3226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000129', 'Bingo Tedhe Medhe Masala Tadka 66 g',
   'General', NULL, '',
   2000, 66, true,
   2000, 0, '', '',
   20, 'SMSKU-000129', '[]'::jsonb,
-  'Bingo', 2000, 0
+  'Bingo', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2866,21 +3251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000130', 'Haldiram&apos;s Aloo Bhujia 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000130', 'Haldiram''s Aloo Bhujia 200 g',
   'General', NULL, '',
   7500, 200, true,
   7500, 0, '', '',
   18, 'SMSKU-000130', '[]'::jsonb,
-  'Haldiram&apos;s', 8000, 500
+  'Haldiram''s', 8000, 500,
+  750, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2888,21 +3276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000131', 'Haldiram&apos;s Aloo Bhujia 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000131', 'Haldiram''s Aloo Bhujia 400 g',
   'General', NULL, '',
   14500, 400, true,
   14500, 0, '', '',
   10, 'SMSKU-000131', '[]'::jsonb,
-  'Haldiram&apos;s', 15500, 1000
+  'Haldiram''s', 15500, 1000,
+  1446, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2910,21 +3301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000132', 'Haldiram&apos;s Moong Dal 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000132', 'Haldiram''s Moong Dal 200 g',
   'General', NULL, '',
   7000, 200, true,
   7000, 0, '', '',
   16, 'SMSKU-000132', '[]'::jsonb,
-  'Haldiram&apos;s', 7500, 500
+  'Haldiram''s', 7500, 500,
+  696, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2932,21 +3326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000133', 'Haldiram&apos;s Moong Dal 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000133', 'Haldiram''s Moong Dal 400 g',
   'General', NULL, '',
   13500, 400, true,
   13500, 0, '', '',
   8, 'SMSKU-000133', '[]'::jsonb,
-  'Haldiram&apos;s', 14500, 1000
+  'Haldiram''s', 14500, 1000,
+  1339, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2954,21 +3351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000134', 'Haldiram&apos;s Namkeen Mixture 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000134', 'Haldiram''s Namkeen Mixture 200 g',
   'General', NULL, '',
   6800, 200, true,
   6800, 0, '', '',
   15, 'SMSKU-000134', '[]'::jsonb,
-  'Haldiram&apos;s', 7200, 400
+  'Haldiram''s', 7200, 400,
+  686, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2976,21 +3376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000135', 'Haldiram&apos;s Namkeen Mixture 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000135', 'Haldiram''s Namkeen Mixture 400 g',
   'General', NULL, '',
   13200, 400, true,
   13200, 0, '', '',
   8, 'SMSKU-000135', '[]'::jsonb,
-  'Haldiram&apos;s', 14000, 800
+  'Haldiram''s', 14000, 800,
+  1329, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -2998,21 +3401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000136', 'Pringles Original Salted Crisps 107 g',
   'General', NULL, '',
   14000, 107, true,
   14000, 0, '', '',
   12, 'SMSKU-000136', '[]'::jsonb,
-  'Pringles', 14900, 900
+  'Pringles', 14900, 900,
+  1404, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3020,21 +3426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000137', 'Pringles Sour Cream &amp; Onion 107 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000137', 'Pringles Sour Cream & Onion 107 g',
   'General', NULL, '',
   14000, 107, true,
   14000, 0, '', '',
   10, 'SMSKU-000137', '[]'::jsonb,
-  'Pringles', 14900, 900
+  'Pringles', 14900, 900,
+  1404, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3042,21 +3451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000138', 'Too Yumm Veggie Stix Herbs &amp; Sundried Tomato 30 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000138', 'Too Yumm Veggie Stix Herbs & Sundried Tomato 30 g',
   'General', NULL, '',
   2000, 30, true,
   2000, 0, '', '',
   18, 'SMSKU-000138', '[]'::jsonb,
-  'Too Yumm', 2000, 0
+  'Too Yumm', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3064,21 +3476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000139', 'Parle Parle-G Gold Biscuits 100 g',
   'General', NULL, '',
   2000, 100, true,
   2000, 0, '', '',
   50, 'SMSKU-000139', '[]'::jsonb,
-  'Parle', 2000, 0
+  'Parle', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3086,21 +3501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000140', 'Parle Parle-G Gold Biscuits 250 g',
   'General', NULL, '',
   4000, 250, true,
   4000, 0, '', '',
   30, 'SMSKU-000140', '[]'::jsonb,
-  'Parle', 4000, 0
+  'Parle', 4000, 0,
+  610, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3108,21 +3526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000141', 'Parle Monaco Salted Biscuits 75 g',
   'General', NULL, '',
   2000, 75, true,
   2000, 0, '', '',
   35, 'SMSKU-000141', '[]'::jsonb,
-  'Parle', 2000, 0
+  'Parle', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3130,21 +3551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000142', 'Parle Monaco Salted Biscuits 200 g',
   'General', NULL, '',
   4500, 200, true,
   4500, 0, '', '',
   20, 'SMSKU-000142', '[]'::jsonb,
-  'Parle', 4500, 0
+  'Parle', 4500, 0,
+  686, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3152,21 +3576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000143', 'Britannia Good Day Cashew Cookies 75 g',
   'General', NULL, '',
   2500, 75, true,
   2500, 0, '', '',
   35, 'SMSKU-000143', '[]'::jsonb,
-  'Britannia', 2500, 0
+  'Britannia', 2500, 0,
+  381, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3174,21 +3601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000144', 'Britannia Good Day Cashew Cookies 200 g',
   'General', NULL, '',
   5200, 200, true,
   5200, 0, '', '',
   18, 'SMSKU-000144', '[]'::jsonb,
-  'Britannia', 5500, 300
+  'Britannia', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3196,21 +3626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000145', 'Britannia Marie Gold Biscuits 100 g',
   'General', NULL, '',
   2200, 100, true,
   2200, 0, '', '',
   40, 'SMSKU-000145', '[]'::jsonb,
-  'Britannia', 2200, 0
+  'Britannia', 2200, 0,
+  336, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3218,21 +3651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000146', 'Britannia Marie Gold Biscuits 250 g',
   'General', NULL, '',
   4500, 250, true,
   4500, 0, '', '',
   22, 'SMSKU-000146', '[]'::jsonb,
-  'Britannia', 4800, 300
+  'Britannia', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3240,21 +3676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000147', 'Britannia Jim Jam Cream Biscuits 100 g',
   'General', NULL, '',
   3000, 100, true,
   3000, 0, '', '',
   28, 'SMSKU-000147', '[]'::jsonb,
-  'Britannia', 3000, 0
+  'Britannia', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3262,21 +3701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000148', 'Britannia Jim Jam Cream Biscuits 150 g',
   'General', NULL, '',
   3800, 150, true,
   3800, 0, '', '',
   18, 'SMSKU-000148', '[]'::jsonb,
-  'Britannia', 4000, 200
+  'Britannia', 4000, 200,
+  549, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3284,21 +3726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000149', 'Britannia Bourbon Chocolate Cream 100 g',
   'General', NULL, '',
   3000, 100, true,
   3000, 0, '', '',
   25, 'SMSKU-000149', '[]'::jsonb,
-  'Britannia', 3000, 0
+  'Britannia', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3306,21 +3751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000150', 'Britannia Bourbon Chocolate Cream 150 g',
   'General', NULL, '',
   4000, 150, true,
   4000, 0, '', '',
   15, 'SMSKU-000150', '[]'::jsonb,
-  'Britannia', 4200, 200
+  'Britannia', 4200, 200,
+  580, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3328,21 +3776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000151', 'Sunfeast Dark Fantasy Choco Fills 75 g',
   'General', NULL, '',
   3800, 75, true,
   3800, 0, '', '',
   22, 'SMSKU-000151', '[]'::jsonb,
-  'Sunfeast', 4000, 200
+  'Sunfeast', 4000, 200,
+  549, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3350,21 +3801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000152', 'Sunfeast Dark Fantasy Choco Fills 150 g',
   'General', NULL, '',
   7000, 150, true,
   7000, 0, '', '',
   14, 'SMSKU-000152', '[]'::jsonb,
-  'Sunfeast', 7500, 500
+  'Sunfeast', 7500, 500,
+  992, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3372,21 +3826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000153', 'Sunfeast Mom&apos;s Magic Cashew &amp; Almond 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000153', 'Sunfeast Mom''s Magic Cashew & Almond 200 g',
   'General', NULL, '',
   4800, 200, true,
   4800, 0, '', '',
   18, 'SMSKU-000153', '[]'::jsonb,
-  'Sunfeast', 5000, 200
+  'Sunfeast', 5000, 200,
+  702, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3394,21 +3851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000154', 'McVitie&apos;s Digestive Biscuits Wholewheat 100 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000154', 'McVitie''s Digestive Biscuits Wholewheat 100 g',
   'General', NULL, '',
   4200, 100, true,
   4200, 0, '', '',
   14, 'SMSKU-000154', '[]'::jsonb,
-  'McVitie&apos;s', 4500, 300
+  'McVitie''s', 4500, 300,
+  595, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3416,21 +3876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000155', 'McVitie&apos;s Digestive Biscuits Wholewheat 250 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000155', 'McVitie''s Digestive Biscuits Wholewheat 250 g',
   'General', NULL, '',
   9200, 250, true,
   9200, 0, '', '',
   8, 'SMSKU-000155', '[]'::jsonb,
-  'McVitie&apos;s', 9900, 700
+  'McVitie''s', 9900, 700,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3438,21 +3901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000156', 'Unibic Choco Chip Cookies 150 g',
   'General', NULL, '',
   5600, 150, true,
   5600, 0, '', '',
   16, 'SMSKU-000156', '[]'::jsonb,
-  'Unibic', 6000, 400
+  'Unibic', 6000, 400,
+  793, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3460,21 +3926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000157', 'Oreo Original Cream Biscuits 120 g',
   'General', NULL, '',
   3000, 120, true,
   3000, 0, '', '',
   25, 'SMSKU-000157', '[]'::jsonb,
-  'Oreo', 3000, 0
+  'Oreo', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3482,21 +3951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000158', 'Oreo Original Cream Biscuits 300 g',
   'General', NULL, '',
   6000, 300, true,
   6000, 0, '', '',
   12, 'SMSKU-000158', '[]'::jsonb,
-  'Oreo', 6500, 500
+  'Oreo', 6500, 500,
+  839, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3504,21 +3976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000159', 'Cadbury Dairy Milk Chocolate 25 g',
   'General', NULL, '',
   4000, 25, true,
   4000, 0, '', '',
   50, 'SMSKU-000159', '[]'::jsonb,
-  'Cadbury', 4000, 0
+  'Cadbury', 4000, 0,
+  610, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3526,21 +4001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000160', 'Cadbury Dairy Milk Chocolate 55 g',
   'General', NULL, '',
   8000, 55, true,
   8000, 0, '', '',
   30, 'SMSKU-000160', '[]'::jsonb,
-  'Cadbury', 8000, 0
+  'Cadbury', 8000, 0,
+  1220, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3548,21 +4026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000161', 'Cadbury Dairy Milk Chocolate 110 g',
   'General', NULL, '',
   14500, 110, true,
   14500, 0, '', '',
   15, 'SMSKU-000161', '[]'::jsonb,
-  'Cadbury', 15000, 500
+  'Cadbury', 15000, 500,
+  2136, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3570,21 +4051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000162', 'Cadbury Dairy Milk Silk 60 g',
   'General', NULL, '',
   9500, 60, true,
   9500, 0, '', '',
   25, 'SMSKU-000162', '[]'::jsonb,
-  'Cadbury', 9900, 400
+  'Cadbury', 9900, 400,
+  1388, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3592,21 +4076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000163', 'Cadbury Dairy Milk Silk 150 g',
   'General', NULL, '',
   19000, 150, true,
   19000, 0, '', '',
   12, 'SMSKU-000163', '[]'::jsonb,
-  'Cadbury', 20000, 1000
+  'Cadbury', 20000, 1000,
+  2746, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3614,21 +4101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000164', 'Cadbury 5 Star Chocolate Bar 25 g',
   'General', NULL, '',
   2000, 25, true,
   2000, 0, '', '',
   40, 'SMSKU-000164', '[]'::jsonb,
-  'Cadbury', 2000, 0
+  'Cadbury', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3636,21 +4126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000165', 'Cadbury 5 Star Chocolate Bar 44 g',
   'General', NULL, '',
   4000, 44, true,
   4000, 0, '', '',
   25, 'SMSKU-000165', '[]'::jsonb,
-  'Cadbury', 4000, 0
+  'Cadbury', 4000, 0,
+  610, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3658,21 +4151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000166', 'Cadbury Gems Chocolate 18 g',
   'General', NULL, '',
   2000, 18, true,
   2000, 0, '', '',
   40, 'SMSKU-000166', '[]'::jsonb,
-  'Cadbury', 2000, 0
+  'Cadbury', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3680,21 +4176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000167', 'Cadbury Perk Wafer Chocolate 22 g',
   'General', NULL, '',
   1500, 22, true,
   1500, 0, '', '',
   35, 'SMSKU-000167', '[]'::jsonb,
-  'Cadbury', 1500, 0
+  'Cadbury', 1500, 0,
+  229, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3702,21 +4201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000168', 'Cadbury Celebrations Rich Dry Fruit Collection 135 g',
   'General', NULL, '',
   22000, 135, true,
   22000, 0, '', '',
   8, 'SMSKU-000168', '[]'::jsonb,
-  'Cadbury', 23000, 1000
+  'Cadbury', 23000, 1000,
+  3203, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3724,21 +4226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000169', 'Nestle KitKat Wafer 18 g',
   'General', NULL, '',
   2000, 18, true,
   2000, 0, '', '',
   40, 'SMSKU-000169', '[]'::jsonb,
-  'Nestle', 2000, 0
+  'Nestle', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3746,21 +4251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000170', 'Nestle KitKat Wafer 37 g',
   'General', NULL, '',
   4000, 37, true,
   4000, 0, '', '',
   25, 'SMSKU-000170', '[]'::jsonb,
-  'Nestle', 4000, 0
+  'Nestle', 4000, 0,
+  610, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3768,21 +4276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000171', 'Nestle Munch Chocolate 18 g',
   'General', NULL, '',
   1000, 18, true,
   1000, 0, '', '',
   50, 'SMSKU-000171', '[]'::jsonb,
-  'Nestle', 1000, 0
+  'Nestle', 1000, 0,
+  153, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3790,21 +4301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000172', 'Nestle Munch Chocolate 42 g',
   'General', NULL, '',
   2000, 42, true,
   2000, 0, '', '',
   30, 'SMSKU-000172', '[]'::jsonb,
-  'Nestle', 2000, 0
+  'Nestle', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3812,21 +4326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000173', 'Ferrero Rocher Chocolate 200 g',
   'General', NULL, '',
   55000, 200, true,
   55000, 0, '', '',
   6, 'SMSKU-000173', '[]'::jsonb,
-  'Ferrero', 57500, 2500
+  'Ferrero', 57500, 2500,
+  8008, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3834,21 +4351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000174', 'Amul Dark Chocolate 55% Cocoa 150 g',
   'General', NULL, '',
   16500, 150, true,
   16500, 0, '', '',
   10, 'SMSKU-000174', '[]'::jsonb,
-  'Amul', 17500, 1000
+  'Amul', 17500, 1000,
+  2364, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3856,21 +4376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000175', 'Snickers Chocolate Bar 45 g',
   'General', NULL, '',
   5000, 45, true,
   5000, 0, '', '',
   22, 'SMSKU-000175', '[]'::jsonb,
-  'Snickers', 5000, 0
+  'Snickers', 5000, 0,
+  763, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3878,21 +4401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000176', 'Mentos Mint Rolls 37 g',
   'General', NULL, '',
   2000, 37, true,
   2000, 0, '', '',
   30, 'SMSKU-000176', '[]'::jsonb,
-  'Mentos', 2000, 0
+  'Mentos', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3900,21 +4426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000177', 'Pulse Kachcha Aam Candy 50 pcs',
   'General', NULL, '',
   5000, 0, true,
   5000, 0, '', '',
   20, 'SMSKU-000177', '[]'::jsonb,
-  'Pulse', 5000, 0
+  'Pulse', 5000, 0,
+  763, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3922,21 +4451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000178', 'Coca-Cola Classic 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   50, 'SMSKU-000178', '[]'::jsonb,
-  'Coca-Cola', 2000, 0
+  'Coca-Cola', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3944,21 +4476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000179', 'Coca-Cola Classic 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   35, 'SMSKU-000179', '[]'::jsonb,
-  'Coca-Cola', 4000, 0
+  'Coca-Cola', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3966,21 +4501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000180', 'Coca-Cola Classic 750 ml',
   'General', NULL, '',
   4500, 750, true,
   4500, 0, '', '',
   20, 'SMSKU-000180', '[]'::jsonb,
-  'Coca-Cola', 4500, 0
+  'Coca-Cola', 4500, 0,
+  984, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -3988,21 +4526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000181', 'Coca-Cola Classic 1.25 L',
   'General', NULL, '',
   7200, 1250, true,
   7200, 0, '', '',
   12, 'SMSKU-000181', '[]'::jsonb,
-  'Coca-Cola', 7500, 300
+  'Coca-Cola', 7500, 300,
+  1509, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4010,21 +4551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000182', 'Coca-Cola Classic 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   8, 'SMSKU-000182', '[]'::jsonb,
-  'Coca-Cola', 9500, 500
+  'Coca-Cola', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4032,21 +4576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000183', 'Pepsi Cola 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   45, 'SMSKU-000183', '[]'::jsonb,
-  'Pepsi', 2000, 0
+  'Pepsi', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4054,21 +4601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000184', 'Pepsi Cola 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   30, 'SMSKU-000184', '[]'::jsonb,
-  'Pepsi', 4000, 0
+  'Pepsi', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4076,21 +4626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000185', 'Pepsi Cola 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   8, 'SMSKU-000185', '[]'::jsonb,
-  'Pepsi', 9500, 500
+  'Pepsi', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4098,21 +4651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000186', 'Sprite Lemon Lime 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   40, 'SMSKU-000186', '[]'::jsonb,
-  'Sprite', 2000, 0
+  'Sprite', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4120,21 +4676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000187', 'Sprite Lemon Lime 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   28, 'SMSKU-000187', '[]'::jsonb,
-  'Sprite', 4000, 0
+  'Sprite', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4142,21 +4701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000188', 'Sprite Lemon Lime 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   7, 'SMSKU-000188', '[]'::jsonb,
-  'Sprite', 9500, 500
+  'Sprite', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4164,21 +4726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000189', 'Thums Up Cola 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   38, 'SMSKU-000189', '[]'::jsonb,
-  'Thums Up', 2000, 0
+  'Thums Up', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4186,21 +4751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000190', 'Thums Up Cola 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   24, 'SMSKU-000190', '[]'::jsonb,
-  'Thums Up', 4000, 0
+  'Thums Up', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4208,21 +4776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000191', 'Thums Up Cola 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   6, 'SMSKU-000191', '[]'::jsonb,
-  'Thums Up', 9500, 500
+  'Thums Up', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4230,21 +4801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000192', 'Fanta Orange 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   30, 'SMSKU-000192', '[]'::jsonb,
-  'Fanta', 2000, 0
+  'Fanta', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4252,21 +4826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000193', 'Fanta Orange 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   20, 'SMSKU-000193', '[]'::jsonb,
-  'Fanta', 4000, 0
+  'Fanta', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4274,21 +4851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000194', 'Limca Lemon 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   28, 'SMSKU-000194', '[]'::jsonb,
-  'Limca', 2000, 0
+  'Limca', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4296,21 +4876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000195', 'Limca Lemon 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   18, 'SMSKU-000195', '[]'::jsonb,
-  'Limca', 4000, 0
+  'Limca', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4318,21 +4901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000196', 'Real Mixed Fruit Juice 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   25, 'SMSKU-000196', '[]'::jsonb,
-  'Real', 3000, 200
+  'Real', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4340,21 +4926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000197', 'Real Mixed Fruit Juice 1 L',
   'General', NULL, '',
   10800, 1000, true,
   10800, 0, '', '',
   12, 'SMSKU-000197', '[]'::jsonb,
-  'Real', 11500, 700
+  'Real', 11500, 700,
+  1082, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4362,21 +4951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000198', 'Real Mango Juice 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   30, 'SMSKU-000198', '[]'::jsonb,
-  'Real', 3000, 200
+  'Real', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4384,21 +4976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000199', 'Real Mango Juice 1 L',
   'General', NULL, '',
   10800, 1000, true,
   10800, 0, '', '',
   14, 'SMSKU-000199', '[]'::jsonb,
-  'Real', 11500, 700
+  'Real', 11500, 700,
+  1082, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4406,21 +5001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000200', 'Real Orange Juice 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   22, 'SMSKU-000200', '[]'::jsonb,
-  'Real', 3000, 200
+  'Real', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4428,21 +5026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000201', 'Real Orange Juice 1 L',
   'General', NULL, '',
   10800, 1000, true,
   10800, 0, '', '',
   10, 'SMSKU-000201', '[]'::jsonb,
-  'Real', 11500, 700
+  'Real', 11500, 700,
+  1082, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4450,21 +5051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000202', 'Tropicana Mango Delight 200 ml',
   'General', NULL, '',
   2500, 200, true,
   2500, 0, '', '',
   28, 'SMSKU-000202', '[]'::jsonb,
-  'Tropicana', 2500, 0
+  'Tropicana', 2500, 0,
+  268, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4472,21 +5076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000203', 'Tropicana Mango Delight 1 L',
   'General', NULL, '',
   10500, 1000, true,
   10500, 0, '', '',
   12, 'SMSKU-000203', '[]'::jsonb,
-  'Tropicana', 11000, 500
+  'Tropicana', 11000, 500,
+  1071, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4494,21 +5101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000204', 'Tropicana Apple Juice 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   20, 'SMSKU-000204', '[]'::jsonb,
-  'Tropicana', 3000, 200
+  'Tropicana', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4516,21 +5126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000205', 'Tropicana Apple Juice 1 L',
   'General', NULL, '',
   11500, 1000, true,
   11500, 0, '', '',
   8, 'SMSKU-000205', '[]'::jsonb,
-  'Tropicana', 12000, 500
+  'Tropicana', 12000, 500,
+  1179, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4538,21 +5151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000206', 'Paper Boat Aam Panna 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   18, 'SMSKU-000206', '[]'::jsonb,
-  'Paper Boat', 3000, 200
+  'Paper Boat', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4560,21 +5176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000207', 'Paper Boat Jaljeera 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   16, 'SMSKU-000207', '[]'::jsonb,
-  'Paper Boat', 3000, 200
+  'Paper Boat', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4582,21 +5201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000208', 'Paper Boat Kokum 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   14, 'SMSKU-000208', '[]'::jsonb,
-  'Paper Boat', 3000, 200
+  'Paper Boat', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4604,21 +5226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000209', 'Frooti Mango Drink 150 ml',
   'General', NULL, '',
   1000, 150, true,
   1000, 0, '', '',
   50, 'SMSKU-000209', '[]'::jsonb,
-  'Frooti', 1000, 0
+  'Frooti', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4626,21 +5251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000210', 'Frooti Mango Drink 250 ml',
   'General', NULL, '',
   1500, 250, true,
   1500, 0, '', '',
   35, 'SMSKU-000210', '[]'::jsonb,
-  'Frooti', 1500, 0
+  'Frooti', 1500, 0,
+  161, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4648,21 +5276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000211', 'Frooti Mango Drink 600 ml',
   'General', NULL, '',
   3000, 600, true,
   3000, 0, '', '',
   20, 'SMSKU-000211', '[]'::jsonb,
-  'Frooti', 3000, 0
+  'Frooti', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4670,21 +5301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000212', 'Frooti Mango Drink 1.2 L',
   'General', NULL, '',
   5200, 1200, true,
   5200, 0, '', '',
   10, 'SMSKU-000212', '[]'::jsonb,
-  'Frooti', 5500, 300
+  'Frooti', 5500, 300,
+  525, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4692,21 +5326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000213', 'Maaza Mango Drink 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   30, 'SMSKU-000213', '[]'::jsonb,
-  'Maaza', 2000, 0
+  'Maaza', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4714,21 +5351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000214', 'Maaza Mango Drink 600 ml',
   'General', NULL, '',
   3500, 600, true,
   3500, 0, '', '',
   18, 'SMSKU-000214', '[]'::jsonb,
-  'Maaza', 3500, 0
+  'Maaza', 3500, 0,
+  375, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4736,21 +5376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000215', 'B Natural Mixed Fruit Juice 1 L',
   'General', NULL, '',
   9900, 1000, true,
   9900, 0, '', '',
   10, 'SMSKU-000215', '[]'::jsonb,
-  'B Natural', 10500, 600
+  'B Natural', 10500, 600,
+  996, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4758,21 +5401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000216', 'Tata Tea Gold Leaf Tea 100 g',
   'General', NULL, '',
   4700, 100, true,
   4700, 0, '', '',
   30, 'SMSKU-000216', '[]'::jsonb,
-  'Tata Tea', 5000, 300
+  'Tata Tea', 5000, 300,
+  210, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4780,21 +5426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000217', 'Tata Tea Gold Leaf Tea 250 g',
   'General', NULL, '',
   11500, 250, true,
   11500, 0, '', '',
   20, 'SMSKU-000217', '[]'::jsonb,
-  'Tata Tea', 12000, 500
+  'Tata Tea', 12000, 500,
+  524, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4802,21 +5451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000218', 'Tata Tea Gold Leaf Tea 500 g',
   'General', NULL, '',
   22500, 500, true,
   22500, 0, '', '',
   12, 'SMSKU-000218', '[]'::jsonb,
-  'Tata Tea', 23500, 1000
+  'Tata Tea', 23500, 1000,
+  1024, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4824,21 +5476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000219', 'Tata Tea Premium Leaf Tea 250 g',
   'General', NULL, '',
   10000, 250, true,
   10000, 0, '', '',
   18, 'SMSKU-000219', '[]'::jsonb,
-  'Tata Tea', 10500, 500
+  'Tata Tea', 10500, 500,
+  452, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4846,21 +5501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000220', 'Tata Tea Premium Leaf Tea 500 g',
   'General', NULL, '',
   19500, 500, true,
   19500, 0, '', '',
   10, 'SMSKU-000220', '[]'::jsonb,
-  'Tata Tea', 20500, 1000
+  'Tata Tea', 20500, 1000,
+  881, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4868,21 +5526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000221', 'Red Label Natural Care Tea 250 g',
   'General', NULL, '',
   12800, 250, true,
   12800, 0, '', '',
   16, 'SMSKU-000221', '[]'::jsonb,
-  'Red Label', 13500, 700
+  'Red Label', 13500, 700,
+  576, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4890,21 +5551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000222', 'Red Label Natural Care Tea 500 g',
   'General', NULL, '',
   24800, 500, true,
   24800, 0, '', '',
   8, 'SMSKU-000222', '[]'::jsonb,
-  'Red Label', 26000, 1200
+  'Red Label', 26000, 1200,
+  1124, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4912,21 +5576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000223', 'Taj Mahal Rich &amp; Aromatic Tea Bags 25 pcs',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000223', 'Taj Mahal Rich & Aromatic Tea Bags 25 pcs',
   'General', NULL, '',
   11200, 0, true,
   11200, 0, '', '',
   14, 'SMSKU-000223', '[]'::jsonb,
-  'Taj Mahal', 12000, 800
+  'Taj Mahal', 12000, 800,
+  495, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4934,21 +5601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000224', 'Taj Mahal Rich &amp; Aromatic Tea Bags 100 pcs',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000224', 'Taj Mahal Rich & Aromatic Tea Bags 100 pcs',
   'General', NULL, '',
   39900, 0, true,
   39900, 0, '', '',
   6, 'SMSKU-000224', '[]'::jsonb,
-  'Taj Mahal', 42000, 2100
+  'Taj Mahal', 42000, 2100,
+  1800, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4956,21 +5626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000225', 'Lipton Green Tea Pure &amp; Light 25 pcs',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000225', 'Lipton Green Tea Pure & Light 25 pcs',
   'General', NULL, '',
   13800, 0, true,
   13800, 0, '', '',
   12, 'SMSKU-000225', '[]'::jsonb,
-  'Lipton', 14500, 700
+  'Lipton', 14500, 700,
+  624, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -4978,21 +5651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000226', 'Lipton Green Tea Pure &amp; Light 100 pcs',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000226', 'Lipton Green Tea Pure & Light 100 pcs',
   'General', NULL, '',
   45000, 0, true,
   45000, 0, '', '',
   6, 'SMSKU-000226', '[]'::jsonb,
-  'Lipton', 47000, 2000
+  'Lipton', 47000, 2000,
+  2048, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5000,21 +5676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000227', 'Girnar Masala Chai Tea Bags 10 pcs',
   'General', NULL, '',
   8000, 0, true,
   8000, 0, '', '',
   10, 'SMSKU-000227', '[]'::jsonb,
-  'Girnar', 8500, 500
+  'Girnar', 8500, 500,
+  357, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5022,21 +5701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000228', 'Nescafe Classic Instant Coffee 50 g',
   'General', NULL, '',
   14800, 50, true,
   14800, 0, '', '',
   18, 'SMSKU-000228', '[]'::jsonb,
-  'Nescafe', 15500, 700
+  'Nescafe', 15500, 700,
+  671, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5044,21 +5726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000229', 'Nescafe Classic Instant Coffee 100 g',
   'General', NULL, '',
   28000, 100, true,
   28000, 0, '', '',
   10, 'SMSKU-000229', '[]'::jsonb,
-  'Nescafe', 29500, 1500
+  'Nescafe', 29500, 1500,
+  1262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5066,21 +5751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000230', 'Nescafe Sunrise Rich Instant Coffee 50 g',
   'General', NULL, '',
   10000, 50, true,
   10000, 0, '', '',
   15, 'SMSKU-000230', '[]'::jsonb,
-  'Nescafe', 10500, 500
+  'Nescafe', 10500, 500,
+  452, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5088,21 +5776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000231', 'Nescafe Sunrise Rich Instant Coffee 100 g',
   'General', NULL, '',
   19000, 100, true,
   19000, 0, '', '',
   8, 'SMSKU-000231', '[]'::jsonb,
-  'Nescafe', 20000, 1000
+  'Nescafe', 20000, 1000,
+  857, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5110,21 +5801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000232', 'Bru Instant Coffee 50 g',
   'General', NULL, '',
   11000, 50, true,
   11000, 0, '', '',
   16, 'SMSKU-000232', '[]'::jsonb,
-  'Bru', 11500, 500
+  'Bru', 11500, 500,
+  500, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5132,21 +5826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000233', 'Bru Instant Coffee 100 g',
   'General', NULL, '',
   21000, 100, true,
   21000, 0, '', '',
   10, 'SMSKU-000233', '[]'::jsonb,
-  'Bru', 22000, 1000
+  'Bru', 22000, 1000,
+  952, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5154,21 +5851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000234', 'Bru Gold Freeze Dried Coffee 50 g',
   'General', NULL, '',
   22000, 50, true,
   22000, 0, '', '',
   8, 'SMSKU-000234', '[]'::jsonb,
-  'Bru', 23000, 1000
+  'Bru', 23000, 1000,
+  1000, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5176,21 +5876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000235', 'Continental XTRA Instant South Blend Coffee 50 g',
   'General', NULL, '',
   9000, 50, true,
   9000, 0, '', '',
   12, 'SMSKU-000235', '[]'::jsonb,
-  'Continental', 9500, 500
+  'Continental', 9500, 500,
+  405, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5198,21 +5901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000236', 'Continental XTRA Instant South Blend Coffee 100 g',
   'General', NULL, '',
   17000, 100, true,
   17000, 0, '', '',
   6, 'SMSKU-000236', '[]'::jsonb,
-  'Continental', 18000, 1000
+  'Continental', 18000, 1000,
+  762, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5220,21 +5926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000237', 'Horlicks Classic Malt 200 g',
   'General', NULL, '',
   13800, 200, true,
   13800, 0, '', '',
   16, 'SMSKU-000237', '[]'::jsonb,
-  'Horlicks', 14500, 700
+  'Horlicks', 14500, 700,
+  1998, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5242,21 +5951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000238', 'Horlicks Classic Malt 500 g',
   'General', NULL, '',
   31000, 500, true,
   31000, 0, '', '',
   10, 'SMSKU-000238', '[]'::jsonb,
-  'Horlicks', 32500, 1500
+  'Horlicks', 32500, 1500,
+  4500, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5264,21 +5976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000239', 'Horlicks Classic Malt 1 kg',
   'General', NULL, '',
   57000, 1000, true,
   57000, 0, '', '',
   5, 'SMSKU-000239', '[]'::jsonb,
-  'Horlicks', 60000, 3000
+  'Horlicks', 60000, 3000,
+  8237, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5286,21 +6001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000240', 'Bournvita Chocolate Health Drink 200 g',
   'General', NULL, '',
   11800, 200, true,
   11800, 0, '', '',
   18, 'SMSKU-000240', '[]'::jsonb,
-  'Bournvita', 12500, 700
+  'Bournvita', 12500, 700,
+  1693, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5308,21 +6026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000241', 'Bournvita Chocolate Health Drink 500 g',
   'General', NULL, '',
   26000, 500, true,
   26000, 0, '', '',
   10, 'SMSKU-000241', '[]'::jsonb,
-  'Bournvita', 27500, 1500
+  'Bournvita', 27500, 1500,
+  3737, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5330,21 +6051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000242', 'Bournvita Chocolate Health Drink 1 kg',
   'General', NULL, '',
   49500, 1000, true,
   49500, 0, '', '',
   5, 'SMSKU-000242', '[]'::jsonb,
-  'Bournvita', 52000, 2500
+  'Bournvita', 52000, 2500,
+  7169, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5352,21 +6076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000243', 'Complan Classic Chocolate Nutrition Drink 200 g',
   'General', NULL, '',
   14800, 200, true,
   14800, 0, '', '',
   12, 'SMSKU-000243', '[]'::jsonb,
-  'Complan', 15500, 700
+  'Complan', 15500, 700,
+  2151, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5374,21 +6101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000244', 'Complan Classic Chocolate Nutrition Drink 500 g',
   'General', NULL, '',
   34000, 500, true,
   34000, 0, '', '',
   6, 'SMSKU-000244', '[]'::jsonb,
-  'Complan', 35500, 1500
+  'Complan', 35500, 1500,
+  4958, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5396,21 +6126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000245', 'Protinex Original Health Supplement 250 g',
   'General', NULL, '',
   33000, 250, true,
   33000, 0, '', '',
   8, 'SMSKU-000245', '[]'::jsonb,
-  'Protinex', 35000, 2000
+  'Protinex', 35000, 2000,
+  4729, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5418,21 +6151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000246', 'Boost Chocolate Energy Drink 200 g',
   'General', NULL, '',
   12500, 200, true,
   12500, 0, '', '',
   14, 'SMSKU-000246', '[]'::jsonb,
-  'Boost', 13000, 500
+  'Boost', 13000, 500,
+  1831, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5440,21 +6176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000247', 'Boost Chocolate Energy Drink 500 g',
   'General', NULL, '',
   27500, 500, true,
   27500, 0, '', '',
   8, 'SMSKU-000247', '[]'::jsonb,
-  'Boost', 29000, 1500
+  'Boost', 29000, 1500,
+  3966, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5462,21 +6201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000248', 'Amul Taaza Toned Milk 500 ml',
   'General', NULL, '',
   2800, 500, true,
   2800, 0, '', '',
   40, 'SMSKU-000248', '[]'::jsonb,
-  'Amul', 2800, 0
+  'Amul', 2800, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5484,21 +6226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000249', 'Amul Taaza Toned Milk 1 L',
   'General', NULL, '',
   5400, 1000, true,
   5400, 0, '', '',
   30, 'SMSKU-000249', '[]'::jsonb,
-  'Amul', 5400, 0
+  'Amul', 5400, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5506,21 +6251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000250', 'Amul Gold Full Cream Milk 500 ml',
   'General', NULL, '',
   3400, 500, true,
   3400, 0, '', '',
   35, 'SMSKU-000250', '[]'::jsonb,
-  'Amul', 3400, 0
+  'Amul', 3400, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5528,21 +6276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000251', 'Amul Gold Full Cream Milk 1 L',
   'General', NULL, '',
   6600, 1000, true,
   6600, 0, '', '',
   25, 'SMSKU-000251', '[]'::jsonb,
-  'Amul', 6600, 0
+  'Amul', 6600, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5550,21 +6301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000252', 'Arokya Toned Milk 500 ml',
   'General', NULL, '',
   2600, 500, true,
   2600, 0, '', '',
   40, 'SMSKU-000252', '[]'::jsonb,
-  'Arokya', 2600, 0
+  'Arokya', 2600, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5572,21 +6326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000253', 'Arokya Toned Milk 1 L',
   'General', NULL, '',
   5000, 1000, true,
   5000, 0, '', '',
   30, 'SMSKU-000253', '[]'::jsonb,
-  'Arokya', 5000, 0
+  'Arokya', 5000, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5594,21 +6351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000254', 'Nandini Homogenised Toned Milk 500 ml',
   'General', NULL, '',
   2500, 500, true,
   2500, 0, '', '',
   30, 'SMSKU-000254', '[]'::jsonb,
-  'Nandini', 2500, 0
+  'Nandini', 2500, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5616,21 +6376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000255', 'Nandini Homogenised Toned Milk 1 L',
   'General', NULL, '',
   4800, 1000, true,
   4800, 0, '', '',
   20, 'SMSKU-000255', '[]'::jsonb,
-  'Nandini', 4800, 0
+  'Nandini', 4800, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5638,21 +6401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000256', 'Amul Slim N Trim Double Toned Milk 500 ml',
   'General', NULL, '',
   2600, 500, true,
   2600, 0, '', '',
   22, 'SMSKU-000256', '[]'::jsonb,
-  'Amul', 2600, 0
+  'Amul', 2600, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5660,21 +6426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000257', 'Amul Masti Dahi (Curd) 200 g',
   'General', NULL, '',
   3000, 200, true,
   3000, 0, '', '',
   30, 'SMSKU-000257', '[]'::jsonb,
-  'Amul', 3000, 0
+  'Amul', 3000, 0,
+  143, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5682,21 +6451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000258', 'Amul Masti Dahi (Curd) 400 g',
   'General', NULL, '',
   5500, 400, true,
   5500, 0, '', '',
   22, 'SMSKU-000258', '[]'::jsonb,
-  'Amul', 5500, 0
+  'Amul', 5500, 0,
+  262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5704,21 +6476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000259', 'Amul Malai Paneer 200 g',
   'General', NULL, '',
   8500, 200, true,
   8500, 0, '', '',
   18, 'SMSKU-000259', '[]'::jsonb,
-  'Amul', 9000, 500
+  'Amul', 9000, 500,
+  381, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5726,21 +6501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000260', 'Amul Malai Paneer 500 g',
   'General', NULL, '',
   20000, 500, true,
   20000, 0, '', '',
   10, 'SMSKU-000260', '[]'::jsonb,
-  'Amul', 21000, 1000
+  'Amul', 21000, 1000,
+  905, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5748,21 +6526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000261', 'Mother Dairy Classic Curd 400 g',
   'General', NULL, '',
   5000, 400, true,
   5000, 0, '', '',
   25, 'SMSKU-000261', '[]'::jsonb,
-  'Mother Dairy', 5000, 0
+  'Mother Dairy', 5000, 0,
+  238, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5770,21 +6551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000262', 'Nestle a+ Probiotic Dahi 200 g',
   'General', NULL, '',
   3500, 200, true,
   3500, 0, '', '',
   20, 'SMSKU-000262', '[]'::jsonb,
-  'Nestle', 3500, 0
+  'Nestle', 3500, 0,
+  167, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5792,21 +6576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000263', 'Nestle a+ Probiotic Dahi 400 g',
   'General', NULL, '',
   5800, 400, true,
   5800, 0, '', '',
   15, 'SMSKU-000263', '[]'::jsonb,
-  'Nestle', 6000, 200
+  'Nestle', 6000, 200,
+  267, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5814,21 +6601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000264', 'Chitale Full Cream Paneer 200 g',
   'General', NULL, '',
   9000, 200, true,
   9000, 0, '', '',
   12, 'SMSKU-000264', '[]'::jsonb,
-  'Chitale', 9500, 500
+  'Chitale', 9500, 500,
+  405, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5836,21 +6626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000265', 'Amul Pasteurised Butter 100 g',
   'General', NULL, '',
   5400, 100, true,
   5400, 0, '', '',
   25, 'SMSKU-000265', '[]'::jsonb,
-  'Amul', 5600, 200
+  'Amul', 5600, 200,
+  557, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5858,21 +6651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000266', 'Amul Pasteurised Butter 500 g',
   'General', NULL, '',
   26000, 500, true,
   26000, 0, '', '',
   12, 'SMSKU-000266', '[]'::jsonb,
-  'Amul', 27000, 1000
+  'Amul', 27000, 1000,
+  2679, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5880,21 +6676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000267', 'Amul Pure Ghee 200 ml',
   'General', NULL, '',
   11500, 200, true,
   11500, 0, '', '',
   20, 'SMSKU-000267', '[]'::jsonb,
-  'Amul', 12000, 500
+  'Amul', 12000, 500,
+  1179, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5902,21 +6701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000268', 'Amul Pure Ghee 500 ml',
   'General', NULL, '',
   27800, 500, true,
   27800, 0, '', '',
   10, 'SMSKU-000268', '[]'::jsonb,
-  'Amul', 29000, 1200
+  'Amul', 29000, 1200,
+  2850, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5924,21 +6726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000269', 'Amul Pure Ghee 1 L',
   'General', NULL, '',
   55000, 1000, true,
   55000, 0, '', '',
   5, 'SMSKU-000269', '[]'::jsonb,
-  'Amul', 57000, 2000
+  'Amul', 57000, 2000,
+  5679, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5946,21 +6751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000270', 'Nandini Table Butter 100 g',
   'General', NULL, '',
   4800, 100, true,
   4800, 0, '', '',
   18, 'SMSKU-000270', '[]'::jsonb,
-  'Nandini', 5000, 200
+  'Nandini', 5000, 200,
+  493, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5968,21 +6776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000271', 'Patanjali Cow Ghee 500 ml',
   'General', NULL, '',
   29500, 500, true,
   29500, 0, '', '',
   8, 'SMSKU-000271', '[]'::jsonb,
-  'Patanjali', 31000, 1500
+  'Patanjali', 31000, 1500,
+  3000, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -5990,21 +6801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000272', 'Amul Processed Cheese Block 200 g',
   'General', NULL, '',
   10000, 200, true,
   10000, 0, '', '',
   18, 'SMSKU-000272', '[]'::jsonb,
-  'Amul', 10500, 500
+  'Amul', 10500, 500,
+  1018, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6012,21 +6826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000273', 'Amul Cheese Slices 100 g',
   'General', NULL, '',
   7200, 100, true,
   7200, 0, '', '',
   15, 'SMSKU-000273', '[]'::jsonb,
-  'Amul', 7500, 300
+  'Amul', 7500, 300,
+  739, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6034,21 +6851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000274', 'Britannia Cheese Cubes 200 g',
   'General', NULL, '',
   10500, 200, true,
   10500, 0, '', '',
   12, 'SMSKU-000274', '[]'::jsonb,
-  'Britannia', 11000, 500
+  'Britannia', 11000, 500,
+  1071, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6056,21 +6876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000275', 'Amul Mozzarella Cheese Pizza 200 g',
   'General', NULL, '',
   13800, 200, true,
   13800, 0, '', '',
   8, 'SMSKU-000275', '[]'::jsonb,
-  'Amul', 14500, 700
+  'Amul', 14500, 700,
+  1404, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6078,21 +6901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000276', 'Amul Vanilla Magic Ice Cream 750 ml',
   'General', NULL, '',
   16500, 750, true,
   16500, 0, '', '',
   10, 'SMSKU-000276', '[]'::jsonb,
-  'Amul', 17500, 1000
+  'Amul', 17500, 1000,
+  2364, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6100,21 +6926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000277', 'Amul Chocolate Ice Cream Tub 750 ml',
   'General', NULL, '',
   18000, 750, true,
   18000, 0, '', '',
   8, 'SMSKU-000277', '[]'::jsonb,
-  'Amul', 19000, 1000
+  'Amul', 19000, 1000,
+  2593, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6122,21 +6951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000278', 'Kwality Wall&apos;s Cornetto Butterscotch Cone 110 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000278', 'Kwality Wall''s Cornetto Butterscotch Cone 110 ml',
   'General', NULL, '',
   5000, 110, true,
   5000, 0, '', '',
   20, 'SMSKU-000278', '[]'::jsonb,
-  'Kwality Wall&apos;s', 5000, 0
+  'Kwality Wall''s', 5000, 0,
+  763, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6144,21 +6976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000279', 'Kwality Wall&apos;s Feast Chocolate Stick Bar 65 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000279', 'Kwality Wall''s Feast Chocolate Stick Bar 65 ml',
   'General', NULL, '',
   3000, 65, true,
   3000, 0, '', '',
   25, 'SMSKU-000279', '[]'::jsonb,
-  'Kwality Wall&apos;s', 3000, 0
+  'Kwality Wall''s', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6166,21 +7001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000280', 'Baskin Robbins Pralines &amp; Cream Tub 450 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000280', 'Baskin Robbins Pralines & Cream Tub 450 ml',
   'General', NULL, '',
   33500, 450, true,
   33500, 0, '', '',
   5, 'SMSKU-000280', '[]'::jsonb,
-  'Baskin Robbins', 35000, 1500
+  'Baskin Robbins', 35000, 1500,
+  4881, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6188,21 +7026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000281', 'Arun Triple Sundae Cup 100 ml',
   'General', NULL, '',
   3000, 100, true,
   3000, 0, '', '',
   22, 'SMSKU-000281', '[]'::jsonb,
-  'Arun', 3000, 0
+  'Arun', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6210,21 +7051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000282', 'McCain French Fries 420 g',
   'General', NULL, '',
   16800, 420, true,
   16800, 0, '', '',
   12, 'SMSKU-000282', '[]'::jsonb,
-  'McCain', 17500, 700
+  'McCain', 17500, 700,
+  1725, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6232,21 +7076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000283', 'McCain French Fries 750 g',
   'General', NULL, '',
   29500, 750, true,
   29500, 0, '', '',
   6, 'SMSKU-000283', '[]'::jsonb,
-  'McCain', 31000, 1500
+  'McCain', 31000, 1500,
+  3000, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6254,21 +7101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000284', 'McCain Smiles Potato Shapes 415 g',
   'General', NULL, '',
   17500, 415, true,
   17500, 0, '', '',
   10, 'SMSKU-000284', '[]'::jsonb,
-  'McCain', 18500, 1000
+  'McCain', 18500, 1000,
+  1768, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6276,21 +7126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000285', 'Safal Frozen Green Peas 500 g',
   'General', NULL, '',
   11200, 500, true,
   11200, 0, '', '',
   14, 'SMSKU-000285', '[]'::jsonb,
-  'Safal', 12000, 800
+  'Safal', 12000, 800,
+  1114, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6298,21 +7151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000286', 'Safal Frozen Green Peas 1 kg',
   'General', NULL, '',
   21800, 1000, true,
   21800, 0, '', '',
   6, 'SMSKU-000286', '[]'::jsonb,
-  'Safal', 23000, 1200
+  'Safal', 23000, 1200,
+  2207, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6320,21 +7176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000287', 'Safal Frozen Mixed Vegetables 500 g',
   'General', NULL, '',
   12200, 500, true,
   12200, 0, '', '',
   10, 'SMSKU-000287', '[]'::jsonb,
-  'Safal', 13000, 800
+  'Safal', 13000, 800,
+  1221, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6342,21 +7201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000288', 'ITC Master Chef Frozen Aloo Tikki 320 g',
   'General', NULL, '',
   13200, 320, true,
   13200, 0, '', '',
   10, 'SMSKU-000288', '[]'::jsonb,
-  'ITC Master Chef', 14000, 800
+  'ITC Master Chef', 14000, 800,
+  1329, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6364,21 +7226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000289', 'ITC Master Chef Frozen Veg Seekh Kebab 300 g',
   'General', NULL, '',
   15500, 300, true,
   15500, 0, '', '',
   8, 'SMSKU-000289', '[]'::jsonb,
-  'ITC Master Chef', 16500, 1000
+  'ITC Master Chef', 16500, 1000,
+  1554, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6386,21 +7251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000290', 'Sumeru Frozen Sweet Corn 500 g',
   'General', NULL, '',
   11800, 500, true,
   11800, 0, '', '',
   10, 'SMSKU-000290', '[]'::jsonb,
-  'Sumeru', 12500, 700
+  'Sumeru', 12500, 700,
+  1189, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6408,21 +7276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000291', 'Godrej Yummiez Veg Spring Roll 320 g',
   'General', NULL, '',
   15000, 320, true,
   15000, 0, '', '',
   8, 'SMSKU-000291', '[]'::jsonb,
-  'Godrej Yummiez', 16000, 1000
+  'Godrej Yummiez', 16000, 1000,
+  1500, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6430,21 +7301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000292', 'Maggi 2-Minute Masala Noodles 70 g',
   'General', NULL, '',
   1400, 70, true,
   1400, 0, '', '',
   60, 'SMSKU-000292', '[]'::jsonb,
-  'Maggi', 1400, 0
+  'Maggi', 1400, 0,
+  214, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6452,21 +7326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000293', 'Maggi 2-Minute Masala Noodles 280 g',
   'General', NULL, '',
   5000, 280, true,
   5000, 0, '', '',
   30, 'SMSKU-000293', '[]'::jsonb,
-  'Maggi', 5200, 200
+  'Maggi', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6474,21 +7351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000294', 'Maggi 2-Minute Masala Noodles 560 g',
   'General', NULL, '',
   9500, 560, true,
   9500, 0, '', '',
   15, 'SMSKU-000294', '[]'::jsonb,
-  'Maggi', 9900, 400
+  'Maggi', 9900, 400,
+  1388, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6496,21 +7376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000295', 'Maggi Atta Noodles 320 g',
   'General', NULL, '',
   6800, 320, true,
   6800, 0, '', '',
   12, 'SMSKU-000295', '[]'::jsonb,
-  'Maggi', 7200, 400
+  'Maggi', 7200, 400,
+  976, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6518,21 +7401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000296', 'Yippee Magic Masala Noodles 70 g',
   'General', NULL, '',
   1400, 70, true,
   1400, 0, '', '',
   45, 'SMSKU-000296', '[]'::jsonb,
-  'Yippee', 1400, 0
+  'Yippee', 1400, 0,
+  214, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6540,21 +7426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000297', 'Yippee Magic Masala Noodles 280 g',
   'General', NULL, '',
   4500, 280, true,
   4500, 0, '', '',
   20, 'SMSKU-000297', '[]'::jsonb,
-  'Yippee', 4800, 300
+  'Yippee', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6562,21 +7451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000298', 'Top Ramen Curry Noodles 280 g',
   'General', NULL, '',
   5200, 280, true,
   5200, 0, '', '',
   15, 'SMSKU-000298', '[]'::jsonb,
-  'Top Ramen', 5500, 300
+  'Top Ramen', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6584,21 +7476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000299', 'Knorr Classic Mixed Veg Soup 44 g',
   'General', NULL, '',
   4500, 44, true,
   4500, 0, '', '',
   20, 'SMSKU-000299', '[]'::jsonb,
-  'Knorr', 4800, 300
+  'Knorr', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6606,21 +7501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000300', 'Knorr Hot &amp; Sour Veg Soup 44 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000300', 'Knorr Hot & Sour Veg Soup 44 g',
   'General', NULL, '',
   4500, 44, true,
   4500, 0, '', '',
   18, 'SMSKU-000300', '[]'::jsonb,
-  'Knorr', 4800, 300
+  'Knorr', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6628,21 +7526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000301', 'Knorr Tomato Soup 53 g',
   'General', NULL, '',
   5200, 53, true,
   5200, 0, '', '',
   16, 'SMSKU-000301', '[]'::jsonb,
-  'Knorr', 5500, 300
+  'Knorr', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6650,21 +7551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000302', 'MTR Ready to Eat Rajma Masala 300 g',
   'General', NULL, '',
   9200, 300, true,
   9200, 0, '', '',
   10, 'SMSKU-000302', '[]'::jsonb,
-  'MTR', 9900, 700
+  'MTR', 9900, 700,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6672,21 +7576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000303', 'MTR Ready to Eat Palak Paneer 300 g',
   'General', NULL, '',
   10200, 300, true,
   10200, 0, '', '',
   8, 'SMSKU-000303', '[]'::jsonb,
-  'MTR', 11000, 800
+  'MTR', 11000, 800,
+  1434, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6694,21 +7601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000304', 'MTR Ready to Eat Dal Makhani 300 g',
   'General', NULL, '',
   9200, 300, true,
   9200, 0, '', '',
   10, 'SMSKU-000304', '[]'::jsonb,
-  'MTR', 9900, 700
+  'MTR', 9900, 700,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6716,21 +7626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000305', 'Maggi Pazzta Cheesy Tomato Twist 64 g',
   'General', NULL, '',
   3800, 64, true,
   3800, 0, '', '',
   15, 'SMSKU-000305', '[]'::jsonb,
-  'Maggi', 4000, 200
+  'Maggi', 4000, 200,
+  549, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6738,21 +7651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000306', 'Ching&apos;s Secret Schezwan Instant Noodles 60 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000306', 'Ching''s Secret Schezwan Instant Noodles 60 g',
   'General', NULL, '',
   2000, 60, true,
   2000, 0, '', '',
   20, 'SMSKU-000306', '[]'::jsonb,
-  'Ching&apos;s Secret', 2000, 0
+  'Ching''s Secret', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6760,21 +7676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000307', 'Kellogg&apos;s Corn Flakes Original 250 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000307', 'Kellogg''s Corn Flakes Original 250 g',
   'General', NULL, '',
   11000, 250, true,
   11000, 0, '', '',
   16, 'SMSKU-000307', '[]'::jsonb,
-  'Kellogg&apos;s', 11500, 500
+  'Kellogg''s', 11500, 500,
+  1602, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6782,21 +7701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000308', 'Kellogg&apos;s Corn Flakes Original 475 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000308', 'Kellogg''s Corn Flakes Original 475 g',
   'General', NULL, '',
   20000, 475, true,
   20000, 0, '', '',
   8, 'SMSKU-000308', '[]'::jsonb,
-  'Kellogg&apos;s', 21000, 1000
+  'Kellogg''s', 21000, 1000,
+  2898, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6804,21 +7726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000309', 'Kellogg&apos;s Chocos Chocolate Cereal 250 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000309', 'Kellogg''s Chocos Chocolate Cereal 250 g',
   'General', NULL, '',
   14200, 250, true,
   14200, 0, '', '',
   14, 'SMSKU-000309', '[]'::jsonb,
-  'Kellogg&apos;s', 15000, 800
+  'Kellogg''s', 15000, 800,
+  2044, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6826,21 +7751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000310', 'Kellogg&apos;s Chocos Chocolate Cereal 700 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000310', 'Kellogg''s Chocos Chocolate Cereal 700 g',
   'General', NULL, '',
   37500, 700, true,
   37500, 0, '', '',
   6, 'SMSKU-000310', '[]'::jsonb,
-  'Kellogg&apos;s', 39500, 2000
+  'Kellogg''s', 39500, 2000,
+  5415, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6848,21 +7776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000311', 'Kellogg&apos;s Muesli Fruit &amp; Nut 500 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000311', 'Kellogg''s Muesli Fruit & Nut 500 g',
   'General', NULL, '',
   32000, 500, true,
   32000, 0, '', '',
   8, 'SMSKU-000311', '[]'::jsonb,
-  'Kellogg&apos;s', 34000, 2000
+  'Kellogg''s', 34000, 2000,
+  4576, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6870,21 +7801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000312', 'Quaker Oats 400 g',
   'General', NULL, '',
   11500, 400, true,
   11500, 0, '', '',
   18, 'SMSKU-000312', '[]'::jsonb,
-  'Quaker', 12000, 500
+  'Quaker', 12000, 500,
+  1678, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6892,21 +7826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000313', 'Quaker Oats 1 kg',
   'General', NULL, '',
   25500, 1000, true,
   25500, 0, '', '',
   10, 'SMSKU-000313', '[]'::jsonb,
-  'Quaker', 27000, 1500
+  'Quaker', 27000, 1500,
+  3661, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6914,21 +7851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000314', 'Saffola Masala Oats Classic Masala 39 g',
   'General', NULL, '',
   2500, 39, true,
   2500, 0, '', '',
   22, 'SMSKU-000314', '[]'::jsonb,
-  'Saffola', 2500, 0
+  'Saffola', 2500, 0,
+  381, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6936,21 +7876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000315', 'Saffola Masala Oats Classic Masala 500 g',
   'General', NULL, '',
   18000, 500, true,
   18000, 0, '', '',
   10, 'SMSKU-000315', '[]'::jsonb,
-  'Saffola', 19000, 1000
+  'Saffola', 19000, 1000,
+  2593, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6958,21 +7901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000316', 'Bagrry&apos;s Muesli with Cranberries 500 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000316', 'Bagrry''s Muesli with Cranberries 500 g',
   'General', NULL, '',
   33500, 500, true,
   33500, 0, '', '',
   8, 'SMSKU-000316', '[]'::jsonb,
-  'Bagrry&apos;s', 35000, 1500
+  'Bagrry''s', 35000, 1500,
+  4881, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -6980,21 +7926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000317', 'Yoga Bar Muesli Dark Chocolate 400 g',
   'General', NULL, '',
   31000, 400, true,
   31000, 0, '', '',
   6, 'SMSKU-000317', '[]'::jsonb,
-  'Yoga Bar', 32500, 1500
+  'Yoga Bar', 32500, 1500,
+  4500, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7002,21 +7951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000318', 'True Elements Granola Honey Crunch 450 g',
   'General', NULL, '',
   36000, 450, true,
   36000, 0, '', '',
   5, 'SMSKU-000318', '[]'::jsonb,
-  'True Elements', 38000, 2000
+  'True Elements', 38000, 2000,
+  5186, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7024,21 +7976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000319', 'Kissan Fresh Tomato Ketchup 200 g',
   'General', NULL, '',
   5000, 200, true,
   5000, 0, '', '',
   22, 'SMSKU-000319', '[]'::jsonb,
-  'Kissan', 5200, 200
+  'Kissan', 5200, 200,
+  514, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7046,21 +8001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000320', 'Kissan Fresh Tomato Ketchup 500 g',
   'General', NULL, '',
   11000, 500, true,
   11000, 0, '', '',
   14, 'SMSKU-000320', '[]'::jsonb,
-  'Kissan', 11500, 500
+  'Kissan', 11500, 500,
+  1125, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7068,21 +8026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000321', 'Kissan Fresh Tomato Ketchup 1 kg',
   'General', NULL, '',
   20000, 1000, true,
   20000, 0, '', '',
   8, 'SMSKU-000321', '[]'::jsonb,
-  'Kissan', 21000, 1000
+  'Kissan', 21000, 1000,
+  2036, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7090,21 +8051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000322', 'Maggi Rich Tomato Ketchup 200 g',
   'General', NULL, '',
   4500, 200, true,
   4500, 0, '', '',
   20, 'SMSKU-000322', '[]'::jsonb,
-  'Maggi', 4800, 300
+  'Maggi', 4800, 300,
+  450, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7112,21 +8076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000323', 'Maggi Rich Tomato Ketchup 500 g',
   'General', NULL, '',
   10500, 500, true,
   10500, 0, '', '',
   12, 'SMSKU-000323', '[]'::jsonb,
-  'Maggi', 11000, 500
+  'Maggi', 11000, 500,
+  1071, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7134,21 +8101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000324', 'Ching&apos;s Secret Green Chilli Sauce 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000324', 'Ching''s Secret Green Chilli Sauce 200 g',
   'General', NULL, '',
   5200, 200, true,
   5200, 0, '', '',
   16, 'SMSKU-000324', '[]'::jsonb,
-  'Ching&apos;s Secret', 5500, 300
+  'Ching''s Secret', 5500, 300,
+  525, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7156,21 +8126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000325', 'Ching&apos;s Secret Schezwan Chutney 250 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000325', 'Ching''s Secret Schezwan Chutney 250 g',
   'General', NULL, '',
   9200, 250, true,
   9200, 0, '', '',
   12, 'SMSKU-000325', '[]'::jsonb,
-  'Ching&apos;s Secret', 9800, 600
+  'Ching''s Secret', 9800, 600,
+  921, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7178,21 +8151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000326', 'Veeba Tandoori Mayo 250 g',
   'General', NULL, '',
   8500, 250, true,
   8500, 0, '', '',
   10, 'SMSKU-000326', '[]'::jsonb,
-  'Veeba', 8900, 400
+  'Veeba', 8900, 400,
+  868, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7200,21 +8176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000327', 'Veeba Chipotle Southwest Dressing 300 g',
   'General', NULL, '',
   11500, 300, true,
   11500, 0, '', '',
   8, 'SMSKU-000327', '[]'::jsonb,
-  'Veeba', 12000, 500
+  'Veeba', 12000, 500,
+  1179, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7222,21 +8201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000328', 'Priya Mango Pickle 300 g',
   'General', NULL, '',
   8000, 300, true,
   8000, 0, '', '',
   14, 'SMSKU-000328', '[]'::jsonb,
-  'Priya', 8500, 500
+  'Priya', 8500, 500,
+  804, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7244,21 +8226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000329', 'Priya Mango Pickle 500 g',
   'General', NULL, '',
   12200, 500, true,
   12200, 0, '', '',
   8, 'SMSKU-000329', '[]'::jsonb,
-  'Priya', 13000, 800
+  'Priya', 13000, 800,
+  1221, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7266,21 +8251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000330', 'Mother&apos;s Recipe Lime Pickle 300 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000330', 'Mother''s Recipe Lime Pickle 300 g',
   'General', NULL, '',
   8500, 300, true,
   8500, 0, '', '',
   12, 'SMSKU-000330', '[]'::jsonb,
-  'Mother&apos;s Recipe', 9000, 500
+  'Mother''s Recipe', 9000, 500,
+  857, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7288,21 +8276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000331', 'Mother&apos;s Recipe Mixed Pickle 300 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000331', 'Mother''s Recipe Mixed Pickle 300 g',
   'General', NULL, '',
   8500, 300, true,
   8500, 0, '', '',
   10, 'SMSKU-000331', '[]'::jsonb,
-  'Mother&apos;s Recipe', 9000, 500
+  'Mother''s Recipe', 9000, 500,
+  857, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7310,21 +8301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000332', 'Kissan Mixed Fruit Jam 200 g',
   'General', NULL, '',
   7500, 200, true,
   7500, 0, '', '',
   18, 'SMSKU-000332', '[]'::jsonb,
-  'Kissan', 8000, 500
+  'Kissan', 8000, 500,
+  750, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7332,21 +8326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000333', 'Kissan Mixed Fruit Jam 500 g',
   'General', NULL, '',
   16200, 500, true,
   16200, 0, '', '',
   10, 'SMSKU-000333', '[]'::jsonb,
-  'Kissan', 17000, 800
+  'Kissan', 17000, 800,
+  1650, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7354,21 +8351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000334', 'Kissan Pineapple Jam 200 g',
   'General', NULL, '',
   7500, 200, true,
   7500, 0, '', '',
   14, 'SMSKU-000334', '[]'::jsonb,
-  'Kissan', 8000, 500
+  'Kissan', 8000, 500,
+  750, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7376,21 +8376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000335', 'Sundrop Peanut Butter Creamy 200 g',
   'General', NULL, '',
   12200, 200, true,
   12200, 0, '', '',
   10, 'SMSKU-000335', '[]'::jsonb,
-  'Sundrop', 13000, 800
+  'Sundrop', 13000, 800,
+  1221, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7398,21 +8401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000336', 'Sundrop Peanut Butter Creamy 462 g',
   'General', NULL, '',
   26000, 462, true,
   26000, 0, '', '',
   5, 'SMSKU-000336', '[]'::jsonb,
-  'Sundrop', 27500, 1500
+  'Sundrop', 27500, 1500,
+  2625, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7420,21 +8426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000337', 'Nutella Hazelnut Cocoa Spread 350 g',
   'General', NULL, '',
   42500, 350, true,
   42500, 0, '', '',
   6, 'SMSKU-000337', '[]'::jsonb,
-  'Nutella', 45000, 2500
+  'Nutella', 45000, 2500,
+  4286, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7442,21 +8451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000338', 'Head &amp; Shoulders Anti-Dandruff Smooth &amp; Silky Shampoo 72 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000338', 'Head & Shoulders Anti-Dandruff Smooth & Silky Shampoo 72 ml',
   'General', NULL, '',
   8000, 72, true,
   8000, 0, '', '',
   20, 'SMSKU-000338', '[]'::jsonb,
-  'Head &amp; Shoulders', 8500, 500
+  'Head & Shoulders', 8500, 500,
+  1144, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7464,21 +8476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000339', 'Head &amp; Shoulders Anti-Dandruff Smooth &amp; Silky Shampoo 180 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000339', 'Head & Shoulders Anti-Dandruff Smooth & Silky Shampoo 180 ml',
   'General', NULL, '',
   18000, 180, true,
   18000, 0, '', '',
   14, 'SMSKU-000339', '[]'::jsonb,
-  'Head &amp; Shoulders', 19000, 1000
+  'Head & Shoulders', 19000, 1000,
+  2593, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7486,21 +8501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000340', 'Head &amp; Shoulders Anti-Dandruff Smooth &amp; Silky Shampoo 340 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000340', 'Head & Shoulders Anti-Dandruff Smooth & Silky Shampoo 340 ml',
   'General', NULL, '',
   33000, 340, true,
   33000, 0, '', '',
   8, 'SMSKU-000340', '[]'::jsonb,
-  'Head &amp; Shoulders', 35000, 2000
+  'Head & Shoulders', 35000, 2000,
+  4729, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7508,21 +8526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000341', 'Dove Hair Fall Rescue Shampoo 80 ml',
   'General', NULL, '',
   7000, 80, true,
   7000, 0, '', '',
   18, 'SMSKU-000341', '[]'::jsonb,
-  'Dove', 7500, 500
+  'Dove', 7500, 500,
+  992, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7530,21 +8551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000342', 'Dove Hair Fall Rescue Shampoo 180 ml',
   'General', NULL, '',
   16800, 180, true,
   16800, 0, '', '',
   12, 'SMSKU-000342', '[]'::jsonb,
-  'Dove', 17800, 1000
+  'Dove', 17800, 1000,
+  2410, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7552,21 +8576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000343', 'Dove Hair Fall Rescue Shampoo 340 ml',
   'General', NULL, '',
   31500, 340, true,
   31500, 0, '', '',
   7, 'SMSKU-000343', '[]'::jsonb,
-  'Dove', 33000, 1500
+  'Dove', 33000, 1500,
+  4576, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7574,21 +8601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000344', 'Dove Intense Repair Conditioner 80 ml',
   'General', NULL, '',
   7800, 80, true,
   7800, 0, '', '',
   14, 'SMSKU-000344', '[]'::jsonb,
-  'Dove', 8200, 400
+  'Dove', 8200, 400,
+  1129, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7596,21 +8626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000345', 'Dove Intense Repair Conditioner 175 ml',
   'General', NULL, '',
   18000, 175, true,
   18000, 0, '', '',
   8, 'SMSKU-000345', '[]'::jsonb,
-  'Dove', 18900, 900
+  'Dove', 18900, 900,
+  2608, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7618,21 +8651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000346', 'Pantene Hair Fall Control Shampoo 72 ml',
   'General', NULL, '',
   7200, 72, true,
   7200, 0, '', '',
   16, 'SMSKU-000346', '[]'::jsonb,
-  'Pantene', 7500, 300
+  'Pantene', 7500, 300,
+  1053, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7640,21 +8676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000347', 'Pantene Hair Fall Control Shampoo 180 ml',
   'General', NULL, '',
   17500, 180, true,
   17500, 0, '', '',
   10, 'SMSKU-000347', '[]'::jsonb,
-  'Pantene', 18500, 1000
+  'Pantene', 18500, 1000,
+  2517, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7662,21 +8701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000348', 'Pantene Hair Fall Control Shampoo 340 ml',
   'General', NULL, '',
   32500, 340, true,
   32500, 0, '', '',
   6, 'SMSKU-000348', '[]'::jsonb,
-  'Pantene', 34000, 1500
+  'Pantene', 34000, 1500,
+  4729, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7684,21 +8726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000349', 'Clinic Plus Strong &amp; Long Shampoo 80 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000349', 'Clinic Plus Strong & Long Shampoo 80 ml',
   'General', NULL, '',
   5000, 80, true,
   5000, 0, '', '',
   22, 'SMSKU-000349', '[]'::jsonb,
-  'Clinic Plus', 5200, 200
+  'Clinic Plus', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7706,21 +8751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000350', 'Clinic Plus Strong &amp; Long Shampoo 175 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000350', 'Clinic Plus Strong & Long Shampoo 175 ml',
   'General', NULL, '',
   10200, 175, true,
   10200, 0, '', '',
   14, 'SMSKU-000350', '[]'::jsonb,
-  'Clinic Plus', 10800, 600
+  'Clinic Plus', 10800, 600,
+  1464, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7728,21 +8776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000351', 'Clinic Plus Strong &amp; Long Shampoo 340 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000351', 'Clinic Plus Strong & Long Shampoo 340 ml',
   'General', NULL, '',
   18800, 340, true,
   18800, 0, '', '',
   8, 'SMSKU-000351', '[]'::jsonb,
-  'Clinic Plus', 19800, 1000
+  'Clinic Plus', 19800, 1000,
+  2715, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7750,21 +8801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000352', 'Sunsilk Lusciously Thick &amp; Long Shampoo 80 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000352', 'Sunsilk Lusciously Thick & Long Shampoo 80 ml',
   'General', NULL, '',
   5200, 80, true,
   5200, 0, '', '',
   20, 'SMSKU-000352', '[]'::jsonb,
-  'Sunsilk', 5500, 300
+  'Sunsilk', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7772,21 +8826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000353', 'Sunsilk Lusciously Thick &amp; Long Shampoo 180 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000353', 'Sunsilk Lusciously Thick & Long Shampoo 180 ml',
   'General', NULL, '',
   10800, 180, true,
   10800, 0, '', '',
   12, 'SMSKU-000353', '[]'::jsonb,
-  'Sunsilk', 11500, 700
+  'Sunsilk', 11500, 700,
+  1541, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7794,21 +8851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000354', 'Sunsilk Lusciously Thick &amp; Long Shampoo 340 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000354', 'Sunsilk Lusciously Thick & Long Shampoo 340 ml',
   'General', NULL, '',
   20000, 340, true,
   20000, 0, '', '',
   7, 'SMSKU-000354', '[]'::jsonb,
-  'Sunsilk', 21000, 1000
+  'Sunsilk', 21000, 1000,
+  2898, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7816,21 +8876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000355', 'TRESemme Keratin Smooth Shampoo 185 ml',
   'General', NULL, '',
   22800, 185, true,
   22800, 0, '', '',
   10, 'SMSKU-000355', '[]'::jsonb,
-  'TRESemme', 24000, 1200
+  'TRESemme', 24000, 1200,
+  3295, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7838,21 +8901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000356', 'TRESemme Keratin Smooth Shampoo 580 ml',
   'General', NULL, '',
   65000, 580, true,
   65000, 0, '', '',
   4, 'SMSKU-000356', '[]'::jsonb,
-  'TRESemme', 68000, 3000
+  'TRESemme', 68000, 3000,
+  9458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7860,21 +8926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000357', 'Parachute Advansed Coconut Hair Oil 90 ml',
   'General', NULL, '',
   5000, 90, true,
   5000, 0, '', '',
   25, 'SMSKU-000357', '[]'::jsonb,
-  'Parachute', 5200, 200
+  'Parachute', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7882,21 +8951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000358', 'Parachute Advansed Coconut Hair Oil 175 ml',
   'General', NULL, '',
   9500, 175, true,
   9500, 0, '', '',
   15, 'SMSKU-000358', '[]'::jsonb,
-  'Parachute', 9900, 400
+  'Parachute', 9900, 400,
+  1388, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7904,21 +8976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000359', 'Parachute Advansed Coconut Hair Oil 300 ml',
   'General', NULL, '',
   15800, 300, true,
   15800, 0, '', '',
   10, 'SMSKU-000359', '[]'::jsonb,
-  'Parachute', 16500, 700
+  'Parachute', 16500, 700,
+  2303, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7926,21 +9001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000360', 'Bajaj Almond Drops Almond Hair Oil 100 ml',
   'General', NULL, '',
   8000, 100, true,
   8000, 0, '', '',
   18, 'SMSKU-000360', '[]'::jsonb,
-  'Bajaj Almond Drops', 8500, 500
+  'Bajaj Almond Drops', 8500, 500,
+  1144, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7948,21 +9026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000361', 'Bajaj Almond Drops Almond Hair Oil 200 ml',
   'General', NULL, '',
   14800, 200, true,
   14800, 0, '', '',
   10, 'SMSKU-000361', '[]'::jsonb,
-  'Bajaj Almond Drops', 15500, 700
+  'Bajaj Almond Drops', 15500, 700,
+  2151, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7970,21 +9051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000362', 'Indulekha Bringha Hair Oil 100 ml',
   'General', NULL, '',
   40000, 100, true,
   40000, 0, '', '',
   6, 'SMSKU-000362', '[]'::jsonb,
-  'Indulekha', 42000, 2000
+  'Indulekha', 42000, 2000,
+  5797, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -7992,21 +9076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000363', 'Dove Cream Beauty Bar Soap 75 g',
   'General', NULL, '',
   5000, 75, true,
   5000, 0, '', '',
   30, 'SMSKU-000363', '[]'::jsonb,
-  'Dove', 5200, 200
+  'Dove', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8014,21 +9101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000364', 'Dove Cream Beauty Bar Soap 100 g',
   'General', NULL, '',
   6200, 100, true,
   6200, 0, '', '',
   22, 'SMSKU-000364', '[]'::jsonb,
-  'Dove', 6500, 300
+  'Dove', 6500, 300,
+  900, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8036,21 +9126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000365', 'Lux Soft Touch Bar Soap 75 g',
   'General', NULL, '',
   3600, 75, true,
   3600, 0, '', '',
   28, 'SMSKU-000365', '[]'::jsonb,
-  'Lux', 3800, 200
+  'Lux', 3800, 200,
+  519, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8058,21 +9151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000366', 'Lux Soft Touch Bar Soap 150 g',
   'General', NULL, '',
   6800, 150, true,
   6800, 0, '', '',
   18, 'SMSKU-000366', '[]'::jsonb,
-  'Lux', 7200, 400
+  'Lux', 7200, 400,
+  976, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8080,21 +9176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000367', 'Dettol Original Germ Protection Soap 75 g',
   'General', NULL, '',
   3600, 75, true,
   3600, 0, '', '',
   30, 'SMSKU-000367', '[]'::jsonb,
-  'Dettol', 3800, 200
+  'Dettol', 3800, 200,
+  519, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8102,21 +9201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000368', 'Dettol Original Germ Protection Soap 125 g',
   'General', NULL, '',
   5500, 125, true,
   5500, 0, '', '',
   20, 'SMSKU-000368', '[]'::jsonb,
-  'Dettol', 5800, 300
+  'Dettol', 5800, 300,
+  793, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8124,21 +9226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000369', 'Lifebuoy Total 10 Germ Protection Soap 100 g',
   'General', NULL, '',
   3300, 100, true,
   3300, 0, '', '',
   30, 'SMSKU-000369', '[]'::jsonb,
-  'Lifebuoy', 3500, 200
+  'Lifebuoy', 3500, 200,
+  473, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8146,21 +9251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000370', 'Lifebuoy Total 10 Germ Protection Soap 150 g',
   'General', NULL, '',
   4800, 150, true,
   4800, 0, '', '',
   20, 'SMSKU-000370', '[]'::jsonb,
-  'Lifebuoy', 5000, 200
+  'Lifebuoy', 5000, 200,
+  702, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8168,21 +9276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000371', 'Dove Deeply Nourishing Body Wash 250 ml',
   'General', NULL, '',
   20000, 250, true,
   20000, 0, '', '',
   12, 'SMSKU-000371', '[]'::jsonb,
-  'Dove', 21000, 1000
+  'Dove', 21000, 1000,
+  2898, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8190,21 +9301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000372', 'Dove Deeply Nourishing Body Wash 500 ml',
   'General', NULL, '',
   37500, 500, true,
   37500, 0, '', '',
   6, 'SMSKU-000372', '[]'::jsonb,
-  'Dove', 39500, 2000
+  'Dove', 39500, 2000,
+  5415, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8212,21 +9326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000373', 'Nivea Creme Soft Shower Gel 250 ml',
   'General', NULL, '',
   21500, 250, true,
   21500, 0, '', '',
   10, 'SMSKU-000373', '[]'::jsonb,
-  'Nivea', 22500, 1000
+  'Nivea', 22500, 1000,
+  3127, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8234,21 +9351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000374', 'Nivea Creme Soft Shower Gel 500 ml',
   'General', NULL, '',
   39000, 500, true,
   39000, 0, '', '',
   5, 'SMSKU-000374', '[]'::jsonb,
-  'Nivea', 41000, 2000
+  'Nivea', 41000, 2000,
+  5644, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8256,21 +9376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000375', 'Himalaya Neem Face Wash 50 ml',
   'General', NULL, '',
   6500, 50, true,
   6500, 0, '', '',
   18, 'SMSKU-000375', '[]'::jsonb,
-  'Himalaya', 7000, 500
+  'Himalaya', 7000, 500,
+  915, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8278,21 +9401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000376', 'Himalaya Neem Face Wash 100 ml',
   'General', NULL, '',
   12200, 100, true,
   12200, 0, '', '',
   12, 'SMSKU-000376', '[]'::jsonb,
-  'Himalaya', 13000, 800
+  'Himalaya', 13000, 800,
+  1739, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8300,21 +9426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000377', 'Himalaya Neem Face Wash 150 ml',
   'General', NULL, '',
   17500, 150, true,
   17500, 0, '', '',
   7, 'SMSKU-000377', '[]'::jsonb,
-  'Himalaya', 18500, 1000
+  'Himalaya', 18500, 1000,
+  2517, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8322,21 +9451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000378', 'Nivea Soft Moisturising Cream 50 ml',
   'General', NULL, '',
   13200, 50, true,
   13200, 0, '', '',
   14, 'SMSKU-000378', '[]'::jsonb,
-  'Nivea', 14000, 800
+  'Nivea', 14000, 800,
+  1892, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8344,21 +9476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000379', 'Nivea Soft Moisturising Cream 100 ml',
   'General', NULL, '',
   23800, 100, true,
   23800, 0, '', '',
   8, 'SMSKU-000379', '[]'::jsonb,
-  'Nivea', 25000, 1200
+  'Nivea', 25000, 1200,
+  3447, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8366,21 +9501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000380', 'Vaseline Intensive Care Deep Moisture Body Lotion 200 ml',
   'General', NULL, '',
   18500, 200, true,
   18500, 0, '', '',
   10, 'SMSKU-000380', '[]'::jsonb,
-  'Vaseline', 19500, 1000
+  'Vaseline', 19500, 1000,
+  2669, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8388,21 +9526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000381', 'Vaseline Intensive Care Deep Moisture Body Lotion 400 ml',
   'General', NULL, '',
   35000, 400, true,
   35000, 0, '', '',
   5, 'SMSKU-000381', '[]'::jsonb,
-  'Vaseline', 36500, 1500
+  'Vaseline', 36500, 1500,
+  5110, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8410,21 +9551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000382', 'Ponds White Beauty Sun Protection SPF 15 Cream 35 g',
   'General', NULL, '',
   11800, 35, true,
   11800, 0, '', '',
   12, 'SMSKU-000382', '[]'::jsonb,
-  'Ponds', 12500, 700
+  'Ponds', 12500, 700,
+  1693, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8432,21 +9576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000383', 'Dettol Original Liquid Handwash 200 ml',
   'General', NULL, '',
   8000, 200, true,
   8000, 0, '', '',
   20, 'SMSKU-000383', '[]'::jsonb,
-  'Dettol', 8500, 500
+  'Dettol', 8500, 500,
+  1144, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8454,21 +9601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000384', 'Dettol Original Liquid Handwash 750 ml',
   'General', NULL, '',
   16500, 750, true,
   16500, 0, '', '',
   10, 'SMSKU-000384', '[]'::jsonb,
-  'Dettol', 17500, 1000
+  'Dettol', 17500, 1000,
+  2364, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8476,21 +9626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000385', 'Colgate Strong Teeth Toothpaste 100 g',
   'General', NULL, '',
   5200, 100, true,
   5200, 0, '', '',
   30, 'SMSKU-000385', '[]'::jsonb,
-  'Colgate', 5600, 400
+  'Colgate', 5600, 400,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8498,21 +9651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000386', 'Colgate Strong Teeth Toothpaste 200 g',
   'General', NULL, '',
   9800, 200, true,
   9800, 0, '', '',
   18, 'SMSKU-000386', '[]'::jsonb,
-  'Colgate', 10400, 600
+  'Colgate', 10400, 600,
+  1403, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8520,21 +9676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000387', 'Colgate MaxFresh Blue Gel Toothpaste 80 g',
   'General', NULL, '',
   6000, 80, true,
   6000, 0, '', '',
   22, 'SMSKU-000387', '[]'::jsonb,
-  'Colgate', 6500, 500
+  'Colgate', 6500, 500,
+  839, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8542,21 +9701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000388', 'Colgate MaxFresh Blue Gel Toothpaste 150 g',
   'General', NULL, '',
   10800, 150, true,
   10800, 0, '', '',
   14, 'SMSKU-000388', '[]'::jsonb,
-  'Colgate', 11500, 700
+  'Colgate', 11500, 700,
+  1541, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8564,21 +9726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000389', 'Colgate Total Charcoal Deep Clean Toothpaste 120 g',
   'General', NULL, '',
   11500, 120, true,
   11500, 0, '', '',
   16, 'SMSKU-000389', '[]'::jsonb,
-  'Colgate', 12000, 500
+  'Colgate', 12000, 500,
+  1678, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8586,21 +9751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000390', 'Pepsodent Germi Check Toothpaste 100 g',
   'General', NULL, '',
   4500, 100, true,
   4500, 0, '', '',
   25, 'SMSKU-000390', '[]'::jsonb,
-  'Pepsodent', 4800, 300
+  'Pepsodent', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8608,21 +9776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000391', 'Pepsodent Germi Check Toothpaste 200 g',
   'General', NULL, '',
   8500, 200, true,
   8500, 0, '', '',
   15, 'SMSKU-000391', '[]'::jsonb,
-  'Pepsodent', 9000, 500
+  'Pepsodent', 9000, 500,
+  1220, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8630,21 +9801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000392', 'Sensodyne Sensitive Toothpaste Fresh Gel 75 g',
   'General', NULL, '',
   17500, 75, true,
   17500, 0, '', '',
   10, 'SMSKU-000392', '[]'::jsonb,
-  'Sensodyne', 18500, 1000
+  'Sensodyne', 18500, 1000,
+  2517, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8652,21 +9826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000393', 'Sensodyne Sensitive Toothpaste Fresh Gel 150 g',
   'General', NULL, '',
   33000, 150, true,
   33000, 0, '', '',
   5, 'SMSKU-000393', '[]'::jsonb,
-  'Sensodyne', 34500, 1500
+  'Sensodyne', 34500, 1500,
+  4805, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8674,21 +9851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000394', 'Closeup Ever Fresh Red Hot Gel 80 g',
   'General', NULL, '',
   5000, 80, true,
   5000, 0, '', '',
   20, 'SMSKU-000394', '[]'::jsonb,
-  'Closeup', 5200, 200
+  'Closeup', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8696,21 +9876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000395', 'Closeup Ever Fresh Red Hot Gel 150 g',
   'General', NULL, '',
   9000, 150, true,
   9000, 0, '', '',
   12, 'SMSKU-000395', '[]'::jsonb,
-  'Closeup', 9500, 500
+  'Closeup', 9500, 500,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8718,21 +9901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000396', 'Oral-B Criss Cross Toothbrush Medium 1 pc',
   'General', NULL, '',
   4000, 0, true,
   4000, 0, '', '',
   30, 'SMSKU-000396', '[]'::jsonb,
-  'Oral-B', 4200, 200
+  'Oral-B', 4200, 200,
+  580, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8740,21 +9926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000397', 'Oral-B Criss Cross Toothbrush Medium 4 pcs',
   'General', NULL, '',
   14800, 0, true,
   14800, 0, '', '',
   12, 'SMSKU-000397', '[]'::jsonb,
-  'Oral-B', 15500, 700
+  'Oral-B', 15500, 700,
+  2151, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8762,21 +9951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000398', 'Colgate Slim Soft Toothbrush 1 pc',
   'General', NULL, '',
   5200, 0, true,
   5200, 0, '', '',
   25, 'SMSKU-000398', '[]'::jsonb,
-  'Colgate', 5500, 300
+  'Colgate', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8784,21 +9976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000399', 'Listerine Cool Mint Mouthwash 250 ml',
   'General', NULL, '',
   11000, 250, true,
   11000, 0, '', '',
   14, 'SMSKU-000399', '[]'::jsonb,
-  'Listerine', 11500, 500
+  'Listerine', 11500, 500,
+  1602, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8806,21 +10001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000400', 'Listerine Cool Mint Mouthwash 500 ml',
   'General', NULL, '',
   20000, 500, true,
   20000, 0, '', '',
   6, 'SMSKU-000400', '[]'::jsonb,
-  'Listerine', 21000, 1000
+  'Listerine', 21000, 1000,
+  2898, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8828,21 +10026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000401', 'Johnson&apos;s Baby Baby Shampoo No More Tears 100 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000401', 'Johnson''s Baby Baby Shampoo No More Tears 100 ml',
   'General', NULL, '',
   9500, 100, true,
   9500, 0, '', '',
   18, 'SMSKU-000401', '[]'::jsonb,
-  'Johnson&apos;s Baby', 10000, 500
+  'Johnson''s Baby', 10000, 500,
+  1373, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8850,21 +10051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000402', 'Johnson&apos;s Baby Baby Shampoo No More Tears 200 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000402', 'Johnson''s Baby Baby Shampoo No More Tears 200 ml',
   'General', NULL, '',
   17500, 200, true,
   17500, 0, '', '',
   10, 'SMSKU-000402', '[]'::jsonb,
-  'Johnson&apos;s Baby', 18500, 1000
+  'Johnson''s Baby', 18500, 1000,
+  2517, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8872,21 +10076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000403', 'Johnson&apos;s Baby Baby Powder 100 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000403', 'Johnson''s Baby Baby Powder 100 g',
   'General', NULL, '',
   6200, 100, true,
   6200, 0, '', '',
   20, 'SMSKU-000403', '[]'::jsonb,
-  'Johnson&apos;s Baby', 6500, 300
+  'Johnson''s Baby', 6500, 300,
+  900, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8894,21 +10101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000404', 'Johnson&apos;s Baby Baby Powder 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000404', 'Johnson''s Baby Baby Powder 200 g',
   'General', NULL, '',
   11500, 200, true,
   11500, 0, '', '',
   14, 'SMSKU-000404', '[]'::jsonb,
-  'Johnson&apos;s Baby', 12000, 500
+  'Johnson''s Baby', 12000, 500,
+  1678, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8916,21 +10126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000405', 'Johnson&apos;s Baby Baby Oil 100 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000405', 'Johnson''s Baby Baby Oil 100 ml',
   'General', NULL, '',
   9000, 100, true,
   9000, 0, '', '',
   16, 'SMSKU-000405', '[]'::jsonb,
-  'Johnson&apos;s Baby', 9500, 500
+  'Johnson''s Baby', 9500, 500,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8938,21 +10151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000406', 'Johnson&apos;s Baby Baby Oil 200 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000406', 'Johnson''s Baby Baby Oil 200 ml',
   'General', NULL, '',
   16800, 200, true,
   16800, 0, '', '',
   10, 'SMSKU-000406', '[]'::jsonb,
-  'Johnson&apos;s Baby', 17500, 700
+  'Johnson''s Baby', 17500, 700,
+  2456, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8960,21 +10176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000407', 'Himalaya Gentle Baby Wash 100 ml',
   'General', NULL, '',
   10500, 100, true,
   10500, 0, '', '',
   14, 'SMSKU-000407', '[]'::jsonb,
-  'Himalaya', 11000, 500
+  'Himalaya', 11000, 500,
+  1525, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -8982,21 +10201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000408', 'Himalaya Gentle Baby Wash 200 ml',
   'General', NULL, '',
   18500, 200, true,
   18500, 0, '', '',
   8, 'SMSKU-000408', '[]'::jsonb,
-  'Himalaya', 19500, 1000
+  'Himalaya', 19500, 1000,
+  2669, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9004,21 +10226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000409', 'Himalaya Baby Diaper Rash Cream 50 g',
   'General', NULL, '',
   13800, 50, true,
   13800, 0, '', '',
   10, 'SMSKU-000409', '[]'::jsonb,
-  'Himalaya', 14500, 700
+  'Himalaya', 14500, 700,
+  1998, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9026,21 +10251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000410', 'Pampers Active Baby Diapers (M) 66 pcs 66 pcs',
   'General', NULL, '',
   94000, 0, true,
   94000, 0, '', '',
   8, 'SMSKU-000410', '[]'::jsonb,
-  'Pampers', 99900, 5900
+  'Pampers', 99900, 5900,
+  13439, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9048,21 +10276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000411', 'Pampers Active Baby Diapers (L) 50 pcs 50 pcs',
   'General', NULL, '',
   94000, 0, true,
   94000, 0, '', '',
   6, 'SMSKU-000411', '[]'::jsonb,
-  'Pampers', 99900, 5900
+  'Pampers', 99900, 5900,
+  13439, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9070,21 +10301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000412', 'MamyPoko Pants Extra Absorb (M) 56 pcs 56 pcs',
   'General', NULL, '',
   89900, 0, true,
   89900, 0, '', '',
   7, 'SMSKU-000412', '[]'::jsonb,
-  'MamyPoko', 94900, 5000
+  'MamyPoko', 94900, 5000,
+  12951, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9092,21 +10326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000413', 'MamyPoko Pants Extra Absorb (L) 46 pcs 46 pcs',
   'General', NULL, '',
   89900, 0, true,
   89900, 0, '', '',
   5, 'SMSKU-000413', '[]'::jsonb,
-  'MamyPoko', 94900, 5000
+  'MamyPoko', 94900, 5000,
+  12951, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9114,21 +10351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000414', 'Cerelac Wheat Rice Mixed Fruit Baby Food 300 g',
   'General', NULL, '',
   25000, 300, true,
   25000, 0, '', '',
   10, 'SMSKU-000414', '[]'::jsonb,
-  'Cerelac', 26500, 1500
+  'Cerelac', 26500, 1500,
+  3585, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9136,21 +10376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000415', 'Cerelac Wheat Apple Cherry Baby Food 300 g',
   'General', NULL, '',
   25000, 300, true,
   25000, 0, '', '',
   8, 'SMSKU-000415', '[]'::jsonb,
-  'Cerelac', 26500, 1500
+  'Cerelac', 26500, 1500,
+  3585, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9158,21 +10401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000416', 'Vim Dishwash Liquid Gel Lemon 250 ml',
   'General', NULL, '',
   5000, 250, true,
   5000, 0, '', '',
   25, 'SMSKU-000416', '[]'::jsonb,
-  'Vim', 5200, 200
+  'Vim', 5200, 200,
+  732, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9180,21 +10426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000417', 'Vim Dishwash Liquid Gel Lemon 500 ml',
   'General', NULL, '',
   9500, 500, true,
   9500, 0, '', '',
   15, 'SMSKU-000417', '[]'::jsonb,
-  'Vim', 9900, 400
+  'Vim', 9900, 400,
+  1388, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9202,21 +10451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000418', 'Vim Dishwash Liquid Gel Lemon 750 ml',
   'General', NULL, '',
   13800, 750, true,
   13800, 0, '', '',
   8, 'SMSKU-000418', '[]'::jsonb,
-  'Vim', 14500, 700
+  'Vim', 14500, 700,
+  1998, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9224,21 +10476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000419', 'Vim Dishwash Bar Lemon 200 g',
   'General', NULL, '',
   2000, 200, true,
   2000, 0, '', '',
   40, 'SMSKU-000419', '[]'::jsonb,
-  'Vim', 2000, 0
+  'Vim', 2000, 0,
+  305, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9246,21 +10501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000420', 'Vim Dishwash Bar Lemon 600 g',
   'General', NULL, '',
   4800, 600, true,
   4800, 0, '', '',
   25, 'SMSKU-000420', '[]'::jsonb,
-  'Vim', 5000, 200
+  'Vim', 5000, 200,
+  702, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9268,21 +10526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000421', 'Prill Dishwash Liquid Lime 250 ml',
   'General', NULL, '',
   4600, 250, true,
   4600, 0, '', '',
   20, 'SMSKU-000421', '[]'::jsonb,
-  'Prill', 4800, 200
+  'Prill', 4800, 200,
+  671, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9290,21 +10551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000422', 'Prill Dishwash Liquid Lime 500 ml',
   'General', NULL, '',
   8500, 500, true,
   8500, 0, '', '',
   12, 'SMSKU-000422', '[]'::jsonb,
-  'Prill', 9000, 500
+  'Prill', 9000, 500,
+  1220, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9312,21 +10576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000423', 'Surf Excel Easy Wash Detergent Powder 500 g',
   'General', NULL, '',
   5200, 500, true,
   5200, 0, '', '',
   25, 'SMSKU-000423', '[]'::jsonb,
-  'Surf Excel', 5500, 300
+  'Surf Excel', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9334,21 +10601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000424', 'Surf Excel Easy Wash Detergent Powder 1 kg',
   'General', NULL, '',
   10000, 1000, true,
   10000, 0, '', '',
   18, 'SMSKU-000424', '[]'::jsonb,
-  'Surf Excel', 10500, 500
+  'Surf Excel', 10500, 500,
+  1449, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9356,21 +10626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000425', 'Surf Excel Easy Wash Detergent Powder 2 kg',
   'General', NULL, '',
   19000, 2000, true,
   19000, 0, '', '',
   10, 'SMSKU-000425', '[]'::jsonb,
-  'Surf Excel', 20000, 1000
+  'Surf Excel', 20000, 1000,
+  2746, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9378,21 +10651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000426', 'Surf Excel Matic Top Load Detergent Powder 500 g',
   'General', NULL, '',
   12500, 500, true,
   12500, 0, '', '',
   15, 'SMSKU-000426', '[]'::jsonb,
-  'Surf Excel', 13000, 500
+  'Surf Excel', 13000, 500,
+  1831, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9400,21 +10676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000427', 'Surf Excel Matic Top Load Detergent Powder 1 kg',
   'General', NULL, '',
   23800, 1000, true,
   23800, 0, '', '',
   8, 'SMSKU-000427', '[]'::jsonb,
-  'Surf Excel', 25000, 1200
+  'Surf Excel', 25000, 1200,
+  3447, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9422,21 +10701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000428', 'Surf Excel Matic Top Load Detergent Powder 2 kg',
   'General', NULL, '',
   46000, 2000, true,
   46000, 0, '', '',
   4, 'SMSKU-000428', '[]'::jsonb,
-  'Surf Excel', 48000, 2000
+  'Surf Excel', 48000, 2000,
+  6712, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9444,21 +10726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000429', 'Surf Excel Liquid Detergent Front Load 500 ml',
   'General', NULL, '',
   15800, 500, true,
   15800, 0, '', '',
   10, 'SMSKU-000429', '[]'::jsonb,
-  'Surf Excel', 16500, 700
+  'Surf Excel', 16500, 700,
+  2303, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9466,21 +10751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000430', 'Surf Excel Liquid Detergent Front Load 1 L',
   'General', NULL, '',
   29500, 1000, true,
   29500, 0, '', '',
   5, 'SMSKU-000430', '[]'::jsonb,
-  'Surf Excel', 31000, 1500
+  'Surf Excel', 31000, 1500,
+  4271, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9488,21 +10776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000431', 'Ariel Matic Front Load Detergent 500 g',
   'General', NULL, '',
   13800, 500, true,
   13800, 0, '', '',
   12, 'SMSKU-000431', '[]'::jsonb,
-  'Ariel', 14500, 700
+  'Ariel', 14500, 700,
+  1998, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9510,21 +10801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000432', 'Ariel Matic Front Load Detergent 1 kg',
   'General', NULL, '',
   26200, 1000, true,
   26200, 0, '', '',
   7, 'SMSKU-000432', '[]'::jsonb,
-  'Ariel', 27500, 1300
+  'Ariel', 27500, 1300,
+  3798, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9532,21 +10826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000433', 'Ariel Matic Front Load Detergent 2 kg',
   'General', NULL, '',
   50500, 2000, true,
   50500, 0, '', '',
   3, 'SMSKU-000433', '[]'::jsonb,
-  'Ariel', 53000, 2500
+  'Ariel', 53000, 2500,
+  7322, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9554,21 +10851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000434', 'Tide Plus Double Power Detergent 500 g',
   'General', NULL, '',
   4500, 500, true,
   4500, 0, '', '',
   28, 'SMSKU-000434', '[]'::jsonb,
-  'Tide', 4800, 300
+  'Tide', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9576,21 +10876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000435', 'Tide Plus Double Power Detergent 1 kg',
   'General', NULL, '',
   8500, 1000, true,
   8500, 0, '', '',
   18, 'SMSKU-000435', '[]'::jsonb,
-  'Tide', 9000, 500
+  'Tide', 9000, 500,
+  1220, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9598,21 +10901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000436', 'Tide Plus Double Power Detergent 2 kg',
   'General', NULL, '',
   16200, 2000, true,
   16200, 0, '', '',
   8, 'SMSKU-000436', '[]'::jsonb,
-  'Tide', 17000, 800
+  'Tide', 17000, 800,
+  2349, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9620,21 +10926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000437', 'Rin Detergent Bar 250 g',
   'General', NULL, '',
   2200, 250, true,
   2200, 0, '', '',
   30, 'SMSKU-000437', '[]'::jsonb,
-  'Rin', 2200, 0
+  'Rin', 2200, 0,
+  336, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9642,21 +10951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000438', 'Comfort After Wash Fabric Conditioner Blue 220 ml',
   'General', NULL, '',
   6000, 220, true,
   6000, 0, '', '',
   18, 'SMSKU-000438', '[]'::jsonb,
-  'Comfort', 6500, 500
+  'Comfort', 6500, 500,
+  839, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9664,21 +10976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000439', 'Comfort After Wash Fabric Conditioner Blue 860 ml',
   'General', NULL, '',
   20500, 860, true,
   20500, 0, '', '',
   8, 'SMSKU-000439', '[]'::jsonb,
-  'Comfort', 21500, 1000
+  'Comfort', 21500, 1000,
+  2975, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9686,21 +11001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000440', 'Harpic Power Plus Toilet Cleaner Original 500 ml',
   'General', NULL, '',
   10000, 500, true,
   10000, 0, '', '',
   20, 'SMSKU-000440', '[]'::jsonb,
-  'Harpic', 10500, 500
+  'Harpic', 10500, 500,
+  1449, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9708,21 +11026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000441', 'Harpic Power Plus Toilet Cleaner Original 1 L',
   'General', NULL, '',
   18500, 1000, true,
   18500, 0, '', '',
   10, 'SMSKU-000441', '[]'::jsonb,
-  'Harpic', 19500, 1000
+  'Harpic', 19500, 1000,
+  2669, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9730,21 +11051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000442', 'Lizol Disinfectant Surface Cleaner Citrus 500 ml',
   'General', NULL, '',
   10500, 500, true,
   10500, 0, '', '',
   14, 'SMSKU-000442', '[]'::jsonb,
-  'Lizol', 11000, 500
+  'Lizol', 11000, 500,
+  1525, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9752,21 +11076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000443', 'Lizol Disinfectant Surface Cleaner Citrus 975 ml',
   'General', NULL, '',
   19000, 975, true,
   19000, 0, '', '',
   7, 'SMSKU-000443', '[]'::jsonb,
-  'Lizol', 20000, 1000
+  'Lizol', 20000, 1000,
+  2746, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9774,21 +11101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000444', 'Colin Glass &amp; Multisurface Cleaner 500 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000444', 'Colin Glass & Multisurface Cleaner 500 ml',
   'General', NULL, '',
   9000, 500, true,
   9000, 0, '', '',
   12, 'SMSKU-000444', '[]'::jsonb,
-  'Colin', 9500, 500
+  'Colin', 9500, 500,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9796,21 +11126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000445', 'Domex Fresh Guard Ocean Fresh Disinfectant 500 ml',
   'General', NULL, '',
   7500, 500, true,
   7500, 0, '', '',
   14, 'SMSKU-000445', '[]'::jsonb,
-  'Domex', 8000, 500
+  'Domex', 8000, 500,
+  1068, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9818,21 +11151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000446', 'Odonil Bathroom Air Freshener Blocks Jasmine 75 g',
   'General', NULL, '',
   5200, 75, true,
   5200, 0, '', '',
   18, 'SMSKU-000446', '[]'::jsonb,
-  'Odonil', 5500, 300
+  'Odonil', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9840,21 +11176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000447', 'Good Knight Gold Flash Liquid Vapourizer Refill 45 ml',
   'General', NULL, '',
   7800, 45, true,
   7800, 0, '', '',
   20, 'SMSKU-000447', '[]'::jsonb,
-  'Good Knight', 8200, 400
+  'Good Knight', 8200, 400,
+  1129, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9862,21 +11201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000448', 'All Out Ultra Liquid Vapourizer Refill 45 ml',
   'General', NULL, '',
   7600, 45, true,
   7600, 0, '', '',
   18, 'SMSKU-000448', '[]'::jsonb,
-  'All Out', 8000, 400
+  'All Out', 8000, 400,
+  1098, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9884,21 +11226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000449', 'Scotch-Brite Scrub Pad Large 1 pc',
   'General', NULL, '',
   2800, 0, true,
   2800, 0, '', '',
   35, 'SMSKU-000449', '[]'::jsonb,
-  'Scotch-Brite', 3000, 200
+  'Scotch-Brite', 3000, 200,
+  397, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9906,21 +11251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000450', 'Britannia White Bread 400 g',
   'General', NULL, '',
   4000, 400, true,
   4000, 0, '', '',
   30, 'SMSKU-000450', '[]'::jsonb,
-  'Britannia', 4000, 0
+  'Britannia', 4000, 0,
+  190, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9928,21 +11276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000451', 'Britannia Whole Wheat Bread 400 g',
   'General', NULL, '',
   4500, 400, true,
   4500, 0, '', '',
   25, 'SMSKU-000451', '[]'::jsonb,
-  'Britannia', 4500, 0
+  'Britannia', 4500, 0,
+  214, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9950,21 +11301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000452', 'Harvest Gold White Sandwich Bread 300 g',
   'General', NULL, '',
   3500, 300, true,
   3500, 0, '', '',
   22, 'SMSKU-000452', '[]'::jsonb,
-  'Harvest Gold', 3500, 0
+  'Harvest Gold', 3500, 0,
+  167, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9972,21 +11326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000453', 'Harvest Gold Multigrain Bread 450 g',
   'General', NULL, '',
   5200, 450, true,
   5200, 0, '', '',
   15, 'SMSKU-000453', '[]'::jsonb,
-  'Harvest Gold', 5500, 300
+  'Harvest Gold', 5500, 300,
+  233, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -9994,21 +11351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000454', 'Modern Brown Bread 400 g',
   'General', NULL, '',
   4000, 400, true,
   4000, 0, '', '',
   18, 'SMSKU-000454', '[]'::jsonb,
-  'Modern', 4200, 200
+  'Modern', 4200, 200,
+  181, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10016,21 +11376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000455', 'Britannia Milk Bread 400 g',
   'General', NULL, '',
   4500, 400, true,
   4500, 0, '', '',
   16, 'SMSKU-000455', '[]'::jsonb,
-  'Britannia', 4800, 300
+  'Britannia', 4800, 300,
+  200, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10038,21 +11401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000456', 'English Oven Gourmet Burger Buns 4 pcs',
   'General', NULL, '',
   7500, 0, true,
   7500, 0, '', '',
   10, 'SMSKU-000456', '[]'::jsonb,
-  'English Oven', 8000, 500
+  'English Oven', 8000, 500,
+  333, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10060,21 +11426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000457', 'English Oven Pav Buns 6 pcs',
   'General', NULL, '',
   5800, 0, true,
   5800, 0, '', '',
   12, 'SMSKU-000457', '[]'::jsonb,
-  'English Oven', 6000, 200
+  'English Oven', 6000, 200,
+  267, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10082,21 +11451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000458', 'Cello Butterflow Ball Pen Blue (Pack of 10) 10 pcs',
   'General', NULL, '',
   9000, 0, true,
   9000, 0, '', '',
   15, 'SMSKU-000458', '[]'::jsonb,
-  'Cello', 10000, 1000
+  'Cello', 10000, 1000,
+  857, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10104,21 +11476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000459', 'Reynolds Trimax Gel Pen Blue 1 pc',
   'General', NULL, '',
   2500, 0, true,
   2500, 0, '', '',
   30, 'SMSKU-000459', '[]'::jsonb,
-  'Reynolds', 2500, 0
+  'Reynolds', 2500, 0,
+  268, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10126,21 +11501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000460', 'Classmate Spiral Notebook 200 Pages 1 pc',
   'General', NULL, '',
   7500, 0, true,
   7500, 0, '', '',
   20, 'SMSKU-000460', '[]'::jsonb,
-  'Classmate', 8000, 500
+  'Classmate', 8000, 500,
+  750, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10148,21 +11526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000461', 'Camlin Kokuyo Mechanical Pencil 0.7mm 1 pc',
   'General', NULL, '',
   3800, 0, true,
   3800, 0, '', '',
   15, 'SMSKU-000461', '[]'::jsonb,
-  'Camlin', 4000, 200
+  'Camlin', 4000, 200,
+  386, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10170,21 +11551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000462', 'Fevicol SH Squeeze Bottle Glue 200 g',
   'General', NULL, '',
   9000, 200, true,
   9000, 0, '', '',
   12, 'SMSKU-000462', '[]'::jsonb,
-  'Fevicol', 9500, 500
+  'Fevicol', 9500, 500,
+  911, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10192,21 +11576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000463', '3M Post-it Notes Pad (100 Sheets) 100 pcs',
   'General', NULL, '',
   8500, 0, true,
   8500, 0, '', '',
   10, 'SMSKU-000463', '[]'::jsonb,
-  '3M', 9000, 500
+  '3M', 9000, 500,
+  857, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10214,21 +11601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000464', '7UP Lemon Soft Drink 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   30, 'SMSKU-000464', '[]'::jsonb,
-  '7UP', 2000, 0
+  '7UP', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10236,21 +11626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000465', '7UP Lemon Soft Drink 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   20, 'SMSKU-000465', '[]'::jsonb,
-  '7UP', 4000, 0
+  '7UP', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10258,21 +11651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000466', '7UP Lemon Soft Drink 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   8, 'SMSKU-000466', '[]'::jsonb,
-  '7UP', 9500, 500
+  '7UP', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10280,21 +11676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000467', 'Mirinda Orange Soft Drink 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   28, 'SMSKU-000467', '[]'::jsonb,
-  'Mirinda', 2000, 0
+  'Mirinda', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10302,21 +11701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000468', 'Mirinda Orange Soft Drink 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   18, 'SMSKU-000468', '[]'::jsonb,
-  'Mirinda', 4000, 0
+  'Mirinda', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10324,21 +11726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000469', 'Mountain Dew Citrus Soft Drink 250 ml',
   'General', NULL, '',
   2000, 250, true,
   2000, 0, '', '',
   25, 'SMSKU-000469', '[]'::jsonb,
-  'Mountain Dew', 2000, 0
+  'Mountain Dew', 2000, 0,
+  437, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10346,21 +11751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000470', 'Mountain Dew Citrus Soft Drink 500 ml',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   16, 'SMSKU-000470', '[]'::jsonb,
-  'Mountain Dew', 4000, 0
+  'Mountain Dew', 4000, 0,
+  875, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10368,21 +11776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000471', 'Mountain Dew Citrus Soft Drink 2 L',
   'General', NULL, '',
   9000, 2000, true,
   9000, 0, '', '',
   7, 'SMSKU-000471', '[]'::jsonb,
-  'Mountain Dew', 9500, 500
+  'Mountain Dew', 9500, 500,
+  1859, 2800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10390,21 +11801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000472', 'Real Guava Juice 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   18, 'SMSKU-000472', '[]'::jsonb,
-  'Real', 3000, 200
+  'Real', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10412,21 +11826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000473', 'Real Guava Juice 1 L',
   'General', NULL, '',
   10800, 1000, true,
   10800, 0, '', '',
   8, 'SMSKU-000473', '[]'::jsonb,
-  'Real', 11500, 700
+  'Real', 11500, 700,
+  1082, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10434,21 +11851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000474', 'Minute Maid Pulpy Orange 400 ml',
   'General', NULL, '',
   4200, 400, true,
   4200, 0, '', '',
   16, 'SMSKU-000474', '[]'::jsonb,
-  'Minute Maid', 4500, 300
+  'Minute Maid', 4500, 300,
+  418, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10456,21 +11876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000475', 'Minute Maid Pulpy Orange 1 L',
   'General', NULL, '',
   9200, 1000, true,
   9200, 0, '', '',
   8, 'SMSKU-000475', '[]'::jsonb,
-  'Minute Maid', 9900, 700
+  'Minute Maid', 9900, 700,
+  911, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10478,21 +11901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000476', 'Paper Boat Chilled Shikanji 200 ml',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   14, 'SMSKU-000476', '[]'::jsonb,
-  'Paper Boat', 3000, 200
+  'Paper Boat', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10500,21 +11926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000477', 'Bisleri Mineral Water 500 ml',
   'General', NULL, '',
   2000, 500, true,
   2000, 0, '', '',
   60, 'SMSKU-000477', '[]'::jsonb,
-  'Bisleri', 2000, 0
+  'Bisleri', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10522,21 +11951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000478', 'Bisleri Mineral Water 1 L',
   'General', NULL, '',
   3000, 1000, true,
   3000, 0, '', '',
   40, 'SMSKU-000478', '[]'::jsonb,
-  'Bisleri', 3000, 0
+  'Bisleri', 3000, 0,
+  321, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10544,21 +11976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000479', 'Bisleri Mineral Water 2 L',
   'General', NULL, '',
   4800, 2000, true,
   4800, 0, '', '',
   20, 'SMSKU-000479', '[]'::jsonb,
-  'Bisleri', 5000, 200
+  'Bisleri', 5000, 200,
+  493, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10566,21 +12001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000480', 'Wagh Bakri Premium Leaf Tea 250 g',
   'General', NULL, '',
   13800, 250, true,
   13800, 0, '', '',
   15, 'SMSKU-000480', '[]'::jsonb,
-  'Wagh Bakri', 14500, 700
+  'Wagh Bakri', 14500, 700,
+  624, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10588,21 +12026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000481', 'Wagh Bakri Premium Leaf Tea 500 g',
   'General', NULL, '',
   26800, 500, true,
   26800, 0, '', '',
   8, 'SMSKU-000481', '[]'::jsonb,
-  'Wagh Bakri', 28000, 1200
+  'Wagh Bakri', 28000, 1200,
+  1219, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10610,21 +12051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000482', 'MDH Rajma Masala 100 g',
   'General', NULL, '',
   6400, 100, true,
   6400, 0, '', '',
   15, 'SMSKU-000482', '[]'::jsonb,
-  'MDH', 6800, 400
+  'MDH', 6800, 400,
+  286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10632,21 +12076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000483', 'Everest Pav Bhaji Masala 50 g',
   'General', NULL, '',
   4800, 50, true,
   4800, 0, '', '',
   20, 'SMSKU-000483', '[]'::jsonb,
-  'Everest', 5000, 200
+  'Everest', 5000, 200,
+  219, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10654,21 +12101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000484', 'Everest Pav Bhaji Masala 100 g',
   'General', NULL, '',
   9000, 100, true,
   9000, 0, '', '',
   12, 'SMSKU-000484', '[]'::jsonb,
-  'Everest', 9500, 500
+  'Everest', 9500, 500,
+  405, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10676,21 +12126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000485', 'Catch Garlic Powder 100 g',
   'General', NULL, '',
   8200, 100, true,
   8200, 0, '', '',
   14, 'SMSKU-000485', '[]'::jsonb,
-  'Catch', 8800, 600
+  'Catch', 8800, 600,
+  362, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10698,21 +12151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000486', 'Shan Biryani Masala Mix 65 g',
   'General', NULL, '',
   6800, 65, true,
   6800, 0, '', '',
   10, 'SMSKU-000486', '[]'::jsonb,
-  'Shan', 7200, 400
+  'Shan', 7200, 400,
+  305, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10720,21 +12176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000487', 'Haldiram&apos;s Chivda 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000487', 'Haldiram''s Chivda 400 g',
   'General', NULL, '',
   12500, 400, true,
   12500, 0, '', '',
   12, 'SMSKU-000487', '[]'::jsonb,
-  'Haldiram&apos;s', 13000, 500
+  'Haldiram''s', 13000, 500,
+  1286, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10742,21 +12201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000488', 'Bikaji Bhujia 200 g',
   'General', NULL, '',
   7000, 200, true,
   7000, 0, '', '',
   14, 'SMSKU-000488', '[]'::jsonb,
-  'Bikaji', 7500, 500
+  'Bikaji', 7500, 500,
+  696, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10764,21 +12226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000489', 'Bikaji Bhujia 400 g',
   'General', NULL, '',
   13500, 400, true,
   13500, 0, '', '',
   8, 'SMSKU-000489', '[]'::jsonb,
-  'Bikaji', 14500, 1000
+  'Bikaji', 14500, 1000,
+  1339, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10786,21 +12251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000490', 'Uncle Chipps Spicy Treat 26 g',
   'General', NULL, '',
   1000, 26, true,
   1000, 0, '', '',
   30, 'SMSKU-000490', '[]'::jsonb,
-  'Uncle Chipps', 1000, 0
+  'Uncle Chipps', 1000, 0,
+  107, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10808,21 +12276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000491', 'Uncle Chipps Spicy Treat 52 g',
   'General', NULL, '',
   2000, 52, true,
   2000, 0, '', '',
   22, 'SMSKU-000491', '[]'::jsonb,
-  'Uncle Chipps', 2000, 0
+  'Uncle Chipps', 2000, 0,
+  214, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10830,21 +12301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000492', 'Natkhat Puffed Rice Murmura 200 g',
   'General', NULL, '',
   2800, 200, true,
   2800, 0, '', '',
   20, 'SMSKU-000492', '[]'::jsonb,
-  'Natkhat', 3000, 200
+  'Natkhat', 3000, 200,
+  279, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10852,21 +12326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000493', 'Parle Hide &amp; Seek Chocolate Biscuits 100 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000493', 'Parle Hide & Seek Chocolate Biscuits 100 g',
   'General', NULL, '',
   3300, 100, true,
   3300, 0, '', '',
   22, 'SMSKU-000493', '[]'::jsonb,
-  'Parle', 3500, 200
+  'Parle', 3500, 200,
+  473, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10874,21 +12351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000494', 'Parle Hide &amp; Seek Chocolate Biscuits 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000494', 'Parle Hide & Seek Chocolate Biscuits 200 g',
   'General', NULL, '',
   6200, 200, true,
   6200, 0, '', '',
   14, 'SMSKU-000494', '[]'::jsonb,
-  'Parle', 6500, 300
+  'Parle', 6500, 300,
+  900, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10896,21 +12376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000495', 'Britannia Good Day Butter Cookies 200 g',
   'General', NULL, '',
   5200, 200, true,
   5200, 0, '', '',
   18, 'SMSKU-000495', '[]'::jsonb,
-  'Britannia', 5500, 300
+  'Britannia', 5500, 300,
+  747, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10918,21 +12401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000496', 'Parle 20-20 Cashew &amp; Badam Biscuits 150 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000496', 'Parle 20-20 Cashew & Badam Biscuits 150 g',
   'General', NULL, '',
   3800, 150, true,
   3800, 0, '', '',
   15, 'SMSKU-000496', '[]'::jsonb,
-  'Parle', 4000, 200
+  'Parle', 4000, 200,
+  549, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10940,21 +12426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000497', 'Amul Milk Chocolate Bar 150 g',
   'General', NULL, '',
   15800, 150, true,
   15800, 0, '', '',
   12, 'SMSKU-000497', '[]'::jsonb,
-  'Amul', 16500, 700
+  'Amul', 16500, 700,
+  2303, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10962,21 +12451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000498', 'Cadbury Bournville Dark Chocolate 80 g',
   'General', NULL, '',
   13300, 80, true,
   13300, 0, '', '',
   10, 'SMSKU-000498', '[]'::jsonb,
-  'Cadbury', 14000, 700
+  'Cadbury', 14000, 700,
+  1922, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -10984,21 +12476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000499', 'Munch Crispier Chocolate Bar 18 g',
   'General', NULL, '',
   1000, 18, true,
   1000, 0, '', '',
   35, 'SMSKU-000499', '[]'::jsonb,
-  'Munch', 1000, 0
+  'Munch', 1000, 0,
+  153, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11006,21 +12501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000500', 'Dabur Honey 250 g',
   'General', NULL, '',
   17500, 250, true,
   17500, 0, '', '',
   14, 'SMSKU-000500', '[]'::jsonb,
-  'Dabur', 18500, 1000
+  'Dabur', 18500, 1000,
+  786, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11028,21 +12526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000501', 'Dabur Honey 500 g',
   'General', NULL, '',
   34500, 500, true,
   34500, 0, '', '',
   8, 'SMSKU-000501', '[]'::jsonb,
-  'Dabur', 36000, 1500
+  'Dabur', 36000, 1500,
+  1571, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11050,21 +12551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000502', 'Apis Himalayan Honey 250 g',
   'General', NULL, '',
   16500, 250, true,
   16500, 0, '', '',
   10, 'SMSKU-000502', '[]'::jsonb,
-  'Apis', 17500, 1000
+  'Apis', 17500, 1000,
+  738, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11072,21 +12576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000503', 'Happilo Premium Cashews 100 g',
   'General', NULL, '',
   16500, 100, true,
   16500, 0, '', '',
   12, 'SMSKU-000503', '[]'::jsonb,
-  'Happilo', 17500, 1000
+  'Happilo', 17500, 1000,
+  738, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11094,21 +12601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000504', 'Happilo Premium Cashews 200 g',
   'General', NULL, '',
   32500, 200, true,
   32500, 0, '', '',
   6, 'SMSKU-000504', '[]'::jsonb,
-  'Happilo', 34000, 1500
+  'Happilo', 34000, 1500,
+  1476, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11116,21 +12626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000505', 'Happilo Premium Almonds 100 g',
   'General', NULL, '',
   14800, 100, true,
   14800, 0, '', '',
   12, 'SMSKU-000505', '[]'::jsonb,
-  'Happilo', 15500, 700
+  'Happilo', 15500, 700,
+  671, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11138,21 +12651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000506', 'Happilo Premium Almonds 200 g',
   'General', NULL, '',
   28500, 200, true,
   28500, 0, '', '',
   6, 'SMSKU-000506', '[]'::jsonb,
-  'Happilo', 30000, 1500
+  'Happilo', 30000, 1500,
+  1286, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11160,21 +12676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000507', 'Nutraj Mixed Nuts 200 g',
   'General', NULL, '',
   28000, 200, true,
   28000, 0, '', '',
   8, 'SMSKU-000507', '[]'::jsonb,
-  'Nutraj', 29500, 1500
+  'Nutraj', 29500, 1500,
+  1262, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11182,21 +12701,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000508', 'Parachute Coconut Oil Jar 500 ml',
   'General', NULL, '',
   18500, 500, true,
   18500, 0, '', '',
   12, 'SMSKU-000508', '[]'::jsonb,
-  'Parachute', 19500, 1000
+  'Parachute', 19500, 1000,
+  833, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11204,21 +12726,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000509', 'Parachute Coconut Oil Jar 1 L',
   'General', NULL, '',
   35800, 1000, true,
   35800, 0, '', '',
   6, 'SMSKU-000509', '[]'::jsonb,
-  'Parachute', 37500, 1700
+  'Parachute', 37500, 1700,
+  1624, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11226,21 +12751,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000510', 'Fortune Soyabean Refined Oil 1 L',
   'General', NULL, '',
   12500, 1000, true,
   12500, 0, '', '',
   18, 'SMSKU-000510', '[]'::jsonb,
-  'Fortune', 13000, 500
+  'Fortune', 13000, 500,
+  571, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11248,21 +12776,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000511', 'Fortune Soyabean Refined Oil 5 L',
   'General', NULL, '',
   59500, 5000, true,
   59500, 0, '', '',
   6, 'SMSKU-000511', '[]'::jsonb,
-  'Fortune', 62000, 2500
+  'Fortune', 62000, 2500,
+  2714, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11270,21 +12801,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000512', 'Garnier Fructis Long &amp; Strong Shampoo 175 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000512', 'Garnier Fructis Long & Strong Shampoo 175 ml',
   'General', NULL, '',
   19000, 175, true,
   19000, 0, '', '',
   10, 'SMSKU-000512', '[]'::jsonb,
-  'Garnier', 19900, 900
+  'Garnier', 19900, 900,
+  2761, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11292,21 +12826,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000513', 'Garnier Fructis Long &amp; Strong Shampoo 340 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000513', 'Garnier Fructis Long & Strong Shampoo 340 ml',
   'General', NULL, '',
   36200, 340, true,
   36200, 0, '', '',
   5, 'SMSKU-000513', '[]'::jsonb,
-  'Garnier', 38000, 1800
+  'Garnier', 38000, 1800,
+  5247, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11314,21 +12851,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000514', 'WOW Onion Black Seed Hair Oil 100 ml',
   'General', NULL, '',
   33000, 100, true,
   33000, 0, '', '',
   8, 'SMSKU-000514', '[]'::jsonb,
-  'WOW', 34900, 1900
+  'WOW', 34900, 1900,
+  4744, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11336,21 +12876,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000515', 'Mamaearth Onion Shampoo for Hair Growth 250 ml',
   'General', NULL, '',
   33000, 250, true,
   33000, 0, '', '',
   7, 'SMSKU-000515', '[]'::jsonb,
-  'Mamaearth', 34900, 1900
+  'Mamaearth', 34900, 1900,
+  4744, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11358,21 +12901,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000516', 'Dabur Red Toothpaste 100 g',
   'General', NULL, '',
   6500, 100, true,
   6500, 0, '', '',
   18, 'SMSKU-000516', '[]'::jsonb,
-  'Dabur', 6800, 300
+  'Dabur', 6800, 300,
+  946, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11380,21 +12926,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000517', 'Dabur Red Toothpaste 200 g',
   'General', NULL, '',
   12200, 200, true,
   12200, 0, '', '',
   10, 'SMSKU-000517', '[]'::jsonb,
-  'Dabur', 12800, 600
+  'Dabur', 12800, 600,
+  1769, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11402,21 +12951,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000518', 'Himalaya Complete Care Toothpaste 80 g',
   'General', NULL, '',
   5800, 80, true,
   5800, 0, '', '',
   16, 'SMSKU-000518', '[]'::jsonb,
-  'Himalaya', 6200, 400
+  'Himalaya', 6200, 400,
+  824, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11424,21 +12976,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000519', 'Himalaya Complete Care Toothpaste 150 g',
   'General', NULL, '',
   10600, 150, true,
   10600, 0, '', '',
   10, 'SMSKU-000519', '[]'::jsonb,
-  'Himalaya', 11200, 600
+  'Himalaya', 11200, 600,
+  1525, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11446,21 +13001,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000520', 'Rin Advanced Powder Detergent 500 g',
   'General', NULL, '',
   4000, 500, true,
   4000, 0, '', '',
   25, 'SMSKU-000520', '[]'::jsonb,
-  'Rin', 4200, 200
+  'Rin', 4200, 200,
+  580, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11468,21 +13026,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000521', 'Rin Advanced Powder Detergent 1 kg',
   'General', NULL, '',
   7600, 1000, true,
   7600, 0, '', '',
   16, 'SMSKU-000521', '[]'::jsonb,
-  'Rin', 8000, 400
+  'Rin', 8000, 400,
+  1098, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11490,21 +13051,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000522', 'Rin Advanced Powder Detergent 2 kg',
   'General', NULL, '',
   14800, 2000, true,
   14800, 0, '', '',
   8, 'SMSKU-000522', '[]'::jsonb,
-  'Rin', 15500, 700
+  'Rin', 15500, 700,
+  2151, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11512,21 +13076,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000523', 'Wheel Active 3 Detergent Powder 500 g',
   'General', NULL, '',
   3000, 500, true,
   3000, 0, '', '',
   30, 'SMSKU-000523', '[]'::jsonb,
-  'Wheel', 3000, 0
+  'Wheel', 3000, 0,
+  458, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11534,21 +13101,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000524', 'Wheel Active 3 Detergent Powder 2 kg',
   'General', NULL, '',
   10500, 2000, true,
   10500, 0, '', '',
   14, 'SMSKU-000524', '[]'::jsonb,
-  'Wheel', 11000, 500
+  'Wheel', 11000, 500,
+  1525, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11556,21 +13126,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000525', 'Lizol Pine Fresh Floor Cleaner 500 ml',
   'General', NULL, '',
   10500, 500, true,
   10500, 0, '', '',
   14, 'SMSKU-000525', '[]'::jsonb,
-  'Lizol', 11000, 500
+  'Lizol', 11000, 500,
+  1525, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11578,21 +13151,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000526', 'Exo Dishwash Bar 200 g',
   'General', NULL, '',
   2000, 200, true,
   2000, 0, '', '',
   30, 'SMSKU-000526', '[]'::jsonb,
-  'Exo', 2200, 200
+  'Exo', 2200, 200,
+  275, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11600,21 +13176,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000527', 'Exo Dishwash Bar 600 g',
   'General', NULL, '',
   5500, 600, true,
   5500, 0, '', '',
   15, 'SMSKU-000527', '[]'::jsonb,
-  'Exo', 5800, 300
+  'Exo', 5800, 300,
+  793, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11622,21 +13201,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000528', 'HIT Mosquito &amp; Fly Killer Spray 200 ml',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000528', 'HIT Mosquito & Fly Killer Spray 200 ml',
   'General', NULL, '',
   14800, 200, true,
   14800, 0, '', '',
   12, 'SMSKU-000528', '[]'::jsonb,
-  'HIT', 15500, 700
+  'HIT', 15500, 700,
+  2151, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11644,21 +13226,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000529', 'Mortein Power Guard Mosquito Coil 10 pcs',
   'General', NULL, '',
   4500, 0, true,
   4500, 0, '', '',
   20, 'SMSKU-000529', '[]'::jsonb,
-  'Mortein', 4800, 300
+  'Mortein', 4800, 300,
+  641, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11666,21 +13251,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000530', 'Milky Mist Paneer 200 g',
   'General', NULL, '',
   8800, 200, true,
   8800, 0, '', '',
   14, 'SMSKU-000530', '[]'::jsonb,
-  'Milky Mist', 9200, 400
+  'Milky Mist', 9200, 400,
+  400, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11688,21 +13276,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000531', 'Milky Mist Paneer 500 g',
   'General', NULL, '',
   21000, 500, true,
   21000, 0, '', '',
   7, 'SMSKU-000531', '[]'::jsonb,
-  'Milky Mist', 22000, 1000
+  'Milky Mist', 22000, 1000,
+  952, 500
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11710,21 +13301,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000532', 'Amul Masti Spiced Buttermilk 200 ml',
   'General', NULL, '',
   1800, 200, true,
   1800, 0, '', '',
   35, 'SMSKU-000532', '[]'::jsonb,
-  'Amul', 1800, 0
+  'Amul', 1800, 0,
+  0, 0
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11732,21 +13326,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000533', 'Maggi Masala Oats Veggie 39 g',
   'General', NULL, '',
   2500, 39, true,
   2500, 0, '', '',
   20, 'SMSKU-000533', '[]'::jsonb,
-  'Maggi', 2500, 0
+  'Maggi', 2500, 0,
+  381, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11754,21 +13351,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000534', 'MTR Ready to Eat Chole 300 g',
   'General', NULL, '',
   9200, 300, true,
   9200, 0, '', '',
   10, 'SMSKU-000534', '[]'::jsonb,
-  'MTR', 9900, 700
+  'MTR', 9900, 700,
+  1297, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11776,21 +13376,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000535', 'Gits Gulab Jamun Mix 500 g',
   'General', NULL, '',
   11500, 500, true,
   11500, 0, '', '',
   10, 'SMSKU-000535', '[]'::jsonb,
-  'Gits', 12000, 500
+  'Gits', 12000, 500,
+  1678, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11798,21 +13401,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000536', 'Gits Dosa Mix 500 g',
   'General', NULL, '',
   11500, 500, true,
   11500, 0, '', '',
   12, 'SMSKU-000536', '[]'::jsonb,
-  'Gits', 12000, 500
+  'Gits', 12000, 500,
+  1678, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11820,21 +13426,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000537', 'Bagrry&apos;s White Oats Quick Cook 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000537', 'Bagrry''s White Oats Quick Cook 400 g',
   'General', NULL, '',
   15500, 400, true,
   15500, 0, '', '',
   10, 'SMSKU-000537', '[]'::jsonb,
-  'Bagrry&apos;s', 16500, 1000
+  'Bagrry''s', 16500, 1000,
+  2212, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11842,21 +13451,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000538', 'Bagrry&apos;s White Oats Quick Cook 1 kg',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000538', 'Bagrry''s White Oats Quick Cook 1 kg',
   'General', NULL, '',
   36500, 1000, true,
   36500, 0, '', '',
   5, 'SMSKU-000538', '[]'::jsonb,
-  'Bagrry&apos;s', 38500, 2000
+  'Bagrry''s', 38500, 2000,
+  5263, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11864,21 +13476,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000539', 'Quaker Oats Plus 5 Protein Cereals 500 g',
   'General', NULL, '',
   20000, 500, true,
   20000, 0, '', '',
   8, 'SMSKU-000539', '[]'::jsonb,
-  'Quaker', 21000, 1000
+  'Quaker', 21000, 1000,
+  2898, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11886,21 +13501,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000540', 'Maggi Hot &amp; Sweet Tomato Sauce 200 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000540', 'Maggi Hot & Sweet Tomato Sauce 200 g',
   'General', NULL, '',
   5200, 200, true,
   5200, 0, '', '',
   14, 'SMSKU-000540', '[]'::jsonb,
-  'Maggi', 5500, 300
+  'Maggi', 5500, 300,
+  525, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11908,21 +13526,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
-  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000541', 'Maggi Hot &amp; Sweet Tomato Sauce 400 g',
+  'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000541', 'Maggi Hot & Sweet Tomato Sauce 400 g',
   'General', NULL, '',
   9400, 400, true,
   9400, 0, '', '',
   8, 'SMSKU-000541', '[]'::jsonb,
-  'Maggi', 9900, 500
+  'Maggi', 9900, 500,
+  954, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11930,21 +13551,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000542', 'Dr. Oetker Funfoods Eggless Mayonnaise 275 g',
   'General', NULL, '',
   12500, 275, true,
   12500, 0, '', '',
   10, 'SMSKU-000542', '[]'::jsonb,
-  'Dr. Oetker', 13000, 500
+  'Dr. Oetker', 13000, 500,
+  1286, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11952,21 +13576,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000543', 'Heinz Tomato Ketchup 300 g',
   'General', NULL, '',
   13800, 300, true,
   13800, 0, '', '',
   10, 'SMSKU-000543', '[]'::jsonb,
-  'Heinz', 14500, 700
+  'Heinz', 14500, 700,
+  1404, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11974,21 +13601,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000544', 'Heinz Tomato Ketchup 900 g',
   'General', NULL, '',
   37500, 900, true,
   37500, 0, '', '',
   4, 'SMSKU-000544', '[]'::jsonb,
-  'Heinz', 39000, 1500
+  'Heinz', 39000, 1500,
+  3857, 1200
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -11996,21 +13626,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000545', 'Huggies Soft Skin Baby Wipes 80 pcs',
   'General', NULL, '',
   19000, 0, true,
   19000, 0, '', '',
   10, 'SMSKU-000545', '[]'::jsonb,
-  'Huggies', 19900, 900
+  'Huggies', 19900, 900,
+  2761, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -12018,21 +13651,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000546', 'Himalaya Baby Lotion 200 ml',
   'General', NULL, '',
   16800, 200, true,
   16800, 0, '', '',
   10, 'SMSKU-000546', '[]'::jsonb,
-  'Himalaya', 17500, 700
+  'Himalaya', 17500, 700,
+  2456, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -12040,21 +13676,24 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 INSERT INTO products (
   id, store_id, barcode, name, category, aisle, image_url,
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), 'store_1', 'SNAP0000000547', 'Himalaya Baby Lotion 400 ml',
   'General', NULL, '',
   30500, 400, true,
   30500, 0, '', '',
   5, 'SMSKU-000547', '[]'::jsonb,
-  'Himalaya', 32000, 1500
+  'Himalaya', 32000, 1500,
+  4424, 1800
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -12062,7 +13701,9 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;
 
 SELECT setval('store_id_seq', GREATEST((SELECT COALESCE(MAX(NULLIF(regexp_replace(id, '[^0-9]', '', 'g'), '')::bigint), 0) FROM stores), 1));
 

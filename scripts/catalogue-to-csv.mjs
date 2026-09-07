@@ -29,7 +29,25 @@ import { inflateRawSync } from 'node:zlib';
  *   |  Discount: ₹10.00 flat  |  Final: ₹200.00Available Qty: 20Barcode: SNAP0000000001
  */
 const RECORD =
-  /Brand:\s*(?<brand>.*?)Variant:\s*(?<variant>[\d.]+)\s*(?<unit>[a-zA-Z]+?)SKU Code:\s*(?<sku>\S+?)MRP:\s*₹(?<mrp>[\d.]+)\s*\|\s*Sell:\s*₹(?<sell>[\d.]+)\s*\|\s*Discount:\s*(?<disc>.*?)\|\s*Final:\s*₹(?<final>[\d.]+)Available Qty:\s*(?<qty>\d+)Barcode:\s*(?<barcode>\S+)$/i;
+  /Brand:\s*(?<brand>.*?)Variant:\s*(?<variant>[\d.]+)\s*(?<unit>[a-zA-Z]+?)SKU Code:\s*(?<sku>\S+?)MRP:\s*₹(?<mrp>[\d.]+)\s*\|\s*Sell:\s*₹(?<sell>[\d.]+)\s*\|\s*Discount:\s*(?<disc>.*?)\|\s*Final:\s*₹(?<final>[\d.]+)(?:GST & Other Charges:\s*₹(?<gst>[\d.]+)\s*\((?<gstRate>[\d.]+)%\s*GST slab\))?Available Qty:\s*(?<qty>\d+)Barcode:\s*(?<barcode>\S+)$/i;
+
+/**
+ * Word stores `&` as `&amp;` inside `<w:t>`, so the GST label arrives as
+ * "GST &amp; Other Charges" and never matches a pattern written with a bare ampersand.
+ *
+ * Only the five predefined XML entities are handled, which is all Word emits for text —
+ * anything else in this document is already a literal character.
+ */
+function unescapeXml(text) {
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    // Ampersand last, or "&amp;lt;" would decode twice.
+    .replace(/&amp;/g, '&');
+}
 
 /**
  * Unit → grams.
@@ -116,11 +134,12 @@ async function extractDocumentXml(docxPath) {
 
 function paragraphs(xml) {
   return [...xml.matchAll(/<w:p[ >][\s\S]*?<\/w:p>/g)].map((match) =>
-    [...match[0].matchAll(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g)]
-      .map((run) => run[1])
-      .join('')
-      .replace(/<[^>]+>/g, '')
-      .trim()
+    unescapeXml(
+      [...match[0].matchAll(/<w:t[^>]*>([\s\S]*?)<\/w:t>/g)]
+        .map((run) => run[1])
+        .join('')
+        .replace(/<[^>]+>/g, '')
+    ).trim()
   );
 }
 
@@ -154,7 +173,8 @@ async function main() {
       continue;
     }
 
-    const { brand, variant, unit, sku, mrp, sell, final, qty, barcode } = match.groups;
+    const { brand, variant, unit, sku, mrp, sell, final, gst, gstRate, qty, barcode } =
+      match.groups;
     const grams = toGrams(variant, unit);
     if (grams === null) noWeight += 1;
 
@@ -173,12 +193,12 @@ async function main() {
       price_rupees: Number(sell).toFixed(2),
       mrp_rupees: Number(mrp).toFixed(2),
       discount_rupees: (discountPaise / 100).toFixed(2),
-      // Not stated in the supplied catalogue. Left blank rather than derived from a
-      // guessed slab: the retailer's own `product_pricing.gst_amount` is the figure that
-      // has to agree with their taxable value, CGST and SGST for a GSTR filing, and a
-      // number invented here would eventually contradict it.
-      gst_amount_rupees: '',
-      gst_rate: '',
+      // Taken from the document, never derived. The catalogue states GST *inclusive of*
+      // the final price — ₹200.00 at the 5% slab carries ₹9.52, because 200 / 1.05 is
+      // 190.48 — and that figure has to agree with the retailer's taxable value, CGST
+      // and SGST for a GSTR filing. Recomputing it here would eventually disagree.
+      gst_amount_rupees: gst ? Number(gst).toFixed(2) : '',
+      gst_rate: gstRate ?? '',
       weight_grams: grams ?? '',
       stock: qty,
       cost_rupees: '',

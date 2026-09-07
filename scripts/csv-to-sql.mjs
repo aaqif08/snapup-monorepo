@@ -151,14 +151,15 @@ ON CONFLICT (id) DO NOTHING;`
   unit_price, expected_weight_grams, is_active,
   cost_price, profit_margin_pct, supplier_name, supplier_contact,
   stock_quantity, internal_sku, purchase_history,
-  brand, mrp_paise, discount_paise
+  brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
 ) VALUES (
   'prod_' || nextval('product_id_seq'), ${lit(storeId)}, ${lit(row.barcode)}, ${lit(row.name)},
   ${text(row.category || 'General')}, ${lit(row.aisle || null)}, ${text(row.image_url)},
   ${price}, ${num(row.weight_grams, '0')}, true,
   ${cost}, 0, ${text(row.supplier)}, '',
   ${num(row.stock, '0')}, ${text(row.sku)}, '[]'::jsonb,
-  ${lit(row.brand)}, ${paise(row.mrp_rupees)}, ${paise(row.discount_rupees, '0')}
+  ${lit(row.brand)}, ${paise(row.mrp_rupees)}, ${paise(row.discount_rupees, '0')},
+  ${paise(row.gst_amount_rupees, '0')}, ${row.gst_rate ? Math.round(Number(row.gst_rate) * 100) : 'NULL'}
 )
 ON CONFLICT (store_id, barcode) DO UPDATE SET
   name = EXCLUDED.name, category = EXCLUDED.category, aisle = EXCLUDED.aisle,
@@ -166,7 +167,9 @@ ON CONFLICT (store_id, barcode) DO UPDATE SET
   cost_price = EXCLUDED.cost_price, supplier_name = EXCLUDED.supplier_name,
   stock_quantity = EXCLUDED.stock_quantity, internal_sku = EXCLUDED.internal_sku,
   brand = EXCLUDED.brand, mrp_paise = EXCLUDED.mrp_paise,
-  discount_paise = EXCLUDED.discount_paise, is_active = true;`
+  discount_paise = EXCLUDED.discount_paise,
+  gst_amount_paise = EXCLUDED.gst_amount_paise, gst_rate_bp = EXCLUDED.gst_rate_bp,
+  is_active = true;`
     );
     out.push('');
   }
