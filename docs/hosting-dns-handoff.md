@@ -107,6 +107,32 @@ before the first deploy — the app refuses to start without the six signing sec
 than sign tokens with development defaults, and a container that exits immediately reads as
 a build problem rather than a missing variable.
 
+### Two services, one repository
+
+| Service | App | URL | `SNAPUP_APP` |
+| --- | --- | --- | --- |
+| `snapup-monorepo` | `apps/customer-web` — shopper app **and** the API | https://snapup-monorepo-production.up.railway.app | `customer` |
+| `snapup-admin` | `apps/admin-web` — the console and the exit desk | https://snapup-admin-production.up.railway.app | `admin` |
+
+Railway runs **package.json's `build` and `start`**, not the `buildCommand` and
+`startCommand` in `railway.json`. That is the single most load-bearing fact about deploying
+this repository, and getting it wrong is silent: the console service happily built the
+customer app and only failed because the gateway refuses to build without its signing
+secrets. Had it built, the shopper app would have been serving on the console's hostname.
+
+So both scripts dispatch through `scripts/railway-app.mjs`, which reads `SNAPUP_APP` and
+runs `build:customer` / `build:admin` accordingly. It defaults to `customer` — an unset
+variable must not be able to turn the gateway into something else — and refuses an
+unrecognised value rather than guessing.
+
+**Set `PORT` explicitly on each service.** Railway injects its own (`8080` here) and Next
+honours it, but the generated domain targets whatever port it was created with. A domain
+pointed at 3000 in front of a process listening on 8080 returns 502 with the application
+logging a perfectly healthy `Ready in 304ms`.
+
+The console needs only `SNAPUP_API_BASE` and `SNAPUP_ADMIN_API_TOKEN` — it holds no signing
+secrets and no database connection, because it reaches everything through the gateway.
+
 ### What was verified on the live deployment
 
 Run against `https://snapup-monorepo-production.up.railway.app` with Neon behind it, the
@@ -127,10 +153,18 @@ Step 4 is the design working, not a failure. A customer's own word that they pai
 `customer_attested`, which is below the bar for opening the gate, so no exit token is minted
 and the basket goes to the staff desk with a short code instead.
 
-The exit desk itself — scale comparison and staff approval — is guarded by a console
-session rather than the machine token, so closing that last leg needs a real staff account.
-It is verified locally and is the one step not exercised against production, because
-creating a staff login in the pilot database to prove a point is not a fair test.
+The exit desk has since been exercised against production too, with a real owner account
+on the deployed console:
+
+```
+4. console login    : 200, role=owner
+5. staff scans code : 200, Rs 440.00, expect 2000g +/-85g
+6. weight 2600g     : 409 weight_mismatch
+7. weight 2000g     : 200, exit token conf=staff_verified -> gate OPEN
+```
+
+Step 6 is the check earning its place: 600 g of unbilled goods is refused, and only a
+basket inside the 85 g tolerance mints an exit token.
 
 `pilot_ready: false` reflects platform warnings (per-instance rate limits, log-only OTP
 and reset delivery), not the store registry — it never inspects stores at all.
