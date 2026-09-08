@@ -348,16 +348,16 @@ more sensitive target.
 
 | Case | Scenario | Expected | Actual |
 |---|---|---|---|
-| R5.1 | No location shared | Directory still works, no distances | 5 stores, no `distanceKm` |
-| R5.2 | Coordinates at HSR Layout | Real distances, nearest first | `store_1` at 0.0 km, ascending |
-| R5.3 | Same request from Jayanagar | Ordering follows the device | `store_5` nearest |
-| R5.4 | `radius_km=2` vs `100` | Filters by radius | 1 store vs 5 |
+| R5.1 | No location shared | Directory still works, no distances | every store, no `distanceKm` |
+| R5.2 | Coordinates at the shop | Real distances, nearest first; unsurveyed appended without one | `store_1` at 0.0 km, ascending |
+| R5.3 | Same request from Chennai | Distance is computed, not stored | `store_1` ~0 km at the shop, >150 km away |
+| R5.4 | `radius_km=2` vs `100` | Filters by radius | fewer stores at 2 km than at 100 km |
 | R5.5 | 4 malformed coordinate inputs | Rejected | `400 invalid_coordinates` |
 | R5.6 | Public directory contents | No network ranges | no CIDR data present |
 | R5.7 | Directory `Cache-Control` | `private`, never `public` | `private, max-age=30` |
 | R6.1 | Registry write, no credential | Denied | `401 missing_token` |
 | R6.2 | Registry write, wrong credential | Denied | `403 invalid_token` |
-| R6.3 | Admin registers a store | Created | `201`, `store_6` |
+| R6.3 | Admin registers a store | Created | `201`, next id from the sequence |
 | R6.4 | Customer directory afterwards | Store present, no redeploy | listed and nearest |
 | R6.5 | Session at the new store | Works | `201` |
 | R6.6 | Malformed CIDR (`10.0.0.1`, `999.1.1.1/32`) | Rejected | `400 invalid_store` |

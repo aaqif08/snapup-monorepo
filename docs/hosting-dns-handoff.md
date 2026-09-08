@@ -232,7 +232,7 @@ the Neon driver automatically for any non-`file:` URL — no code change.
 | id | Store | Egress range | Purpose |
 | --- | --- | --- | --- |
 | `store_1` | Kurinji Metro Bazaar — Kumbakonam | **empty** | the pilot shop |
-| `store_2` | SnapUp Demo — Test Network | `49.37.208.0/20` | testing the app end to end |
+| `store_2` | SnapUp Test — Home Wi-Fi | `49.37.208.0/20` | testing the app end to end |
 
 `store_1` has no range registered, which is why `pilot_ready` is `false`. That is the one
 outstanding value and the store refuses every shopper until it is supplied.
@@ -255,10 +255,10 @@ on the same ISP could start a session there. That is acceptable for a store hold
 of the catalogue and pointing at the merchant's own VPA, and it would not be acceptable for
 `store_1`.
 
-> `docs/branch-onboarding.md` still lists the original eight branches, in which `store_2` is
-> the Thanjavur East Main shop. That table predates the Kumbakonam-only decision and its ids
-> no longer match the database — `store_2` is now the demo store. Treat this file as the
-> current one and re-derive that table from the database if the pilot ever expands.
+> Store ids changed meaning when the pilot narrowed to one shop. `store_2` was Thanjavur
+> East Main and is now the test bench; Kumbakonam was `store_4` and is now `store_1`. Any
+> note or ticket written before that change and naming a store id is wrong in a way that
+> reads as correct. `docs/branch-onboarding.md` carries the current table.
 
 ---
 

@@ -5,7 +5,7 @@ The pilot launches at **one shop**. The registry holds two records and no others
 | id | What it is | Coordinates | Egress range | Status |
 | --- | --- | --- | --- | --- |
 | `store_1` | Kurinji Metro Bazaar — Kumbakonam, 332 Nageswaran North (+91 89401 00300, key ref `KMB_KUMBAKONAM`) | surveyed | **missing — blocking** | refuses every shopper until its network is registered |
-| `store_2` | SnapUp Test — Home Wi-Fi. A bench, not a shop. | deliberately null | a home ISP pool | works |
+| `store_2` | SnapUp Test — Home Wi-Fi. A bench, not a shop. | surveyed (Kelambakkam) | a home ISP pool | works |
 
 The other seven Kurinji Metro Bazaar branches — Trichy, two in Thanjavur, Mayiladuthurai,
 Pudukkottai, Mannargudi and Natchiarkoil — were removed rather than deactivated. A registry
@@ -18,16 +18,36 @@ If the pilot expands, re-derive the branch list from the retailer directly rathe
 this file or from kurinjimetrobazaar.com — a public website is not an operational source of
 truth, and the two Thanjavur shops in particular were worth verifying.
 
-## Why `store_2` has no coordinates
+## The test bench, and what its geofence proves
 
-Not an omission. `checkGeofence` treats a null centre as `not_surveyed`, which **defers** to
-the network check instead of refusing. Giving the bench the shop's real coordinates would
-put a tester at home hundreds of kilometres outside a 50 m fence, and every request would
-fail with `outside_store` — a confusing way to discover that the fence works. Unsurveyed
-stores are appended to the directory rather than dropped, so it stays visible and usable.
+`store_2` is surveyed at a house near Kelambakkam and runs the same 50 m fence as the shop,
+so the bench rehearses the real thing rather than a relaxed version of it. Measured against
+the live deployment:
 
-The Wi-Fi check still applies to it in full. The bench is not an open door; it is a store
-whose authorised network happens to be a house.
+| Reading sent | Result |
+| --- | --- |
+| at the bench, ±10 m | session granted |
+| 200 m away, ±10 m | `outside_store` — "about 200 m from…" |
+| 200 m away, ±120 m | granted — the reading is vaguer than the fence, so it defers |
+| no position at all | granted — defers |
+| the Kumbakonam shop's position | `outside_store` — 226,654 m |
+
+The two deferrals are the design, not a hole. A fence is a filter on honest mistakes, never
+a security control — the position comes from the customer's own browser and anyone with
+developer tools can claim to stand at the till. The control that holds is the network check,
+which the server observes on the connection and the page cannot assert.
+
+**The one case that will refuse you wrongly** is a browser reporting a confident position
+that is wrong, which laptop Wi-Fi geolocation does routinely. Test on a phone. If a laptop
+must be used, widen the bench's radius rather than deleting its coordinates:
+
+```sql
+UPDATE stores SET geofence_radius_m = 500 WHERE id = 'store_2';
+```
+
+Its coordinates and egress range are not in `seed.ts`. They describe a house, not the
+software, and the next person to run a bench has a different house and a different ISP
+lease — a hard-coded pair would quietly point their fence at the last person's address.
 
 ## What still blocks the launch
 
@@ -123,11 +143,11 @@ its own database is a cross-tenant call.
 For the pilot you are running the retail database yourselves, so:
 
 1. Point `SNAPUP_STORE_API_BASE` at it and set `SNAPUP_STORE_API_KEY`.
-2. Clear `apiKeyRef` on all eight branches (or set the eight per-branch variables to the
-   same values — either works).
-3. Register a real egress CIDR on at least one branch, or set `PRESENCE_DEV_BYPASS` for
-   local testing only.
-4. Coordinates can stay blank. The branch works; it just sorts last.
+2. Clear `apiKeyRef` on `store_1` (or set `SNAPUP_STORE_API_KEY_KMB_KUMBAKONAM` to the same
+   value — either works). The bench has no `apiKeyRef` to clear.
+3. Register a real egress CIDR on at least one store. `store_2` already has one, which is
+   the point of it — never set `PRESENCE_DEV_BYPASS` on anything deployed.
+4. Coordinates can stay blank. The store works; it just sorts last and runs no fence.
 
 The store *registry* always uses the platform connection regardless of the above —
 resolving a branch's endpoint means reading that branch's record, and reading it from

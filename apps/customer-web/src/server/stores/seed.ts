@@ -78,16 +78,18 @@ export const STORE_SEED: StoreRecord[] = [
     // The bench, not a shop. It exists so the whole journey — scan, price, pay, exit
     // code — can be walked through on a home network, without standing in Kumbakonam.
     //
-    // Its coordinates stay null on purpose, and not merely because nobody surveyed a
-    // house. A null centre makes `checkGeofence` return `not_surveyed`, which *defers*
-    // instead of refusing; coordinates borrowed from the real shop would put the tester
-    // hundreds of kilometres outside a 50 m fence and refuse every request with
-    // `outside_store`. `findNearbyStores` appends unsurveyed branches rather than
-    // dropping them, so this one stays visible in the directory at all times.
+    // Position and network are left blank *here* while being set in the pilot database,
+    // because both describe somebody's house rather than the software. They live in
+    // `data/demo-store.csv`; whoever runs the bench next has a different house and a
+    // different ISP lease, and a hard-coded pair would quietly point their fence at the
+    // last person's address.
     //
-    // Its egress range is deliberately NOT committed here. The range belongs to somebody's
-    // home ISP, it changes when their lease renews, and source control is the wrong place
-    // for either fact — it lives in `data/demo-store.csv` and in the database.
+    // A surveyed bench does run a real 50 m fence, the same as the shop. That is safe to
+    // test against because `checkGeofence` defers rather than refuses whenever it cannot
+    // answer: no position offered, or a reading whose own accuracy is worse than the
+    // fence. The case it will refuse is a browser that reports a confident position that
+    // is simply wrong — laptop Wi-Fi geolocation does this — so test on a phone, or widen
+    // `geofence_radius_m` for the bench.
     id: 'store_2',
     name: 'SnapUp Test — Home Wi-Fi',
     address: 'Test bench — not a retail location',
