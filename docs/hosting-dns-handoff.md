@@ -51,6 +51,73 @@ and it would weaken the security model, so it is not recommended for the pilot.
 
 ---
 
+## Deploying the backend to Railway
+
+`railway.json` at the repository root configures it. Railway reads it automatically on
+first deploy.
+
+```json
+build.buildCommand   npm ci && npm run build:customer
+deploy.startCommand  npm run start:customer
+deploy.healthcheckPath  /api/health
+```
+
+Three things about that configuration are load-bearing:
+
+**`npm ci` runs at the repository root**, not inside the app. This is an npm-workspaces
+monorepo and `apps/customer-web` depends on `@snapup/ui` by workspace reference —
+installing from the app directory cannot resolve it. Set Railway's root directory to the
+repository root, not to `apps/customer-web`.
+
+**No port is passed.** Railway assigns one at runtime and `next start` reads `PORT` from
+the environment itself. Passing `-p ${PORT:-3000}` looks more explicit and breaks: npm
+hands script arguments to the platform shell, cmd.exe does not expand that syntax, and
+Next.js receives the literal string and refuses to start. Verified working by running the
+production server on an arbitrary port with `PORT` set.
+
+**The health check answers 200 whenever the process is serving.** A shop with no gateway IP
+registered is not a failed deployment, and a probe that failed on unfinished configuration
+would restart a working container forever. Read `pilot_ready` in the body for readiness;
+the status code is about the process.
+
+`railway.json` is the Config-as-Code format, which Railway has deprecated in favour of
+`.railway/railway.ts` — supported until 2026-12-01, comfortably past this pilot. The
+migration was attempted and abandoned: the IaC engine requires a globally installed CLI to
+evaluate the file, and shipping configuration that cannot be validated locally is worse
+than shipping a supported format that can. `railway config migrate --apply` performs the
+conversion when someone has the CLI installed properly.
+
+### Deploying
+
+```bash
+railway login                 # interactive; opens a browser
+railway link                  # attach to the project
+railway up                    # build and deploy
+railway domain                # add api-dev.snapup.astradyneglobal.com, then copy the DNS records
+```
+
+Set every environment variable from the customer-app list below in Railway's dashboard
+before the first deploy — the app refuses to start without the six signing secrets rather
+than sign tokens with development defaults, and a container that exits immediately reads as
+a build problem rather than a missing variable.
+
+### What was verified locally
+
+The production build was started exactly as Railway will start it — `npm run start:customer`
+with `NODE_ENV=production`, a supplied `PORT`, and the real secrets — and the whole journey
+run against it with the presence check on:
+
+```
+session started from the registered IP, geofence passed
+scanned a real catalogue barcode
+priced: items ₹600.00 + fee ₹60.00 = ₹660.00, GST ₹28.56 shown inside
+payee: ASTRADYNEGLOBAL1789@iob
+paid -> awaiting_verification, exit code issued, gate closed pending staff
+/api/health -> 200, presence_bypass: false
+```
+
+---
+
 ## What to configure in Vercel
 
 Both apps live in one repository, so each Vercel project needs its **Root Directory** set —
