@@ -132,7 +132,8 @@ session rather than the machine token, so closing that last leg needs a real sta
 It is verified locally and is the one step not exercised against production, because
 creating a staff login in the pilot database to prove a point is not a fair test.
 
-`pilot_ready: false` is expected and correct: `store_1` still has no egress range.
+`pilot_ready: false` reflects platform warnings (per-instance rate limits, log-only OTP
+and reset delivery), not the store registry — it never inspects stores at all.
 
 ---
 
@@ -234,7 +235,7 @@ the Neon driver automatically for any non-`file:` URL — no code change.
 | `store_1` | Kurinji Metro Bazaar — Kumbakonam | **empty** | the pilot shop |
 | `store_2` | SnapUp Test — Home Wi-Fi | `49.37.208.0/20` | testing the app end to end |
 
-`store_1` has no range registered, which is why `pilot_ready` is `false`. That is the one
+`store_1` has no range registered. That is the one
 outstanding value and the store refuses every shopper until it is supplied.
 
 `store_2` exists so the journey can be exercised without standing in the shop. Its range is
@@ -277,8 +278,11 @@ curl -H "Authorization: Bearer $SNAPUP_ADMIN_API_TOKEN" \
      https://dev.snapup.astradyneglobal.com/api/admin/stores
 ```
 
-A green health check with `pilot_ready: false` is the expected state until the shop's real
-gateway IP is registered. That is fail-closed behaviour, not a fault.
+`pilot_ready` reports on **platform configuration only** — database, rate limiter, OTP and
+reset delivery, presence bypass. It never inspects the store registry, so it does not go
+true when a shop's gateway IP is registered and it does not go false when one is missing.
+Read the store list for that. Two separate questions, and conflating them means waiting on
+a flag that was never going to move.
 
 ---
 
