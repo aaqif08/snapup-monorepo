@@ -96,25 +96,43 @@ railway up                    # build and deploy
 railway domain                # add api-dev.snapup.astradyneglobal.com, then copy the DNS records
 ```
 
+**`SNAPUP_TRUSTED_PROXY_HOPS=2` on Railway, not the default 1.** Railway appends its own
+internal proxy to `x-forwarded-for`, so the right-most entry is Railway's address rather
+than the shopper's. Left at `1`, every session binds to `152.233.15.120` and presence
+refuses every shopper — a failure that looks like a misconfigured store rather than a
+misconfigured platform. See `deployment.md` §7 for how to measure this on a new host.
+
 Set every environment variable from the customer-app list below in Railway's dashboard
 before the first deploy — the app refuses to start without the six signing secrets rather
 than sign tokens with development defaults, and a container that exits immediately reads as
 a build problem rather than a missing variable.
 
-### What was verified locally
+### What was verified on the live deployment
 
-The production build was started exactly as Railway will start it — `npm run start:customer`
-with `NODE_ENV=production`, a supplied `PORT`, and the real secrets — and the whole journey
-run against it with the presence check on:
+Run against `https://snapup-monorepo-production.up.railway.app` with Neon behind it, the
+presence check on, and no spoofed headers — i.e. the real journey, not a local rehearsal:
 
 ```
-session started from the registered IP, geofence passed
-scanned a real catalogue barcode
-priced: items ₹600.00 + fee ₹60.00 = ₹660.00, GST ₹28.56 shown inside
-payee: ASTRADYNEGLOBAL1789@iob
-paid -> awaiting_verification, exit code issued, gate closed pending staff
-/api/health -> 200, presence_bypass: false
+1. session: presence + geofence passed, bound to 49.37.212.85, 1800s TTL
+2. scanned SNAP0000000001 from Neon: India Gate Classic Basmati Rice 1 kg @ Rs 210.00
+3. bill: items Rs 600.00 (saved Rs 30.00) + fee Rs 60.00 - disc Rs 0.00 = Rs 660.00
+   GST Rs 28.56 shown inside, never added  |  guest: fee charged
+   payee ASTRADYNEGLOBAL1789@iob (Astra Dyne Global), weight 3000g
+4. payment: awaiting_verification, confirmation customer_attested,
+   exit_token null, payment_verified false, staff code BT5JDH
+5. health: db=postgres accounts_durable=true presence_bypass=false pilot_ready=false
 ```
+
+Step 4 is the design working, not a failure. A customer's own word that they paid is
+`customer_attested`, which is below the bar for opening the gate, so no exit token is minted
+and the basket goes to the staff desk with a short code instead.
+
+The exit desk itself — scale comparison and staff approval — is guarded by a console
+session rather than the machine token, so closing that last leg needs a real staff account.
+It is verified locally and is the one step not exercised against production, because
+creating a staff login in the pilot database to prove a point is not a fair test.
+
+`pilot_ready: false` is expected and correct: `store_1` still has no egress range.
 
 ---
 
@@ -147,7 +165,7 @@ SNAPUP_ACCOUNT_SECRET
 SNAPUP_OTP_PEPPER
 SNAPUP_CREDENTIAL_SECRET     encrypts branch API keys and Wi-Fi passwords at rest
 DATABASE_URL                 Neon, pooled endpoint, sslmode=require
-SNAPUP_TRUSTED_PROXY_HOPS=1  Vercel is one proxy in front of the app
+SNAPUP_TRUSTED_PROXY_HOPS=1  Vercel is one proxy in front of the app; on Railway this is 2
 ```
 
 Two more that must be set deliberately, because their production defaults throw:
@@ -206,6 +224,41 @@ because it needs nothing installed. It has two properties that disqualify it her
 
 Point `DATABASE_URL` at Neon's **pooled** endpoint with `sslmode=require`. The code selects
 the Neon driver automatically for any non-`file:` URL — no code change.
+
+---
+
+## The two stores in the pilot database, and a warning about dynamic IPs
+
+| id | Store | Egress range | Purpose |
+| --- | --- | --- | --- |
+| `store_1` | Kurinji Metro Bazaar — Kumbakonam | **empty** | the pilot shop |
+| `store_2` | SnapUp Demo — Test Network | `49.37.208.0/20` | testing the app end to end |
+
+`store_1` has no range registered, which is why `pilot_ready` is `false`. That is the one
+outstanding value and the store refuses every shopper until it is supplied.
+
+`store_2` exists so the journey can be exercised without standing in the shop. Its range is
+a **/20, not a /32**, and that is a deliberate widening: the test machine's address moved
+from `49.37.208.93` to `49.37.212.85` between two runs an hour apart, because it is a
+dynamic residential connection. A `/32` on a dynamic address stops working without anyone
+touching the app, and the failure reads as "presence is broken" rather than "the ISP
+renewed a lease". The /20 covers the pool both addresses came from.
+
+**This is the thing to settle with the retailer before go-live.** If the Kumbakonam shop's
+broadband has a dynamic IP, the same rotation will lock out every shopper mid-pilot, at a
+moment nobody is watching for it. Ask the ISP for a static IP on that line — it is usually
+a small monthly addition to a business connection — or register the pool range they will
+commit to in writing. Do not register a /32 against a dynamic line and hope.
+
+The demo store's range is only as trustworthy as the pool it names: roughly 4,000 addresses
+on the same ISP could start a session there. That is acceptable for a store holding a copy
+of the catalogue and pointing at the merchant's own VPA, and it would not be acceptable for
+`store_1`.
+
+> `docs/branch-onboarding.md` still lists the original eight branches, in which `store_2` is
+> the Thanjavur East Main shop. That table predates the Kumbakonam-only decision and its ids
+> no longer match the database — `store_2` is now the demo store. Treat this file as the
+> current one and re-derive that table from the database if the pilot ever expands.
 
 ---
 

@@ -112,6 +112,29 @@ CDN in front, that becomes two, and `SNAPUP_TRUSTED_PROXY_HOPS` has to match —
 the check reads the CDN's IP and every shopper is refused, or worse, a spoofed header is
 believed.
 
+**The value is per-platform, and it is not a guess — measure it.**
+
+| Platform | Hops | What the right-most entry is |
+| --- | --- | --- |
+| Vercel | `1` | the real client IP |
+| Railway | `2` | Railway's internal proxy; the client is one to its left |
+
+Railway was measured, not assumed. With the default of `1` the app bound sessions to
+`152.233.15.120` — a Railway proxy address, identical for every shopper on earth — and
+refused everyone, because no store's registered range contains it. Setting `2` bound the
+session to the real client IP.
+
+Indexing from the right is what makes this safe under a spoofed header rather than merely
+correct under an honest one. A client that sends its own `x-forwarded-for` only *prepends*
+to the chain, so the entries the platform appended stay at the same distance from the right
+and the derived IP is unchanged. That is why the count is measured from the end and never
+from the start.
+
+To measure it on a new platform: register `0.0.0.0/0` for a throwaway store, start a
+session, and base64url-decode the first segment of the returned token. Its `ip` claim is
+exactly what the server derived. Then set the hop count so that claim is the real client
+IP, and put the store's real range back. Do this on a test store — never on a live one.
+
 ## Verifying
 
 ```bash

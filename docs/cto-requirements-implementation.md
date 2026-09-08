@@ -751,7 +751,7 @@ rest of this document is held to.
 | `SNAPUP_STORE_API_TIMEOUT_MS` | Per-attempt budget, default `800`. Sized so a slow upstream degrades inside Requirement 3's 2-second target rather than hanging. |
 | `DATABASE_URL` | Postgres connection string, used only when the store API is not configured. |
 | `SNAPUP_API_BASE` | *(admin-web)* Where the customer app's API lives. Default `http://localhost:3000`. |
-| `SNAPUP_TRUSTED_PROXY_HOPS` | Proxies appending to `x-forwarded-for`. Default `1` (correct for Vercel). |
+| `SNAPUP_TRUSTED_PROXY_HOPS` | Proxies appending to `x-forwarded-for`. Default `1` (Vercel); **`2` on Railway**, measured — see `deployment.md` §7. |
 | `SNAPUP_PRESENCE_DEV_BYPASS` | `1` skips the egress IP check. Dev only — **ignored in production builds**. |
 
 None of these carry a `NEXT_PUBLIC_` prefix, and that is load-bearing rather than
