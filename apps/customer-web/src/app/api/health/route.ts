@@ -51,7 +51,14 @@ export async function GET() {
     );
   }
   if (OTP_DELIVERY === 'log' || !smsIsLive()) {
-    warnings.push('OTPs are written to the server log, not sent. No customer can sign in.');
+    // Accurate as written until the pilot dropped OTP for customers. Shoppers now
+    // register with a username and password, so undelivered codes no longer lock anyone
+    // out of the shop — they only affect staff signing in to the console by phone. A
+    // health check that overstates the damage is one people learn to scroll past.
+    warnings.push(
+      'OTPs are written to the server log, not sent. Staff phone sign-in to the console ' +
+        'will not work; customers are unaffected — they use a username and password.'
+    );
   }
   if (RESET_DELIVERY === 'log') {
     warnings.push('Password reset links are written to the server log, not emailed.');
