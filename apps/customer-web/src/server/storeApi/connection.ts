@@ -38,7 +38,7 @@ export interface StoreApiConnection {
 const KEY_ENV_PREFIX = 'SNAPUP_STORE_API_KEY_';
 const BASE_ENV_PREFIX = 'SNAPUP_STORE_API_BASE_';
 
-/** Environment variable name for a key reference, e.g. `KMB_TRICHY`. */
+/** Environment variable name for a key reference, e.g. `KMB_KUMBAKONAM`. */
 export function keyEnvName(ref: string): string {
   return `${KEY_ENV_PREFIX}${ref.trim().toUpperCase().replace(/[^A-Z0-9]+/g, '_')}`;
 }

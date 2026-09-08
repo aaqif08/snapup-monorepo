@@ -2,18 +2,23 @@ import 'server-only';
 import { NO_GEOFENCE, NO_STATED_HOURS, NO_WIFI_CREDENTIALS, NO_STORED_API_KEY, type StoreRecord } from './types';
 
 /**
- * Initial store registry — Kurinji Metro Bazaar, the pilot retailer.
+ * Initial store registry — the Kumbakonam pilot.
  *
- * Names and addresses are transcribed from the branch listing published at
+ * Two records, and only two. The pilot launches at the Kumbakonam branch alone, so the
+ * other seven Kurinji Metro Bazaar shops that used to sit here have been removed rather
+ * than left `isActive: false` — a registry that lists shops the pilot will not serve
+ * invites somebody to register a network against one by mistake, and every id below it
+ * shifted when they went. `store_2` is a test bench, not a shop.
+ *
+ * Name and address are transcribed from the branch listing published at
  * kurinjimetrobazaar.com. Everything else on these records is deliberately empty,
  * because everything else has to be measured rather than looked up.
  *
  * ## Why every coordinate is null
  *
  * The retailer publishes addresses, not coordinates. A street address is not a position:
- * geocoding "108, East Main Street, Thanjavur" lands somewhere on that street, which is
- * good enough to drive to and useless for a presence check or a nearest-branch ordering
- * between two shops in the same town.
+ * geocoding "332, Nageswaran North, Kumbakonam" lands somewhere on that street, which is
+ * good enough to drive to and useless for a 50 m presence check at the entrance.
  *
  * Seeding a plausible-looking guess would be the worst option available. It boots, it
  * sorts, it looks surveyed, and it is silently wrong — and once committed there is
@@ -35,20 +40,16 @@ import { NO_GEOFENCE, NO_STATED_HOURS, NO_WIFI_CREDENTIALS, NO_STORED_API_KEY, t
  *
  * Empty fails closed: the branch refuses every shopper until its network is registered.
  *
- * ## Branch contact numbers, from the same listing
+ * ## Kumbakonam's contact number, from the same listing
  *
- * Not modelled on `StoreRecord` — kept here so the onboarding call has them to hand.
+ * Not modelled on `StoreRecord` — kept here so the onboarding call has it to hand.
  *
- *   store_1 Trichy (Kattur)   +91 63844 11744    store_5 Mayiladuthurai +91 81100 00738
- *   store_2 Thanjavur 1       +91 82206 66680    store_6 Pudukkottai    +91 74184 33354
- *   store_3 Thanjavur 2       +91 96009 00114    store_7 Mannargudi     +91 98944 30533
- *   store_4 Kumbakonam        +91 89401 00300    store_8 Natchiarkoil   +91 82200 05728
+ *   store_1 Kumbakonam  +91 89401 00300
  *
  * See docs/branch-onboarding.md for the full checklist.
  */
 
-/** Shared by every branch until each supplies its own. Kept in one place so a chain-wide
- *  correction is one edit rather than eight. */
+/** Shared by both records until each supplies its own. */
 const AWAITING_SURVEY = {
   latitude: null,
   longitude: null,
@@ -64,39 +65,6 @@ const AWAITING_SURVEY = {
 export const STORE_SEED: StoreRecord[] = [
   {
     id: 'store_1',
-    name: 'Kurinji Metro Bazaar — Trichy',
-    address: '60/4 A1C Singaram Nagar, Kattur, Tiruchirappalli',
-    advertisedSsid: 'KMB-Trichy-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_TRICHY',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_2',
-    name: 'Kurinji Metro Bazaar — Thanjavur East Main',
-    address: '108, East Main Street, Thanjavur',
-    advertisedSsid: 'KMB-Thanjavur-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_THANJAVUR_1',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_3',
-    name: 'Kurinji Metro Bazaar — Thanjavur New Housing Unit',
-    address: '30, New Housing Unit, Thanjavur',
-    advertisedSsid: 'KMB-Thanjavur-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_THANJAVUR_2',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_4',
     name: 'Kurinji Metro Bazaar — Kumbakonam',
     address: '332, Nageswaran North, Kumbakonam',
     advertisedSsid: 'KMB-Kumbakonam-Guest',
@@ -107,45 +75,25 @@ export const STORE_SEED: StoreRecord[] = [
     ...AWAITING_SURVEY,
   },
   {
-    id: 'store_5',
-    name: 'Kurinji Metro Bazaar — Mayiladuthurai',
-    address: '11, Pattamangala Street, Mayiladuthurai',
-    advertisedSsid: 'KMB-Mayiladuthurai-Guest',
+    // The bench, not a shop. It exists so the whole journey — scan, price, pay, exit
+    // code — can be walked through on a home network, without standing in Kumbakonam.
+    //
+    // Its coordinates stay null on purpose, and not merely because nobody surveyed a
+    // house. A null centre makes `checkGeofence` return `not_surveyed`, which *defers*
+    // instead of refusing; coordinates borrowed from the real shop would put the tester
+    // hundreds of kilometres outside a 50 m fence and refuse every request with
+    // `outside_store`. `findNearbyStores` appends unsurveyed branches rather than
+    // dropping them, so this one stays visible in the directory at all times.
+    //
+    // Its egress range is deliberately NOT committed here. The range belongs to somebody's
+    // home ISP, it changes when their lease renews, and source control is the wrong place
+    // for either fact — it lives in `data/demo-store.csv` and in the database.
+    id: 'store_2',
+    name: 'SnapUp Test — Home Wi-Fi',
+    address: 'Test bench — not a retail location',
+    advertisedSsid: 'Home-WiFi',
     apiBaseUrl: null,
-    apiKeyRef: 'KMB_MAYILADUTHURAI',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_6',
-    name: 'Kurinji Metro Bazaar — Pudukkottai',
-    address: '1319, North Main Street, Pudukkottai',
-    advertisedSsid: 'KMB-Pudukkottai-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_PUDUKKOTTAI',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_7',
-    name: 'Kurinji Metro Bazaar — Mannargudi',
-    address: '60, Kaasukara Street, Mannargudi',
-    advertisedSsid: 'KMB-Mannargudi-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_MANNARGUDI',
-    isActive: true,
-    isOpen: true,
-    ...AWAITING_SURVEY,
-  },
-  {
-    id: 'store_8',
-    name: 'Kurinji Metro Bazaar — Natchiarkoil',
-    address: '840/1, Main Road, Natchiarkoil',
-    advertisedSsid: 'KMB-Natchiarkoil-Guest',
-    apiBaseUrl: null,
-    apiKeyRef: 'KMB_NATCHIARKOIL',
+    apiKeyRef: null,
     isActive: true,
     isOpen: true,
     ...AWAITING_SURVEY,

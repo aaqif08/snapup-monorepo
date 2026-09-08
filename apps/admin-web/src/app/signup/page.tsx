@@ -320,7 +320,7 @@ export default function ConsoleSignupPage() {
                 <input
                   value={storeName}
                   onChange={(event) => setStoreName(event.target.value)}
-                  placeholder="Kurinji Metro Bazaar — Trichy"
+                  placeholder="Kurinji Metro Bazaar — Kumbakonam"
                   className={authInputClass}
                 />
               </AuthField>
@@ -338,7 +338,7 @@ export default function ConsoleSignupPage() {
                 <input
                   value={ssid}
                   onChange={(event) => setSsid(event.target.value)}
-                  placeholder="KMB-Trichy-Guest"
+                  placeholder="KMB-Kumbakonam-Guest"
                   autoCapitalize="none"
                   spellCheck={false}
                   className={`${authInputClass} font-mono`}

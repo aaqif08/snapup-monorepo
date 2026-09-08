@@ -85,7 +85,7 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
     const keyRef = apiKeyRef.trim().toUpperCase();
     if (keyRef && !/^[A-Z][A-Z0-9_]{0,63}$/.test(keyRef)) {
       setError(
-        'The API key reference is the NAME of an environment variable (e.g. KMB_TRICHY), not the key itself.'
+        'The API key reference is the NAME of an environment variable (e.g. KMB_KUMBAKONAM), not the key itself.'
       );
       return;
     }
@@ -331,7 +331,7 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
               value={apiKeyRef}
               onChange={(e) => setApiKeyRef(e.target.value)}
               className={`${inputClass} font-mono uppercase`}
-              placeholder="KMB_TRICHY"
+              placeholder="KMB_KUMBAKONAM"
               autoCapitalize="characters"
               spellCheck={false}
             />
@@ -414,8 +414,8 @@ export default function StoreFormModal({ initial, onSave, onClose }: StoreFormMo
             </p>
             <p className="mt-2 text-[11px] leading-relaxed text-ink">
               The reference is the <strong>name of an environment variable</strong>, not the
-              key. <span className="font-mono">KMB_TRICHY</span> means the deployment must
-              set <span className="font-mono">SNAPUP_STORE_API_KEY_KMB_TRICHY</span>. Never
+              key. <span className="font-mono">KMB_KUMBAKONAM</span> means the deployment must
+              set <span className="font-mono">SNAPUP_STORE_API_KEY_KMB_KUMBAKONAM</span>. Never
               paste the key itself here — it would be stored in the registry and appear in
               every backup.
             </p>

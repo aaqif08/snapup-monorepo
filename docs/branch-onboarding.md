@@ -1,37 +1,42 @@
-# Branch onboarding — Kurinji Metro Bazaar
+# Branch onboarding — the Kumbakonam pilot
 
-Eight branches are registered in the store registry with their published names and
-addresses. **None of them can serve a customer yet**, and this document is the list of
-what has to be collected before any of them can.
+The pilot launches at **one shop**. The registry holds two records and no others.
 
-The gap is not an oversight. Three of the four things a branch needs cannot be looked
-up — they have to be measured at the shop or supplied by the retailer's own IT.
-
-## Status
-
-Run the admin console's Stores page, or check the server log at startup. Every branch
-currently reports:
-
-- `egress_cidrs_missing` — **blocking.** Every shopper is refused.
-- `coordinates_missing` — advisory. The branch is listed last with no distance.
-- `merchant_vpa_missing` — advisory. Checkout falls back to paying at the counter.
-
-## The eight branches
-
-| id | Branch | Address | Phone | Key ref |
+| id | What it is | Coordinates | Egress range | Status |
 | --- | --- | --- | --- | --- |
-| `store_1` | Trichy (Kattur) | 60/4 A1C Singaram Nagar, Kattur | +91 63844 11744 | `KMB_TRICHY` |
-| `store_2` | Thanjavur East Main | 108, East Main Street | +91 82206 66680 | `KMB_THANJAVUR_1` |
-| `store_3` | Thanjavur New Housing Unit | 30, New Housing Unit | +91 96009 00114 | `KMB_THANJAVUR_2` |
-| `store_4` | Kumbakonam | 332, Nageswaran North | +91 89401 00300 | `KMB_KUMBAKONAM` |
-| `store_5` | Mayiladuthurai | 11, Pattamangala Street | +91 81100 00738 | `KMB_MAYILADUTHURAI` |
-| `store_6` | Pudukkottai | 1319, North Main Street | +91 74184 33354 | `KMB_PUDUKKOTTAI` |
-| `store_7` | Mannargudi | 60, Kaasukara Street | +91 98944 30533 | `KMB_MANNARGUDI` |
-| `store_8` | Natchiarkoil | 840/1, Main Road | +91 82200 05728 | `KMB_NATCHIARKOIL` |
+| `store_1` | Kurinji Metro Bazaar — Kumbakonam, 332 Nageswaran North (+91 89401 00300, key ref `KMB_KUMBAKONAM`) | surveyed | **missing — blocking** | refuses every shopper until its network is registered |
+| `store_2` | SnapUp Test — Home Wi-Fi. A bench, not a shop. | deliberately null | a home ISP pool | works |
 
-Transcribed from kurinjimetrobazaar.com. Confirm against the retailer before go-live —
-a public website is not an operational source of truth, and `store_2`/`store_3` being
-two separate Thanjavur shops in particular is worth verifying.
+The other seven Kurinji Metro Bazaar branches — Trichy, two in Thanjavur, Mayiladuthurai,
+Pudukkottai, Mannargudi and Natchiarkoil — were removed rather than deactivated. A registry
+listing shops the pilot will not serve invites someone to register a network against the
+wrong one, and the ids are not stable across that removal: **`store_2` used to mean
+Thanjavur East Main and now means the test bench.** Any note, ticket or spreadsheet written
+before this change and referring to a store id should be re-read against this table.
+
+If the pilot expands, re-derive the branch list from the retailer directly rather than from
+this file or from kurinjimetrobazaar.com — a public website is not an operational source of
+truth, and the two Thanjavur shops in particular were worth verifying.
+
+## Why `store_2` has no coordinates
+
+Not an omission. `checkGeofence` treats a null centre as `not_surveyed`, which **defers** to
+the network check instead of refusing. Giving the bench the shop's real coordinates would
+put a tester at home hundreds of kilometres outside a 50 m fence, and every request would
+fail with `outside_store` — a confusing way to discover that the fence works. Unsurveyed
+stores are appended to the directory rather than dropped, so it stays visible and usable.
+
+The Wi-Fi check still applies to it in full. The bench is not an open door; it is a store
+whose authorised network happens to be a house.
+
+## What still blocks the launch
+
+- `store_1` `egress_cidrs_missing` — **blocking.** The shop's public gateway IP.
+- `store_1` opening hours — advisory.
+
+Ask the retailer's ISP whether that gateway address is **static**. If it is dynamic it will
+rotate mid-pilot and lock out every shopper at a moment nobody is watching — the bench's own
+address moved within an hour of being registered. See `docs/hosting-dns-handoff.md`.
 
 ## What has to be collected, per branch
 
@@ -95,11 +100,11 @@ call to the platform endpoint, which the console warns about.
 
 #### Environment variables
 
-`apiKeyRef: 'KMB_TRICHY'` resolves to:
+`apiKeyRef: 'KMB_KUMBAKONAM'` resolves to:
 
 ```bash
-SNAPUP_STORE_API_KEY_KMB_TRICHY=...      # the key itself
-SNAPUP_STORE_API_BASE_KMB_TRICHY=https://trichy.example.com/api   # optional
+SNAPUP_STORE_API_KEY_KMB_KUMBAKONAM=...      # the key itself
+SNAPUP_STORE_API_BASE_KMB_KUMBAKONAM=https://kumbakonam.example.com/api  # optional
 ```
 
 The base URL can be set either on the store record (editable in the console, no

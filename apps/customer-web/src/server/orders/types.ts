@@ -193,7 +193,7 @@ export interface OrderRepository {
   /**
    * The order a member of staff is holding a code for.
    *
-   * Scoped by store: a code typed at Trichy must never resolve an order from Thanjavur.
+   * Scoped by store: a code typed at one branch must never resolve another branch's order.
    * Codes are short enough to collide across a chain over time, and "it found *an* order"
    * is not the same as "it found the right one".
    */

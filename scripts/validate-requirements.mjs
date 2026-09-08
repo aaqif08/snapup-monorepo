@@ -634,9 +634,19 @@ async function validateRequirement4(state) {
 // Store directory and device location
 // ---------------------------------------------------------------------------
 
-/** Seeded store coordinates, from src/server/stores/seed.ts. */
-const HSR_LAYOUT = { lat: 12.9082, lng: 77.6476 }; // store_1 sits here
-const JAYANAGAR = { lat: 12.925, lng: 77.5838 }; // store_5 sits here
+/**
+ * Vantage points for the directory checks.
+ *
+ * `AT_THE_SHOP` is store_1's surveyed position; `FAR_AWAY` is Chennai, ~250 km north-east.
+ * Both were Bangalore addresses from a seed that no longer exists — and one of them named
+ * `store_5`, a branch removed when the pilot narrowed to Kumbakonam alone.
+ *
+ * Only store_1 is surveyed. store_2 is the test bench and holds no coordinates on purpose,
+ * so these checks assert that it is *appended without a distance* rather than ranked or
+ * dropped — which is the behaviour findNearbyStores() documents.
+ */
+const AT_THE_SHOP = { lat: 10.960012, lng: 79.379673 }; // store_1 sits here
+const FAR_AWAY = { lat: 13.0827, lng: 80.2707 }; // Chennai
 
 async function validateStoreDirectory(state) {
   section('Store directory — device location');
@@ -656,46 +666,64 @@ async function validateStoreDirectory(state) {
 
   await check('R5.2', 'Coordinates produce real distances, nearest first', async () => {
     const response = await api(
-      `/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`,
+      `/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}`,
       { ip: STORE_1.ip }
     );
     expectStatus(response, 200);
     expect(response.json.located === true, 'located should be true');
 
     const stores = response.json.stores;
-    expect(stores.length > 1, 'need at least two stores to check ordering');
-    expect(stores.every((s) => typeof s.distanceKm === 'number'), 'a store is missing distanceKm');
+    const ranked = stores.filter((s) => typeof s.distanceKm === 'number');
+    const unranked = stores.filter((s) => s.distanceKm === undefined);
 
-    for (let i = 1; i < stores.length; i += 1) {
+    for (let i = 1; i < ranked.length; i += 1) {
       expect(
-        stores[i].distanceKm >= stores[i - 1].distanceKm,
-        `out of order: ${stores[i - 1].distanceKm} then ${stores[i].distanceKm}`
+        ranked[i].distanceKm >= ranked[i - 1].distanceKm,
+        `out of order: ${ranked[i - 1].distanceKm} then ${ranked[i].distanceKm}`
       );
     }
 
-    expect(stores[0].id === 'store_1', `expected store_1 nearest to HSR Layout, got ${stores[0].id}`);
+    expect(ranked.length > 0, 'no store carried a distance');
+    expect(stores[0].id === 'store_1', `expected store_1 nearest to the shop, got ${stores[0].id}`);
     expect(stores[0].distanceKm < 0.5, `store_1 should be ~0km away, got ${stores[0].distanceKm}`);
-    return `nearest ${stores[0].name} at ${stores[0].distanceKm}km`;
+
+    // Every unsurveyed store sorts after every ranked one, and never invents a distance.
+    const firstUnranked = stores.findIndex((s) => s.distanceKm === undefined);
+    expect(
+      firstUnranked === -1 || firstUnranked >= ranked.length,
+      'an unsurveyed store was ranked among those with real distances'
+    );
+    return `nearest ${stores[0].name} at ${stores[0].distanceKm}km, ${unranked.length} unsurveyed appended`;
   });
 
   await check('R5.3', 'Ordering actually tracks the device position', async () => {
-    // Same catalogue, different vantage point: if distance were faked or cached, the
-    // nearest store would not change.
-    const response = await api(
-      `/api/stores/nearby?lat=${JAYANAGAR.lat}&lng=${JAYANAGAR.lng}`,
+    // Same catalogue, different vantage point. With one surveyed branch the ordering
+    // cannot change, so the thing that proves the distance is computed rather than
+    // stored is that it *moves* — ~0 km at the shop, hundreds of km from Chennai.
+    const here = await api(
+      `/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}&radius_km=1000`,
       { ip: STORE_1.ip }
     );
-    expectStatus(response, 200);
-    const nearest = response.json.stores[0];
-    expect(nearest.id === 'store_5', `expected store_5 nearest to Jayanagar, got ${nearest.id}`);
-    return `from Jayanagar: ${nearest.name} at ${nearest.distanceKm}km`;
+    const far = await api(
+      `/api/stores/nearby?lat=${FAR_AWAY.lat}&lng=${FAR_AWAY.lng}&radius_km=1000`,
+      { ip: STORE_1.ip }
+    );
+    expectStatus(here, 200);
+    expectStatus(far, 200);
+
+    const nearKm = here.json.stores.find((s) => s.id === 'store_1')?.distanceKm;
+    const farKm = far.json.stores.find((s) => s.id === 'store_1')?.distanceKm;
+    expect(typeof nearKm === 'number' && typeof farKm === 'number', 'store_1 lost its distance');
+    expect(nearKm < 1, `expected ~0km standing at the shop, got ${nearKm}`);
+    expect(farKm > 150, `expected a long way from Chennai, got ${farKm}`);
+    return `store_1: ${nearKm}km at the shop, ${farKm}km from Chennai`;
   });
 
   await check('R5.4', 'Radius filters the directory', async () => {
-    const wide = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}&radius_km=100`, {
+    const wide = await api(`/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}&radius_km=100`, {
       ip: STORE_1.ip,
     });
-    const tight = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}&radius_km=2`, {
+    const tight = await api(`/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}&radius_km=2`, {
       ip: STORE_1.ip,
     });
     expectStatus(wide, 200);
@@ -718,7 +746,7 @@ async function validateStoreDirectory(state) {
   });
 
   await check('R5.6', 'Directory never leaks a store network range', async () => {
-    const response = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`, {
+    const response = await api(`/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}`, {
       ip: STORE_1.ip,
     });
     // The registered CIDRs are exactly what an attacker needs in order to know which
@@ -730,7 +758,7 @@ async function validateStoreDirectory(state) {
   });
 
   await check('R5.7', 'Directory is private-cached, never shared', async () => {
-    const response = await api(`/api/stores/nearby?lat=${HSR_LAYOUT.lat}&lng=${HSR_LAYOUT.lng}`, {
+    const response = await api(`/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}`, {
       ip: STORE_1.ip,
     });
     const cacheControl = response.headers.get('cache-control') ?? '';

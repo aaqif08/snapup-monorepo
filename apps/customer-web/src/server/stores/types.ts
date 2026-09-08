@@ -86,7 +86,7 @@ export interface StoreRecord {
   /**
    * *Name* of the environment variable holding this branch's API key — never the key.
    *
-   * `apiKeyRef: 'KMB_TRICHY'` resolves to `SNAPUP_STORE_API_KEY_KMB_TRICHY`. The
+   * `apiKeyRef: 'KMB_KUMBAKONAM'` resolves to `SNAPUP_STORE_API_KEY_KMB_KUMBAKONAM`. The
    * indirection is the point: store records are edited in the admin console, returned by
    * the admin API, and on Postgres are sitting in a table that gets backed up and
    * inspected. A credential in that path is a credential that leaks. The reference is

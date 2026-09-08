@@ -213,7 +213,7 @@ export function validateStoreDraft(
     errors.push('apiKeyRef must be a string or null.');
   } else if (!API_KEY_REF_PATTERN.test(body.apiKeyRef.trim())) {
     errors.push(
-      'apiKeyRef must be an environment-variable name like KMB_TRICHY (A–Z, 0–9 and underscore). It is a reference, not the key itself.'
+      'apiKeyRef must be an environment-variable name like KMB_KUMBAKONAM (A–Z, 0–9 and underscore). It is a reference, not the key itself.'
     );
   } else {
     draft.apiKeyRef = body.apiKeyRef.trim().toUpperCase();
