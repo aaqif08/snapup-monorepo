@@ -83,3 +83,16 @@ export async function findNearbyStores(query: NearbyQuery): Promise<PublicStore[
 
   return [...ranked, ...unsurveyed.map((store) => toPublicStore(store))].slice(0, query.limit);
 }
+
+
+/**
+ * Active stores, for resolving a printed poster code.
+ *
+ * Separate from `findNearbyStores` because that one returns the public projection and this
+ * needs the raw ids. Nothing here reaches a customer — the caller compares an HMAC and
+ * returns a single id.
+ */
+export async function listStoresForPosterLookup(): Promise<{ id: string }[]> {
+  const active = await storeRepository.listActive();
+  return active.map((store) => ({ id: store.id }));
+}

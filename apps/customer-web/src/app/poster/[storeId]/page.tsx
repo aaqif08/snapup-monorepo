@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { getStore } from '@/server/stores';
-import { issuePosterQr } from '@/server/qr';
+import { posterCodeFor } from '@/server/qr';
 import WifiQr from './WifiQr';
 
 export const runtime = 'nodejs';
@@ -20,10 +20,13 @@ export const dynamic = 'force-dynamic';
  * mobile data, and a shopper who scans right-to-left will meet that error before they have
  * done anything wrong.
  *
- * The session code is a signed poster token rather than a store id, so the printed sheet
- * cannot be edited to point at another shop. Its weakness is duration rather than
- * forgeability — see `issuePosterQr`. A shop with a screen at the door should use
- * `/entrance/[storeId]`, which rotates every two minutes and keeps both presence factors.
+ * The session code is an eight-character store pointer, not a credential: `/p/[code]` mints
+ * a fresh two-minute entry token when it is scanned. So the printed sheet is not a
+ * permanent key, and it is short — the first version printed the whole signed token, 240
+ * characters, which is a 61x61 QR that cameras could not read off the page.
+ *
+ * The code is an HMAC of the store id, so it cannot be guessed for a shop whose poster you
+ * have not seen, and the printed sheet cannot be edited to point somewhere else.
  */
 export default async function PosterPage({
   params,
@@ -35,13 +38,12 @@ export default async function PosterPage({
   const store = await getStore(storeId);
   if (!store || !store.isActive) notFound();
 
-  const { token } = issuePosterQr(store.id);
-
   // Absolute, because this is printed: a relative path is meaningless once the code leaves
   // the browser that rendered it. NEXT_PUBLIC_APP_URL lets a custom domain be printed
   // instead of the deployment hostname once DNS is cut over.
   const base = process.env.NEXT_PUBLIC_APP_URL ?? '';
-  const link = `${base}/enter?p=${encodeURIComponent(token)}`;
+  const code = posterCodeFor(store.id);
+  const link = `${base}/p/${code}`;
 
   return (
     <main className="mx-auto max-w-[820px] bg-white px-10 py-12 text-black">
@@ -52,6 +54,9 @@ export default async function PosterPage({
         <h1 className="mt-2 text-4xl font-black leading-tight">{store.name}</h1>
         <p className="mt-3 text-lg font-semibold text-neutral-600">
           Two steps. Join the Wi-Fi, then start shopping.
+        </p>
+        <p className="mt-3 inline-block rounded-full bg-black px-5 py-2 text-sm font-extrabold text-white">
+          Use your phone’s own camera app — not the Snap Up scanner
         </p>
       </header>
 
@@ -82,6 +87,9 @@ export default async function PosterPage({
           <p className="mt-4 text-center text-sm font-semibold text-neutral-600">
             Opens Snap Up and starts your session
           </p>
+          <p className="mt-1 text-center text-xs text-neutral-500">
+            Or open snapup and enter code <span className="font-mono font-bold">{code}</span>
+          </p>
         </section>
       </div>
 
@@ -105,6 +113,9 @@ export default async function PosterPage({
         </p>
         <p className="mt-2 break-all text-[11px] text-neutral-400">
           Session link: <span className="font-mono">{link}</span>
+        </p>
+        <p className="mt-1 text-[11px] text-neutral-400">
+          Test both codes with a phone before printing.
         </p>
       </div>
     </main>

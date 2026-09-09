@@ -45,14 +45,51 @@ function StoreEntry() {
   const [error, setError] = useState<string | null>(null);
 
   const handleScan = useCallback(
-    async (qrToken: string) => {
+    async (scanned: string) => {
       // The scanner fires per frame; ignore everything after the first hit.
       if (phase !== 'scanning') return;
       setPhase('verifying');
       setError(null);
 
+      const text = scanned.trim();
+
+      // The Wi-Fi half of a printed poster. Nothing in this app can act on it — joining a
+      // network is the operating system's job — and passing it to the server would fail as
+      // a malformed token, which reads as "the app is broken" rather than "wrong square".
+      if (/^WIFI:/i.test(text)) {
+        setError(
+          'That is the Wi-Fi code. Close Snap Up, scan it with your phone’s own camera app ' +
+            'to join the shop network, then come back and scan the second code.'
+        );
+        setPhase('error');
+        return;
+      }
+
+      // A printed poster's session code is a link, because a phone camera can open a link
+      // and cannot open a bare token. Scanned in here it arrives as the URL text, so follow
+      // it rather than posting it as a token — the previous behaviour was a signature
+      // failure with no hint that the right code had been scanned the wrong way.
+      if (/^https?:\/\//i.test(text)) {
+        try {
+          const url = new URL(text);
+          const poster = url.pathname.match(/^\/p\/([0-9A-Za-z]{8})$/);
+          if (poster) {
+            router.replace(`/p/${poster[1]}`);
+            return;
+          }
+          const legacy = url.searchParams.get('p');
+          if (legacy) {
+            await startSession(legacy);
+            router.replace('/scan');
+            return;
+          }
+        } catch {
+          // Not a URL this app knows; fall through and let the server judge the text.
+        }
+      }
+
       try {
-        await startSession(qrToken);
+        await startSession(text);
         router.replace('/scan');
       } catch (err) {
         const message =
