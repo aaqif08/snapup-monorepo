@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import BarcodeScanner from '@snapup/ui/BarcodeScanner';
 import { startSession, GatewayError } from '@/lib/api';
 
@@ -15,14 +15,33 @@ type Phase = 'scanning' | 'verifying' | 'error';
  * store identity, and it is the only copy that is tamper-evident. Taking a store id
  * from the URL as well would just create a second, forgeable source of truth.
  *
+ * `?p=` carries a **signed poster token** and does not breach that rule: it is the same
+ * signed payload the camera would have read, arriving over the URL bar because it was
+ * printed on paper rather than shown on a screen. A phone camera can open a link; it
+ * cannot open a bare token, which is why a printed code has to be a URL. The store
+ * identity still comes from inside the signature, so a printed poster cannot be edited to
+ * point at a different shop.
+ *
  * Deliberately thin: it forwards the scanned token and renders whatever the server
  * decides. No presence logic runs on the client, because anything decided here could be
  * bypassed by someone with devtools open.
  */
 export default function StoreEntryPage() {
-  const router = useRouter();
+  // useSearchParams needs a Suspense boundary to avoid opting the whole route into
+  // client-side rendering at build time.
+  return (
+    <Suspense fallback={null}>
+      <StoreEntry />
+    </Suspense>
+  );
+}
 
-  const [phase, setPhase] = useState<Phase>('scanning');
+function StoreEntry() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const posterToken = searchParams.get('p');
+
+  const [phase, setPhase] = useState<Phase>(posterToken ? 'verifying' : 'scanning');
   const [error, setError] = useState<string | null>(null);
 
   const handleScan = useCallback(
@@ -47,8 +66,34 @@ export default function StoreEntryPage() {
     [phase, router]
   );
 
+  // Fires once, for a poster link only. `handleScan` guards on `phase === 'scanning'` and
+  // the poster path starts in `verifying`, so the two entry routes cannot both run.
+  const posterAttempted = useRef(false);
+  useEffect(() => {
+    if (!posterToken || posterAttempted.current) return;
+    posterAttempted.current = true;
+
+    (async () => {
+      try {
+        await startSession(posterToken);
+        router.replace('/scan');
+      } catch (err) {
+        setError(
+          err instanceof GatewayError
+            ? err.message
+            : 'Could not verify store presence. Please try again.'
+        );
+        setPhase('error');
+      }
+    })();
+  }, [posterToken, router]);
+
   const retry = () => {
     setError(null);
+    // A failed poster link cannot be retried by re-reading it — the token is already in
+    // hand and failed. Falling back to the camera lets someone use the display code
+    // instead of standing at a poster that will keep failing for the same reason.
+    posterAttempted.current = true;
     setPhase('scanning');
   };
 

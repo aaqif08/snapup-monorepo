@@ -6,6 +6,16 @@ import { getStore } from './stores';
 /** Bumped if the payload shape changes, so old signed QRs are rejected rather than misread. */
 export const QR_TOKEN_VERSION = 1;
 
+/**
+ * How the code reached the shopper.
+ *
+ * `display` is the rotating code on a screen by the door; `poster` is printed on paper and
+ * lives for as long as the paper does. A token with no `k` predates this field and is a
+ * display token, which is why the check below treats `undefined` as `display` rather than
+ * rejecting it.
+ */
+export type QrKind = 'display' | 'poster';
+
 export interface QrPayload {
   v: number;
   /** Store identifier. */
@@ -16,6 +26,8 @@ export interface QrPayload {
   iat: number;
   /** Expiration timestamp, epoch seconds. */
   exp: number;
+  /** Absent on tokens issued before printed posters existed; those are all `display`. */
+  k?: QrKind;
 }
 
 /**
@@ -33,6 +45,49 @@ export function issueEntryQr(storeId: string): { token: string; expiresAt: numbe
     nonce: randomNonce(),
     iat: now,
     exp,
+  };
+
+  return { token: signPayload(payload, QR_SIGNING_SECRET), expiresAt: exp };
+}
+
+/** Two years. Long enough that a printed poster outlives the pilot, short enough to expire. */
+export const POSTER_TTL_SECONDS = 730 * 24 * 60 * 60;
+
+/**
+ * Issues the code that goes on a printed poster.
+ *
+ * ## This is deliberately weaker than the display code, and the difference matters
+ *
+ * The rotating entrance code is worth something precisely because it dies in two minutes:
+ * photograph it from the car park and it is useless before you have parked. A printed code
+ * cannot do that. It is on paper, it is public, and it is valid for as long as the paper is
+ * on the wall — so anyone who has ever seen the poster holds presence factor 1 for ever.
+ *
+ * That leaves **the store network as the only factor that still discriminates**, which the
+ * rest of this system already treats as the one that actually holds — the egress IP is
+ * observed on the connection and a page cannot assert it. The geofence narrows it further
+ * for honest devices. So a poster does not open the shop to the internet; it opens it to
+ * whoever is already on the shop's Wi-Fi, which is a much smaller set and the one the
+ * network check was written for.
+ *
+ * It is still a reduction, and it is a choice rather than an accident: a poster costs
+ * nothing and needs no tablet, power or network at the door. Shops that can run a display
+ * should use `/entrance/[storeId]` instead and get both factors.
+ *
+ * The token is signed, so it is not merely a store id in a URL: nobody can point a printed
+ * code at a different shop, which is the property `/enter` cares about.
+ */
+export function issuePosterQr(storeId: string): { token: string; expiresAt: number } {
+  const now = Math.floor(Date.now() / 1000);
+  const exp = now + POSTER_TTL_SECONDS;
+
+  const payload: QrPayload = {
+    v: QR_TOKEN_VERSION,
+    sid: storeId,
+    nonce: randomNonce(),
+    iat: now,
+    exp,
+    k: 'poster',
   };
 
   return { token: signPayload(payload, QR_SIGNING_SECRET), expiresAt: exp };
