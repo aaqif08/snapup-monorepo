@@ -49,6 +49,35 @@ Its coordinates and egress range are not in `seed.ts`. They describe a house, no
 software, and the next person to run a bench has a different house and a different ISP
 lease — a hard-coded pair would quietly point their fence at the last person's address.
 
+## Entrance codes: display or poster
+
+Two ways in, and they are not equivalent.
+
+| | `/entrance/<store_id>` | `/poster/<store_id>` |
+| --- | --- | --- |
+| Needs | a screen, power and network at the door | a printer |
+| Code lifetime | 120 s, rotating | 2 years |
+| Presence factors | QR **and** network | network only, in practice |
+
+**One QR cannot both join the Wi-Fi and start a session.** A Wi-Fi code carries a `WIFI:`
+URI the camera hands to network settings; a session code carries an https link it hands to
+the browser. There is no payload that is both, so the poster shows two codes and numbers
+them. Joining must happen first — the session link fails with "connect to the store Wi-Fi"
+if it is scanned on mobile data, which a shopper scanning right-to-left will hit before
+doing anything wrong.
+
+**The poster's code is signed but long-lived.** Anyone who has seen the poster holds
+presence factor 1 for ever, so the store network becomes the only factor that still
+discriminates. That is already the factor this system relies on — the egress IP is observed
+on the connection and a page cannot assert it — so a poster does not open the shop to the
+internet, it opens it to whoever is on the shop's Wi-Fi. Prefer a display where there is a
+screen to put one on.
+
+**The Wi-Fi password is typed into the poster page, not stored.** A Wi-Fi QR contains the
+password in plain text by design; keeping it in the database to render a sheet printed once
+would put it in backups and logs. It is encoded in the browser and the input is hidden when
+printing. Print the sheet, close the tab.
+
 ## What still blocks the launch
 
 - `store_1` `egress_cidrs_missing` — **blocking.** The shop's public gateway IP.
