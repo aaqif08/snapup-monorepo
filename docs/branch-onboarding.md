@@ -66,12 +66,25 @@ them. Joining must happen first — the session link fails with "connect to the 
 if it is scanned on mobile data, which a shopper scanning right-to-left will hit before
 doing anything wrong.
 
-**The poster's code is signed but long-lived.** Anyone who has seen the poster holds
-presence factor 1 for ever, so the store network becomes the only factor that still
-discriminates. That is already the factor this system relies on — the egress IP is observed
-on the connection and a page cannot assert it — so a poster does not open the shop to the
-internet, it opens it to whoever is on the shop's Wi-Fi. Prefer a display where there is a
-screen to put one on.
+**Scan the poster with the phone's own camera app, not the Snap Up scanner.** A `WIFI:`
+code is handled by the operating system and an https link by the browser; neither is
+something an in-app scanner can act on. The poster says so in black on white, because the
+first person to test one scanned both codes inside the app and got a network error for
+their trouble. Scanning them in the app now gives a useful message instead.
+
+**The printed code is a pointer, not a credential.** `/p/<8 characters>` identifies the
+shop; `/p/[code]` mints a fresh two-minute entry token when it is scanned. So a photograph
+of the poster is a photograph of a store id, and both presence factors survive — the
+earlier design printed a two-year token, which threw that away.
+
+Keep the printed URL short. The first version printed the whole signed token, 240
+characters, which is a 61x61 QR: about three pixels per module on screen, and the in-app
+scanner crops and decodes at 400px, so barely more than one. It did not scan at all, and a
+code that will not scan looks exactly like a broken camera to the person holding the phone.
+
+**The shop Wi-Fi has to reach the internet.** The app is hosted; joining a network that
+cannot route to it produces a browser error about the connection, which reads as an app
+fault. A captive portal that demands a click-through will do the same.
 
 **The Wi-Fi password is typed into the poster page, not stored.** A Wi-Fi QR contains the
 password in plain text by design; keeping it in the database to render a sheet printed once
