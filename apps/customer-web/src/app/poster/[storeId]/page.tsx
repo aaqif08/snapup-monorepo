@@ -95,9 +95,18 @@ export default async function PosterPage({
         </p>
       </footer>
 
-      <p className="mt-8 text-center text-[11px] text-neutral-400 print:hidden">
-        Store {store.id} · printed code valid for two years · press Ctrl/Cmd+P to print
-      </p>
+      {/* Hidden from the printed sheet. On screen it lets whoever is setting the poster up
+          confirm the link actually works from a phone before committing it to paper, and
+          makes a relative URL — the symptom of an unset NEXT_PUBLIC_APP_URL — visible
+          rather than silently baked into a QR nobody can read by eye. */}
+      <div className="mt-8 text-center print:hidden">
+        <p className="text-[11px] text-neutral-400">
+          Store {store.id} · printed code valid for two years · press Ctrl/Cmd+P to print
+        </p>
+        <p className="mt-2 break-all text-[11px] text-neutral-400">
+          Session link: <span className="font-mono">{link}</span>
+        </p>
+      </div>
     </main>
   );
 }
