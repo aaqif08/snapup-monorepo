@@ -81,8 +81,12 @@ export default async function PosterPage({
             </span>
             <h2 className="text-xl font-extrabold">Start shopping</h2>
           </div>
-          <div className="mx-auto flex h-[240px] w-[240px] items-center justify-center rounded-2xl border-4 border-black bg-white p-3">
-            <QRCodeSVG value={link} size={200} level="M" />
+          <div className="mx-auto flex h-[260px] w-[260px] items-center justify-center rounded-2xl border-2 border-neutral-300 bg-white p-2">
+            {/* marginSize is the QR spec's quiet zone, in modules, and it is not decoration:
+                a scanner locates the finder patterns by the white gap around them. The
+                default is 0, and this sat inside a 4px black border with about two
+                modules of padding — a valid code that no phone would read. */}
+            <QRCodeSVG value={link} size={224} level="M" marginSize={4} />
           </div>
           <p className="mt-4 text-center text-sm font-semibold text-neutral-600">
             Opens Snap Up and starts your session

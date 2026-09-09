@@ -217,9 +217,12 @@ export default function CheckoutPage() {
 
           {settled.token && (
             // Stays white in both themes — a QR is dark modules on a light quiet zone, and
-            // inverting it stops scanners reading it.
+            // inverting it stops scanners reading it. `marginSize` puts that quiet zone
+            // inside the SVG rather than relying on the container's padding, so restyling
+            // the card later cannot silently make the code unreadable; `size` is raised to
+            // match so the modules stay the same size on screen.
             <div className="mx-auto mt-6 inline-block rounded-3xl bg-white p-5 shadow-pop">
-              <QRCodeSVG value={settled.token} size={200} />
+              <QRCodeSVG value={settled.token} size={224} marginSize={4} />
             </div>
           )}
 
@@ -287,7 +290,7 @@ export default function CheckoutPage() {
               through SnapUp.
             </p>
             <div className="mx-auto mt-4 inline-block rounded-2xl bg-white p-4">
-              <QRCodeSVG value={pendingUpiQr} size={180} />
+              <QRCodeSVG value={pendingUpiQr} size={204} marginSize={4} />
             </div>
             <button
               onClick={() => setPendingUpiQr(null)}

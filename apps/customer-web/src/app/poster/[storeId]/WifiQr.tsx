@@ -42,9 +42,9 @@ export default function WifiQr({ ssid }: { ssid: string }) {
 
   return (
     <div className="text-center">
-      <div className="mx-auto flex h-[240px] w-[240px] items-center justify-center rounded-2xl border-4 border-black bg-white p-3">
+      <div className="mx-auto flex h-[260px] w-[260px] items-center justify-center rounded-2xl border-2 border-neutral-300 bg-white p-2">
         {ready ? (
-          <QRCodeSVG value={payload} size={200} level="M" />
+          <QRCodeSVG value={payload} size={224} level="M" marginSize={4} />
         ) : (
           <p className="px-4 text-sm font-bold text-neutral-400">
             Enter the Wi-Fi password to generate this code

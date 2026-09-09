@@ -87,7 +87,7 @@ export default function EntranceDisplayPage({
           does not scan. */}
       <div className="mt-8 rounded-3xl bg-white p-6 shadow-pop">
         {token ? (
-          <QRCodeSVG value={token} size={280} level="M" />
+          <QRCodeSVG value={token} size={280} level="M" marginSize={4} />
         ) : (
           <div className="flex h-[280px] w-[280px] items-center justify-center">
             <p className="text-sm font-bold text-neutral-500">
