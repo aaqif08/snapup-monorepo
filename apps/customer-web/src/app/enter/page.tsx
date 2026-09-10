@@ -43,6 +43,8 @@ function StoreEntry() {
 
   const [phase, setPhase] = useState<Phase>(posterToken ? 'verifying' : 'scanning');
   const [error, setError] = useState<string | null>(null);
+  /** What the camera actually read, shown when the server rejects it. */
+  const [scannedText, setScannedText] = useState<string | null>(null);
 
   const handleScan = useCallback(
     async (scanned: string) => {
@@ -97,6 +99,10 @@ function StoreEntry() {
             ? err.message
             : 'Could not verify store presence. Please try again.';
         setError(message);
+        // "This entrance code is not valid" says nothing about which code was read, and in
+        // a shop that is the only thing worth knowing — a Wi-Fi code, an old poster, a
+        // product barcode and a genuine expired token all produce the same sentence.
+        setScannedText(text);
         setPhase('error');
       }
     },
@@ -125,12 +131,21 @@ function StoreEntry() {
     })();
   }, [posterToken, router]);
 
+  const [manualCode, setManualCode] = useState('');
+  const submitManualCode = (event: React.FormEvent) => {
+    event.preventDefault();
+    const code = manualCode.trim().toUpperCase();
+    if (/^[0-9A-Z]{8}$/.test(code)) router.replace(`/p/${code}`);
+    else setError('That code should be the 8 letters and numbers printed under the poster’s second QR.');
+  };
+
   const retry = () => {
     setError(null);
     // A failed poster link cannot be retried by re-reading it — the token is already in
     // hand and failed. Falling back to the camera lets someone use the display code
     // instead of standing at a poster that will keep failing for the same reason.
     posterAttempted.current = true;
+    setScannedText(null);
     setPhase('scanning');
   };
 
@@ -148,7 +163,18 @@ function StoreEntry() {
         {phase === 'error' ? (
           <>
             <h1 className="mb-2 text-2xl font-extrabold text-danger">Can’t start shopping</h1>
-            <p className="mb-6 text-base leading-relaxed text-muted">{error}</p>
+            <p className="mb-4 text-base leading-relaxed text-muted">{error}</p>
+            {scannedText && (
+              <div className="mb-6 rounded-2xl border border-border bg-surface p-4 text-left">
+                <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-muted">
+                  What the camera read
+                </p>
+                <p className="break-all font-mono text-xs text-ink">
+                  {scannedText.slice(0, 60)}
+                  {scannedText.length > 60 ? '…' : ''}
+                </p>
+              </div>
+            )}
             <button
               onClick={retry}
               className="w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition duration-200 hover:bg-primaryDark active:scale-[0.99]"
@@ -166,6 +192,35 @@ function StoreEntry() {
                 ? 'Confirming you’re inside the store.'
                 : 'Point your camera at the Snap Up code on the store entrance display, and make sure you’re connected to the store Wi-Fi.'}
             </p>
+
+            {/* The camera is the fast path, not the only one. A code that will not scan --
+                bad light, a scratched poster, a phone whose autofocus gives up -- otherwise
+                leaves the shopper with nothing to try, and "it will not scan" is the one
+                failure they cannot work around on their own. */}
+            {phase === 'scanning' && (
+              <form onSubmit={submitManualCode} className="mb-6">
+                <label className="mb-1 block text-xs font-extrabold uppercase tracking-wide text-muted">
+                  Or type the code printed on the poster
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    value={manualCode}
+                    onChange={(event) => setManualCode(event.target.value)}
+                    placeholder="ABCD1234"
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    maxLength={8}
+                    className="min-w-0 flex-1 rounded-2xl border border-border bg-surface px-4 py-3 text-center font-mono text-lg font-bold uppercase tracking-widest text-ink"
+                  />
+                  <button
+                    type="submit"
+                    className="shrink-0 rounded-2xl bg-primary px-5 py-3 text-sm font-extrabold text-onPrimary active:scale-[0.99]"
+                  >
+                    Go
+                  </button>
+                </div>
+              </form>
+            )}
 
             <div className="rounded-2xl border border-border bg-surface p-5">
               <p className="mb-1 text-xs font-extrabold uppercase tracking-wide text-muted">
