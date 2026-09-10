@@ -5,6 +5,7 @@ import { confirmationStrength, statusForConfirmation } from './paymentPolicy';
 import type { OrderLine, OrderRecord, OrderRepository, PaymentConfirmation } from './types';
 // A class, so a value import: it is thrown, not just described.
 import { InsufficientStockError } from './types';
+import { appendOutbox } from '@/server/sync/outbox';
 
 /**
  * The order book, durable.
@@ -369,7 +370,43 @@ class PostgresOrderRepository implements OrderRepository {
     // no stock, and `findById` reports whatever the winning call left behind.
     if (!outcome || outcome.claimed === 0) return null;
 
-    return this.findById(orderId);
+    const order = await this.findById(orderId);
+
+    // Section 7: the stock this approval just moved, as deltas the original database can
+    // apply once. Negative, because a sale takes stock off the shelf. Emitted after the
+    // approval rather than inside it — see the note in `appendOutbox` about why that is a
+    // knowing compromise, and what the honest version costs.
+    if (order) {
+      // Both identifiers, because only the retailer knows which one their inventory is
+      // keyed by. `internal_sku` is their SKU code as it came from the catalogue; the
+      // barcode is what is physically on the packet. The origin mapping picks the column,
+      // and this refuses to decide on their behalf.
+      const skus = (await sql(
+        `SELECT id, internal_sku, barcode FROM products WHERE id = ANY($1)`,
+        [order.lines.map((line) => line.productId)]
+      )) as { id: string; internal_sku: string; barcode: string }[];
+      const skuFor = new Map(skus.map((row) => [row.id, row]));
+
+      await appendOutbox({
+        eventType: 'sale.approved',
+        storeId: order.storeId,
+        subjectId: order.id,
+        payload: {
+          bill_total_paise: order.totalPaise,
+          approved_by: staffId,
+          lines: order.lines.map((line) => ({
+            sku: skuFor.get(line.productId)?.internal_sku ?? '',
+            barcode: line.barcode,
+            // Negative: a sale takes stock off the shelf. A delta rather than an absolute
+            // count, so the original's own till sales between runs are not overwritten.
+            delta: -line.quantity,
+          })),
+        },
+        at,
+      });
+    }
+
+    return order;
   }
 
   async denyExit(

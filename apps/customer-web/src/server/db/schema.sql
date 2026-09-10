@@ -683,3 +683,112 @@ DO $$ BEGIN
     CHECK (geofence_radius_m IS NULL OR (geofence_radius_m >= 10 AND geofence_radius_m <= 5000));
 EXCEPTION WHEN others THEN NULL;
 END $$;
+
+-- ---------------------------------------------------------------------------
+-- Billing workflow: gateway payments, immutable bills, and the sync outbox.
+--
+-- From SnapUp_Intern_Billing_Workflow_Guide.pdf, sections 2, 6 and 7. Every
+-- statement here is idempotent, so this file stays safe to re-run.
+--
+-- NOTE: not applied to the pilot database. The brief withholds Neon changes
+-- until the project owner approves them, and every code path that reads these
+-- columns is gated behind configuration that is absent, so an unmigrated
+-- database keeps working exactly as it does today.
+-- ---------------------------------------------------------------------------
+
+-- The state machine from section 2. `payment_state` is deliberately separate from
+-- `status`: `status` is the shopper's view of their basket, this is the money's
+-- view of itself, and conflating them is how a refund ends up looking like an
+-- abandoned cart.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_state text
+  CHECK (payment_state IS NULL OR payment_state IN (
+    'CART',
+    'PAYMENT_PENDING',
+    'PAYMENT_RECEIVED_PENDING_STAFF',
+    'APPROVED_COMPLETED',
+    'DECLINED_OR_CANCELLED',
+    'REFUNDED'
+  ));
+
+-- Which gateway, and its own identifiers. Kept as plain text because they are
+-- someone else's opaque strings and parsing them would only invent constraints.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS gateway            text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS gateway_order_id   text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS gateway_payment_id text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS idempotency_key    text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS failure_reason     text;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS bill_number        text;
+
+-- The uniqueness that makes section 9E hold. A repeated webhook, a refreshed
+-- page and a staff double-click all converge on one of these three keys, and the
+-- database refuses the duplicate rather than the application remembering to.
+-- Partial, because every one of these is NULL until a gateway is configured and
+-- a plain unique index would collapse every unmigrated order into one.
+CREATE UNIQUE INDEX IF NOT EXISTS orders_bill_number_key
+  ON orders (bill_number) WHERE bill_number IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS orders_gateway_payment_key
+  ON orders (gateway, gateway_payment_id) WHERE gateway_payment_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS orders_idempotency_key
+  ON orders (idempotency_key) WHERE idempotency_key IS NOT NULL;
+
+-- Section 6: the bill as it was, not as the catalogue is now.
+--
+-- Deliberately a copy rather than a join. A bill is a statement about a moment —
+-- what was charged, at what price, at what tax — and rebuilding it from today's
+-- products table would silently reprice last month's receipt the next time
+-- somebody edits a price. The product id is kept for analysis, without a foreign
+-- key, so delisting an item cannot orphan or alter a bill that mentions it.
+CREATE TABLE IF NOT EXISTS bill_items (
+  order_id        text NOT NULL REFERENCES orders (id) ON DELETE CASCADE,
+  line_no         integer NOT NULL,
+
+  product_id      text NOT NULL,
+  internal_sku    text NOT NULL,
+  barcode         text NOT NULL,
+  -- Frozen at approval: the label that was printed, whatever the item is called now.
+  label           text NOT NULL,
+
+  quantity        integer NOT NULL CHECK (quantity > 0),
+  unit_price_paise integer NOT NULL,
+  line_total_paise integer NOT NULL,
+  gst_amount_paise integer NOT NULL DEFAULT 0,
+  gst_rate_bp      integer,
+
+  PRIMARY KEY (order_id, line_no)
+);
+
+-- Section 7: the change log the 30-minute sync reads.
+--
+-- Append-only, and written in the same statement as the change it describes —
+-- that is the whole point. An outbox written afterwards can be lost between the
+-- two writes, which is the failure it exists to prevent.
+CREATE TABLE IF NOT EXISTS outbox (
+  id            bigserial PRIMARY KEY,
+  event_type    text NOT NULL,
+  store_id      text NOT NULL,
+  -- The order, product or import this concerns. Not a foreign key: the log must
+  -- outlive whatever it describes.
+  subject_id    text NOT NULL,
+  payload       jsonb NOT NULL,
+
+  created_at    bigint NOT NULL,
+  -- Set only once the original database has confirmed the write, never before.
+  synced_at     bigint,
+  attempts      integer NOT NULL DEFAULT 0,
+  last_error    text
+);
+
+-- The sync job's only query: oldest unconfirmed events first.
+CREATE INDEX IF NOT EXISTS outbox_pending_idx
+  ON outbox (created_at) WHERE synced_at IS NULL;
+
+-- One row per run, so a failure has somewhere to be seen from.
+CREATE TABLE IF NOT EXISTS sync_runs (
+  id            text PRIMARY KEY,
+  started_at    bigint NOT NULL,
+  finished_at   bigint,
+  events_sent   integer NOT NULL DEFAULT 0,
+  events_failed integer NOT NULL DEFAULT 0,
+  outcome       text,
+  detail        jsonb
+);
