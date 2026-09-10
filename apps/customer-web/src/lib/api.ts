@@ -192,7 +192,8 @@ export async function startSession(qrToken: string): Promise<void> {
     token: body.session_token,
     storeId: body.store.id,
     storeName: body.store.name,
-    expiresAt: body.expires_at,
+    // Seconds on the wire, milliseconds in the client. Converted here, once.
+    expiresAtMs: body.expires_at * 1000,
   });
 }
 
@@ -215,7 +216,7 @@ let renewalInFlight: Promise<RenewalResult> | null = null;
 
 export interface RenewalResult {
   renewed: boolean;
-  expiresAt?: number;
+  expiresAtMs?: number;
   reason?: string;
 }
 
@@ -243,10 +244,11 @@ export async function renewSession(): Promise<RenewalResult> {
         token: body.session_token,
         storeId: body.store.id,
         storeName: body.store.name,
-        expiresAt: body.expires_at,
+        // Seconds on the wire, milliseconds in the client. Converted here, once.
+    expiresAtMs: body.expires_at * 1000,
       });
 
-      return { renewed: true, expiresAt: body.expires_at as number };
+      return { renewed: true, expiresAtMs: (body.expires_at as number) * 1000 };
     } catch {
       return { renewed: false, reason: 'network_error' };
     } finally {

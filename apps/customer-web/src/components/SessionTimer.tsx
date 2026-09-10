@@ -22,21 +22,21 @@ import { useEffect, useState } from 'react';
 const WARNING_AT_SECONDS = 15 * 60;
 
 export default function SessionTimer({
-  expiresAt,
+  expiresAtMs,
   onExpire,
 }: {
   /** Epoch milliseconds, from `session/start`. */
-  expiresAt: number | null;
+  expiresAtMs: number | null;
   onExpire?: () => void;
 }) {
-  const [remaining, setRemaining] = useState(() => secondsUntil(expiresAt));
+  const [remaining, setRemaining] = useState(() => secondsUntil(expiresAtMs));
 
   useEffect(() => {
-    if (expiresAt === null) return;
+    if (expiresAtMs === null) return;
 
-    setRemaining(secondsUntil(expiresAt));
+    setRemaining(secondsUntil(expiresAtMs));
     const id = window.setInterval(() => {
-      const next = secondsUntil(expiresAt);
+      const next = secondsUntil(expiresAtMs);
       setRemaining(next);
       if (next <= 0) {
         window.clearInterval(id);
@@ -48,9 +48,9 @@ export default function SessionTimer({
     // `onExpire` deliberately excluded: a caller passing an inline arrow would otherwise
     // tear down and restart the interval on every render, and the clock would never tick.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expiresAt]);
+  }, [expiresAtMs]);
 
-  if (expiresAt === null) return null;
+  if (expiresAtMs === null) return null;
 
   const expired = remaining <= 0;
   const warning = !expired && remaining <= WARNING_AT_SECONDS;
@@ -105,9 +105,9 @@ export function Pill({
   );
 }
 
-function secondsUntil(expiresAt: number | null): number {
-  if (expiresAt === null) return 0;
-  return Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+function secondsUntil(expiresAtMs: number | null): number {
+  if (expiresAtMs === null) return 0;
+  return Math.max(0, Math.floor((expiresAtMs - Date.now()) / 1000));
 }
 
 function format(totalSeconds: number): string {

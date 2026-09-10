@@ -77,7 +77,7 @@ export default function ScanPage() {
 
   const status = useSessionStore((state) => state.status);
   const storeName = useSessionStore((state) => state.storeName);
-  const expiresAt = useSessionStore((state) => state.expiresAt);
+  const expiresAtMs = useSessionStore((state) => state.expiresAtMs);
   const invalidate = useSessionStore((state) => state.invalidate);
 
   // Rehydrate before deciding anything, or the first client render always looks like "no
@@ -115,17 +115,17 @@ export default function ScanPage() {
    * moment missed should still renew.
    */
   useEffect(() => {
-    if (!active || !expiresAt) return;
+    if (!active || !expiresAtMs) return;
 
     const check = () => {
-      const secondsLeft = expiresAt - Math.floor(Date.now() / 1000);
+      const secondsLeft = Math.floor((expiresAtMs - Date.now()) / 1000);
       if (secondsLeft <= RENEW_AT_SECONDS_LEFT && secondsLeft > 0) void renewSession();
     };
 
     check();
     const timer = setInterval(check, RENEWAL_CHECK_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [active, expiresAt]);
+  }, [active, expiresAtMs]);
 
   const prevCount = useRef(itemCount);
   useEffect(() => {
@@ -235,9 +235,9 @@ export default function ScanPage() {
 
       {/* Timer and status sit above the viewfinder, as the design has them. */}
       <div className="flex min-h-[68px] flex-col items-center gap-2 px-4">
-        {active && expiresAt && (
+        {active && expiresAtMs && (
           <SessionTimer
-            expiresAt={expiresAt}
+            expiresAtMs={expiresAtMs}
             onExpire={() => {
               invalidate('expired');
               setIsScanning(false);
