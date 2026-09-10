@@ -60,10 +60,19 @@ export async function POST(request: NextRequest) {
   if (!presence.present) {
     // A valid QR presented from outside the store lands here. This is the exact case
     // the photographed-QR-at-home attack produces, and it is the reason factor 2 exists.
+    //
+    // The observed address is returned with the refusal. It is the caller's own egress IP
+    // — something they can read off any "what is my IP" site — so it discloses nothing they
+    // do not already have, and it is the one fact that separates the two reasons this
+    // fails. A shopper on mobile data and a shop whose ISP renewed its lease produce the
+    // same sentence, and only one of them is the shopper's to fix. Without it, a branch
+    // that has silently changed address looks like every customer suddenly holding their
+    // phone wrong.
     return fail(
       403,
       'presence_not_verified',
-      `Connect to the ${store.advertisedSsid} network inside ${store.name} to start shopping.`
+      `Connect to the ${store.advertisedSsid} network inside ${store.name} to start shopping.`,
+      { observed_ip: getEgressIp(request) }
     );
   }
 
@@ -114,8 +123,16 @@ export async function POST(request: NextRequest) {
   );
 }
 
-function fail(status: number, code: string, message: string) {
-  return NextResponse.json({ error: { code, message } }, { status, headers: { 'cache-control': 'no-store' } });
+function fail(
+  status: number,
+  code: string,
+  message: string,
+  detail?: Record<string, unknown>
+) {
+  return NextResponse.json(
+    { error: { code, message, ...(detail ?? {}) } },
+    { status, headers: { 'cache-control': 'no-store' } }
+  );
 }
 
 function qrFailureMessage(reason: string): string {

@@ -12,10 +12,18 @@ import type { Product } from '@/store/useCartStore';
 export interface ApiError {
   code: string;
   message: string;
+  /** Diagnostics the gateway may attach, e.g. `observed_ip` on a presence refusal. */
+  [extra: string]: unknown;
 }
 
 class GatewayError extends Error {
-  constructor(readonly code: string, message: string, readonly status: number) {
+  constructor(
+    readonly code: string,
+    message: string,
+    readonly status: number,
+    /** Extra fields the gateway attached, e.g. `observed_ip` on a presence refusal. */
+    readonly detail: Record<string, unknown> = {}
+  ) {
     super(message);
     this.name = 'GatewayError';
   }
@@ -119,7 +127,7 @@ export async function fetchNearbyStores(
 
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();
@@ -184,7 +192,7 @@ export async function startSession(qrToken: string): Promise<void> {
 
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();
@@ -388,7 +396,7 @@ export async function lookupBarcode(barcode: string): Promise<LookupResult> {
   }
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();
@@ -425,7 +433,7 @@ export async function searchProducts(
   const response = await authedFetch(`/api/products/search?${params}`);
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();
@@ -496,7 +504,7 @@ export async function createOrder(
 
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();
@@ -537,7 +545,7 @@ export async function confirmPayment(
 
   if (!response.ok) {
     const error = await parseError(response);
-    throw new GatewayError(error.code, error.message, response.status);
+    throw new GatewayError(error.code, error.message, response.status, error);
   }
 
   const body = await response.json();

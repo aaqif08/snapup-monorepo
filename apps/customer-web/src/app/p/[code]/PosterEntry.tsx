@@ -23,6 +23,8 @@ export default function PosterEntry({
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  /** The address the gateway saw, when it refuses on presence. */
+  const [observedIp, setObservedIp] = useState<string | null>(null);
   const attempted = useRef(false);
 
   useEffect(() => {
@@ -39,6 +41,9 @@ export default function PosterEntry({
             ? err.message
             : 'Could not reach Snap Up. Check that you are connected to the shop Wi-Fi.'
         );
+        if (err instanceof GatewayError && typeof err.detail.observed_ip === 'string') {
+          setObservedIp(err.detail.observed_ip);
+        }
       }
     })();
   }, [token, router]);
@@ -58,6 +63,18 @@ export default function PosterEntry({
               Wi-Fi inside {storeName}. Mobile data will not work — that is the check that
               proves you are in the shop.
             </p>
+            {observedIp && (
+              // If this shows while the phone really is on the shop Wi-Fi, the shop's
+              // public address has changed and the branch needs re-registering. That is
+              // staff's problem, not the shopper's, and it is worth being able to read
+              // out over a counter rather than diagnose.
+              <p className="mt-3 border-t border-border pt-3 text-xs leading-relaxed text-muted">
+                We saw your connection as{' '}
+                <span className="font-mono font-bold text-ink">{observedIp}</span>, which is
+                not registered for this shop. If you are already on {ssid}, show this to a
+                member of staff.
+              </p>
+            )}
           </div>
           <button
             onClick={() => window.location.reload()}
