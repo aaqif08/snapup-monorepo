@@ -8,6 +8,7 @@ import ScanToast from '@/components/ScanToast';
 import ScreenHeader from '@/components/ScreenHeader';
 import SessionTimer, { Pill } from '@/components/SessionTimer';
 import { useCartStore, type Product } from '@/store/useCartStore';
+import { classifyScannedEntry, WIFI_CODE_MESSAGE } from '@/lib/entryCode';
 import { useSessionStore } from '@/store/useSessionStore';
 import {
   lookupBarcode,
@@ -54,6 +55,10 @@ export default function ScanPage() {
   const [scanError, setScanError] = useState<string | null>(null);
   const [counterPulse, setCounterPulse] = useState(false);
   const [entering, setEntering] = useState(false);
+  /** The raw text of the last failed entrance scan, shown so a failure is diagnosable. */
+  const [lastEntryText, setLastEntryText] = useState<string | null>(null);
+  /** The poster code, typed rather than scanned. */
+  const [entryCode, setEntryCode] = useState('');
   /** Set when the camera cannot start, so manual entry is offered instead of nothing. */
   const [cameraFault, setCameraFault] = useState(false);
   const [manualCode, setManualCode] = useState('');
@@ -143,13 +148,30 @@ export default function ScanPage() {
    * navigation: `active` flips and the same viewfinder starts reading products.
    */
   const handleEntryScan = useCallback(
-    async (qrToken: string) => {
+    async (scanned: string) => {
       if (entering) return;
       setEntering(true);
       setScanError(null);
 
+      const entry = classifyScannedEntry(scanned);
+
+      if (entry.kind === 'wifi') {
+        setScanError(WIFI_CODE_MESSAGE);
+        setLastEntryText(scanned);
+        setEntering(false);
+        return;
+      }
+
+      // A printed poster is a store pointer, and /p/<code> mints the entry token. Posting
+      // the URL itself as a token is what produced "This entrance code is not valid" for
+      // a poster that had scanned perfectly well.
+      if (entry.kind === 'poster') {
+        router.push(`/p/${entry.code}`);
+        return;
+      }
+
       try {
-        await startSession(qrToken);
+        await startSession(entry.token);
       } catch (error) {
         // The gateway distinguishes "your code is fine but you are not on our network" from
         // every other failure, and that is the one a customer can act on.
@@ -161,10 +183,13 @@ export default function ScanPage() {
             ? error.message
             : 'Couldn’t verify you’re in the shop. Check you’re on the store Wi-Fi and try again.'
         );
+        // Which code was read matters more than that one failed: a Wi-Fi code, an old
+        // poster and an expired display token all fail with the same sentence otherwise.
+        setLastEntryText(scanned);
         setEntering(false);
       }
     },
-    [entering]
+    [entering, router]
   );
 
   const handleScan = useCallback(
@@ -291,6 +316,64 @@ export default function ScanPage() {
                 ? 'Your session ended. Scan the entrance code to start a new one.'
                 : 'Point your camera at the entrance code displayed in the shop, and make sure you’re on the store Wi-Fi.'}
           </p>
+        )}
+
+        {/* Typing the poster code is the way in when the camera will not cooperate — bad
+            light, a scratched sheet, an autofocus that hunts and gives up. This used to be
+            offered for product barcodes only, on the reasoning that entry codes are signed
+            tokens rather than short strings. Printed posters made that false: the code
+            under the second QR is eight characters, and a shopper stuck at the door has
+            nothing else to try. */}
+        {!active && !entering && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              const code = entryCode.trim().toUpperCase();
+              if (!/^[0-9A-Z]{8}$/.test(code)) {
+                setScanError('That should be the 8 characters printed under the poster’s second code.');
+                return;
+              }
+              router.push(`/p/${code}`);
+            }}
+            className="mt-3 rounded-2xl border border-border bg-surface p-4"
+          >
+            <label
+              htmlFor="entry-code"
+              className="text-[11px] font-extrabold uppercase tracking-wide text-muted"
+            >
+              Or type the code printed on the poster
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="entry-code"
+                value={entryCode}
+                onChange={(event) => setEntryCode(event.target.value)}
+                placeholder="ABCD1234"
+                autoCapitalize="characters"
+                autoComplete="off"
+                maxLength={8}
+                className="min-w-0 flex-1 rounded-xl border border-border bg-bg px-3 py-2.5 text-center font-mono text-base font-bold uppercase tracking-widest text-ink"
+              />
+              <button
+                type="submit"
+                className="shrink-0 rounded-xl bg-primary px-5 py-2.5 text-sm font-extrabold text-onPrimary active:scale-[0.99]"
+              >
+                Go
+              </button>
+            </div>
+          </form>
+        )}
+
+        {!active && lastEntryText && (
+          <div className="mt-3 rounded-2xl border border-border bg-surface p-4">
+            <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">
+              What the camera read
+            </p>
+            <p className="mt-1 break-all font-mono text-[11px] text-ink">
+              {lastEntryText.slice(0, 60)}
+              {lastEntryText.length > 60 ? '…' : ''}
+            </p>
+          </div>
         )}
 
         <div className="flex items-center justify-end pt-2">

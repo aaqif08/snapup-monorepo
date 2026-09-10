@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BarcodeScanner from '@snapup/ui/BarcodeScanner';
 import { startSession, GatewayError } from '@/lib/api';
+import { classifyScannedEntry, WIFI_CODE_MESSAGE } from '@/lib/entryCode';
 
 type Phase = 'scanning' | 'verifying' | 'error';
 
@@ -54,44 +55,22 @@ function StoreEntry() {
       setError(null);
 
       const text = scanned.trim();
+      const entry = classifyScannedEntry(text);
 
-      // The Wi-Fi half of a printed poster. Nothing in this app can act on it — joining a
-      // network is the operating system's job — and passing it to the server would fail as
-      // a malformed token, which reads as "the app is broken" rather than "wrong square".
-      if (/^WIFI:/i.test(text)) {
-        setError(
-          'That is the Wi-Fi code. Close Snap Up, scan it with your phone’s own camera app ' +
-            'to join the shop network, then come back and scan the second code.'
-        );
+      if (entry.kind === 'wifi') {
+        setError(WIFI_CODE_MESSAGE);
+        setScannedText(text);
         setPhase('error');
         return;
       }
 
-      // A printed poster's session code is a link, because a phone camera can open a link
-      // and cannot open a bare token. Scanned in here it arrives as the URL text, so follow
-      // it rather than posting it as a token — the previous behaviour was a signature
-      // failure with no hint that the right code had been scanned the wrong way.
-      if (/^https?:\/\//i.test(text)) {
-        try {
-          const url = new URL(text);
-          const poster = url.pathname.match(/^\/p\/([0-9A-Za-z]{8})$/);
-          if (poster) {
-            router.replace(`/p/${poster[1]}`);
-            return;
-          }
-          const legacy = url.searchParams.get('p');
-          if (legacy) {
-            await startSession(legacy);
-            router.replace('/scan');
-            return;
-          }
-        } catch {
-          // Not a URL this app knows; fall through and let the server judge the text.
-        }
+      if (entry.kind === 'poster') {
+        router.replace(`/p/${entry.code}`);
+        return;
       }
 
       try {
-        await startSession(text);
+        await startSession(entry.token);
         router.replace('/scan');
       } catch (err) {
         const message =
