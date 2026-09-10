@@ -91,8 +91,27 @@ export default function ScanPage() {
 
   const active = hydrated && status === 'active';
 
+  // Symmetric on purpose. This used to only ever turn scanning *off*, which is the whole
+  // of the "scanning works once, then never again" report: finishing a checkout sets the
+  // status away from `active` and locks the scanner, and the next session sets it back to
+  // `active` with nothing to unlock it. The camera then sat live while `handleScan`
+  // discarded every frame at its `if (!isScanning) return` guard — a scanner that looks
+  // perfectly healthy and reads nothing.
+  //
+  // The rest is the same lock in other clothes: `lastScanned` holds the toast open, and
+  // whether scanning resumes is decided by that toast being dismissed, so a stale one
+  // carried across sessions keeps the scanner shut.
   useEffect(() => {
-    if (hydrated && status !== 'active') setIsScanning(false);
+    if (!hydrated) return;
+
+    if (status === 'active') {
+      setIsScanning(true);
+      setLastScanned(null);
+      setScanError(null);
+      setLastEntryText(null);
+    } else {
+      setIsScanning(false);
+    }
   }, [hydrated, status]);
 
   // Continuous presence validation.

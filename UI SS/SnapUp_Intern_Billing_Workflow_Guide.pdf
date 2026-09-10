@@ -1,0 +1,941 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Length 3854 >>
+stream
+q
+0.06 0.20 0.38 rg
+0 760 612 32 re f
+Q
+BT
+/F2 12 Tf
+1 1 1 rg
+50 772 Td
+(Snap Up - Internal Engineering Brief) Tj
+ET
+BT
+/F2 17 Tf
+0.06 0.20 0.38 rg
+50 730 Td
+(SNAP UP - INTERN IMPLEMENTATION & TESTING GUIDE) Tj
+ET
+BT
+/F1 10 Tf
+0.25 0.32 0.42 rg
+50 703 Td
+(Checkout, staff approval, inventory, barcode scanning, and database synchronisation) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 686.5 Td
+(Purpose) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 666.5 Td
+(This is the implementation and testing brief for the Snap Up checkout changes. The goal is) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 655 Td
+(to make payment, staff approval, bill generation, inventory reduction, cart scanning, and) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 643.5 Td
+(database synchronisation reliable and auditable.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 627 Td
+(The intern should implement the required changes, test every scenario in this guide, and) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 615.5 Td
+(send a final test report. Do not make production database changes until the project owner) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 604 Td
+(approves them.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 587.5 Td
+(1. Desired checkout state machine) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 567.5 Td
+(A customer scans products into a temporary cart. Scanning a barcode may add a new cart line) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 556 Td
+(or increase the quantity of its existing line. It must not create a bill, purchase record,) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 544.5 Td
+(or inventory update.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 528 Td
+(Customer selects payment and completes the payment-gateway step. Payment success alone must) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 516.5 Td
+(create only a PENDING_STAFF_APPROVAL payment/order record. It must not generate a bill, add) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 505 Td
+(anything to bill history, or reduce inventory.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 488.5 Td
+(Staff opens the pending transaction in the staff portal and verifies it. Only the staff) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 477 Td
+(Proceed / Paid acknowledgement completes the sale. In one database transaction: validate) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 465.5 Td
+(stock, reduce available_qty, create the final bill and bill items, mark payment/order) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 454 Td
+(APPROVED or COMPLETED, and write the result to bill history.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 437.5 Td
+(After this commit succeeds, notify the customer app. It should move to a new Bill / Receipt) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 426 Td
+(page and show the approved bill. Before approval it must show a pending status, never a) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 414.5 Td
+(final bill.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 398 Td
+(2. Payment gateway requirement) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 378 Td
+(Integrate the selected gateway using its server-side API and webhook/signature verification.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 366.5 Td
+(Never trust a payment-success value sent directly by the customer app.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 350 Td
+(Use idempotency keys and gateway transaction IDs. A repeat webhook, page refresh, or staff) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 338.5 Td
+(double-click must not create two bills or deduct stock twice.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 322 Td
+(Recommended states: CART, PAYMENT_PENDING, PAYMENT_RECEIVED_PENDING_STAFF,) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 310.5 Td
+(APPROVED_COMPLETED, DECLINED_OR_CANCELLED, and REFUNDED. Store timestamps and actor IDs for) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 299 Td
+(staff approval.) Tj
+ET
+BT
+/F1 8 Tf
+0.4 0.45 0.5 rg
+50 24 Td
+(Confidential - Snap Up - Page 1 of 5) Tj
+ET
+endstream
+endobj
+4 0 obj
+<< /Type /Page /Parent 13 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 3 0 R >>
+endobj
+5 0 obj
+<< /Length 4267 >>
+stream
+q
+0.06 0.20 0.38 rg
+0 760 612 32 re f
+Q
+BT
+/F2 12 Tf
+1 1 1 rg
+50 772 Td
+(Snap Up - Internal Engineering Brief) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 730 Td
+(3. Inventory rule: reduce only after staff approval) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 710 Td
+(Stock is stored in inventory.available_qty. skus.quantity_value is only pack size, such as 1) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 698.5 Td
+(kg; it is not stock count.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 682 Td
+(At staff approval, lock each inventory row and reduce stock atomically. Use an UPDATE) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 670.5 Td
+(condition such as available_qty >= requested quantity. If any item lacks enough stock, roll) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 659 Td
+(back the entire operation: no bill, no partial deduction, and show the staff a clear) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 647.5 Td
+(failure.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 631 Td
+(Never reduce available_qty when a barcode is scanned, a cart is edited, payment begins, or) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 619.5 Td
+(payment succeeds before staff approval. Update inventory.last_updated when stock changes.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 603 Td
+(The final bill, bill-history record, payment/order state update, and every inventory change) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 591.5 Td
+(must succeed or fail together in one transaction.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 575 Td
+(4. Barcode scanning and cart behaviour) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 555 Td
+(Fix the second-use scan failure: after one completed customer session, scanning must) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 543.5 Td
+(continue to work for later sessions. Reset camera/scanner listeners, barcode de-duplication) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 532 Td
+(flags, cart session state, and any cached processing lock when a checkout ends or the scan) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 520.5 Td
+(screen mounts again.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 504 Td
+(On each successful scan, look up the active SKU by barcode and verify inventory) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 492.5 Td
+(availability. If the SKU is already in the cart, increase its displayed quantity by one; do) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 481 Td
+(not add another visible product line.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 464.5 Td
+(Remove the plus \(+\) quantity button from the cart UI. The only way to increase quantity is) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 453 Td
+(to scan the same barcode again. Keep a remove/decrease action only if the product design) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 441.5 Td
+(needs it, and make it clear it does not alter live inventory before approval.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 425 Td
+(Test unknown barcode, inactive SKU, out-of-stock SKU, repeated scans, rapid scans,) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 413.5 Td
+(navigation away/back, and a completely new checkout after a completed order.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 397 Td
+(5. Bill visibility and history) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 377 Td
+(Before staff acknowledgement: do not generate a bill PDF/number, do not insert into final) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 365.5 Td
+(bill history, and do not expose a receipt page in the customer app. A pending-payment or) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 354 Td
+(waiting-for-staff page is allowed.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 337.5 Td
+(After acknowledgement: generate exactly one bill number and final bill, insert it into bill) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 326 Td
+(history, and return/show that same approved bill to the customer. The staff portal must) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 314.5 Td
+(display a success/failure result, not silently assume it worked.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 298 Td
+(If staff rejects or payment expires/fails, no final bill and no inventory deduction may) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 286.5 Td
+(exist. The pending record may be retained for audit, with its outcome state and reason.) Tj
+ET
+BT
+/F1 8 Tf
+0.4 0.45 0.5 rg
+50 24 Td
+(Confidential - Snap Up - Page 2 of 5) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 13 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 4179 >>
+stream
+q
+0.06 0.20 0.38 rg
+0 760 612 32 re f
+Q
+BT
+/F2 12 Tf
+1 1 1 rg
+50 772 Td
+(Snap Up - Internal Engineering Brief) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 730 Td
+(6. Database design and migration checklist) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 710 Td
+(Keep inventory.available_qty as the authoritative local stock field. Add or confirm durable) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 698.5 Td
+(order/payment/bill tables or fields for status, gateway transaction ID, idempotency key,) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 687 Td
+(staff_approved_by, staff_approved_at, and failure/rejection reason.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 670.5 Td
+(Add a bill-items table that records SKU, immutable product label, quantity, price, tax, and) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 659 Td
+(totals as they were at approval time. Do not rebuild old bills from current catalog prices.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 642.5 Td
+(Create a database migration locally first. It must be repeatable/safe where possible and) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 631 Td
+(include indexes/unique constraints for bill number, gateway transaction ID, and idempotency) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 619.5 Td
+(key. Do not apply it to Neon until approval is given.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 603 Td
+(The existing live database already has inventory.available_qty for all 547 SKUs. The) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 591.5 Td
+(implementation issue is when it is updated, not the absence of the column.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 575 Td
+(7. Duplicate shop database synchronisation) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 555 Td
+(There are two databases: the duplicate database connected to the app and the original shop) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 543.5 Td
+(database. The duplicate is operational; changes made there must be propagated to the) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 532 Td
+(original every 30 minutes.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 515.5 Td
+(Before implementing, obtain written details for the original database connection, permitted) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 504 Td
+(tables, conflict policy, timezone, and recovery owner. Do not guess these. Do not expose) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 492.5 Td
+(either connection string in client apps or source control.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 476 Td
+(Implement a scheduled server-side job every 30 minutes. Sync from an append-only) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 464.5 Td
+(outbox/change-log created in the same transaction as approved sales and stock/import) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 453 Td
+(updates. Mark an outbox event synced only after the original database confirms it.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 436.5 Td
+(The job must be idempotent, retry safely, log each run, alert on failures, and never) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 425 Td
+(overwrite newer original-database data blindly. Include reconciliation: compare stock/order) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 413.5 Td
+(totals and report mismatches. Define whether original-to-duplicate updates are also) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 402 Td
+(required; this is not specified yet.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 385.5 Td
+(8. Importing products / increasing stock) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 365.5 Td
+(Product imports must increase inventory.available_qty, not overwrite it accidentally, unless) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 354 Td
+(an explicitly approved stock-take/import mode says otherwise. Validate SKU and store, reject) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 342.5 Td
+(negative quantities, record who imported stock and when, and create an outbox event for the) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 331 Td
+(30-minute sync.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 314.5 Td
+(Use the same transaction discipline as checkout so the inventory change and its audit/sync) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 303 Td
+(record cannot diverge.) Tj
+ET
+BT
+/F1 8 Tf
+0.4 0.45 0.5 rg
+50 24 Td
+(Confidential - Snap Up - Page 3 of 5) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 13 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 3738 >>
+stream
+q
+0.06 0.20 0.38 rg
+0 760 612 32 re f
+Q
+BT
+/F2 12 Tf
+1 1 1 rg
+50 772 Td
+(Snap Up - Internal Engineering Brief) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 730 Td
+(9. Acceptance tests the intern must run) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 710 Td
+(A. Scan the same SKU twice: one cart line with quantity 2; no plus button is visible; stock) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 698.5 Td
+(unchanged before approval.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 682 Td
+(B. Finish one checkout, start a second checkout, scan a product: it is added correctly.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 670.5 Td
+(Repeat after navigating away/back and after denied camera permission recovery if applicable.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 654 Td
+(C. Payment received but staff has not approved: customer sees pending state; no final) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 642.5 Td
+(bill/history entry; stock unchanged.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 626 Td
+(D. Staff approves: exactly one final bill and history entry exist; customer receives the) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 614.5 Td
+(receipt page; available_qty decreases by the bill quantity.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 598 Td
+(E. Staff double-click/retry, duplicate webhook, or network retry: still one bill and one) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 586.5 Td
+(stock deduction only.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 570 Td
+(F. Insufficient stock at approval: transaction fails cleanly; no bill/history entry; no SKU) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 558.5 Td
+(stock is changed.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 542 Td
+(G. Payment failure, staff rejection, timeout/cancellation: no final bill and no stock) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 530.5 Td
+(reduction.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 514 Td
+(H. Import stock: quantity increases correctly and is included in the next synchronisation) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 502.5 Td
+(event.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 486 Td
+(I. Trigger/test the 30-minute sync using a safe test mode: approved sales/import events) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 474.5 Td
+(reach original DB once; retry and outage recovery do not duplicate updates; reconciliation) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 463 Td
+(is clean.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 446.5 Td
+(10. Final test report required from the intern) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 426.5 Td
+(Send one concise report containing: build/version and environment; database migration names) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 415 Td
+(\(local only unless approved\); each acceptance test with PASS/FAIL, exact steps, expected) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 403.5 Td
+(result, actual result, and evidence; before/after available_qty values for a test SKU; proof) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 392 Td
+(that pending payments create no bill and no deduction; proof of idempotency; sync job run) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 380.5 Td
+(IDs and reconciliation result; known defects/risks; and a clear recommendation: READY / NOT) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 369 Td
+(READY.) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 352.5 Td
+(Testing is mandatory after implementation. Any failed critical test \(duplicate deduction,) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 341 Td
+(premature bill, premature stock reduction, missing second-session scan, or unsafe sync\)) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 329.5 Td
+(means NOT READY.) Tj
+ET
+BT
+/F2 11 Tf
+0.00 0.45 0.36 rg
+50 313 Td
+(Open decisions for the project owner) Tj
+ET
+BT
+/F1 8 Tf
+0.4 0.45 0.5 rg
+50 24 Td
+(Confidential - Snap Up - Page 4 of 5) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 13 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 737 >>
+stream
+q
+0.06 0.20 0.38 rg
+0 760 612 32 re f
+Q
+BT
+/F2 12 Tf
+1 1 1 rg
+50 772 Td
+(Snap Up - Internal Engineering Brief) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 730 Td
+(Choose the payment gateway and confirm its credentials/webhook environment. Provide the) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 718.5 Td
+(original shop database access and the sync conflict/data-ownership policy. Confirm staff) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 707 Td
+(roles allowed to approve/reject. Confirm how refunds and partial fulfilment should restore) Tj
+ET
+BT
+/F1 9.4 Tf
+0.12 0.16 0.23 rg
+50 695.5 Td
+(inventory. Confirm the scheduled-job hosting/monitoring location.) Tj
+ET
+BT
+/F1 8 Tf
+0.4 0.45 0.5 rg
+50 24 Td
+(Confidential - Snap Up - Page 5 of 5) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 13 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R] /Count 5 >>
+endobj
+14 0 obj
+<< /Type /Catalog /Pages 13 0 R >>
+endobj
+xref
+0 15
+0000000000 65535 f 
+0000000009 00000 n 
+0000000079 00000 n 
+0000000154 00000 n 
+0000004059 00000 n 
+0000004196 00000 n 
+0000008514 00000 n 
+0000008651 00000 n 
+0000012881 00000 n 
+0000013018 00000 n 
+0000016807 00000 n 
+0000016945 00000 n 
+0000017733 00000 n 
+0000017872 00000 n 
+0000017956 00000 n 
+trailer
+<< /Size 15 /Root 14 0 R >>
+startxref
+18007
+%%EOF

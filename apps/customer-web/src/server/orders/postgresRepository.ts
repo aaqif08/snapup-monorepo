@@ -3,6 +3,8 @@ import { randomNonce } from '../crypto';
 import { db, toEpochMs, toEpochMsOrNull } from '../db/client';
 import { confirmationStrength, statusForConfirmation } from './paymentPolicy';
 import type { OrderLine, OrderRecord, OrderRepository, PaymentConfirmation } from './types';
+// A class, so a value import: it is thrown, not just described.
+import { InsufficientStockError } from './types';
 
 /**
  * The order book, durable.
@@ -276,7 +278,7 @@ class PostgresOrderRepository implements OrderRepository {
   }
 
   /**
-   * Authorise the exit, release the bill, and move the stock — once.
+   * Authorise the exit, release the bill, and move the stock — once, or not at all.
    *
    * The guard is inside the UPDATE rather than a read-then-write. Two staff scanning the
    * same exit QR at a busy gate is entirely plausible, and a check-then-act would let both
@@ -284,39 +286,88 @@ class PostgresOrderRepository implements OrderRepository {
    * which is not harmless — the shop's count drifts down every time somebody taps a button
    * they think did nothing.
    *
-   * The stock write is conditioned on this order's own `inventory_finalised_at` having just
-   * been set, so it can only ever run on the transaction that won the race.
+   * ## Why this is one statement
+   *
+   * It used to be two: mark the order approved, then reduce stock. Between them the
+   * connection can drop, the instance can be recycled, or Neon can time out, and the shop
+   * is left with a sale it has approved and stock it never took off the shelf — a
+   * discrepancy nobody discovers until a stock-take. A single statement is a single
+   * transaction on every driver here, including Neon's HTTP one, which has no interactive
+   * transactions to reach for.
+   *
+   * ## Why it refuses rather than clamps
+   *
+   * The stock update was `GREATEST(stock - qty, 0)`, which cannot fail. A basket holding
+   * more than the shelf does would be approved, the count floored at zero, and the shortfall
+   * silently absorbed — the one number the shop uses to decide what to reorder, quietly
+   * wrong. Now a short line aborts the whole approval: `short` is computed first, and both
+   * the claim and the deduction are gated on it being empty, so an order that cannot be
+   * fulfilled leaves no approval, no bill and no stock movement behind.
    */
   async approveExit(orderId: string, staffId: string, at: number): Promise<OrderRecord | null> {
     const sql = db();
 
-    const rows = (await sql(
-      `UPDATE orders
-          SET exit_approved_at = $2,
-              inventory_finalised_at = COALESCE(inventory_finalised_at, $2),
-              verified_by = COALESCE(verified_by, $3)
-        WHERE id = $1
-          AND exit_approved_at IS NULL
-          AND exit_denied_at IS NULL
-        RETURNING id`,
+    const result = (await sql(
+      `WITH need AS (
+         SELECT l.product_id, SUM(l.quantity)::int AS qty
+           FROM order_lines AS l
+          WHERE l.order_id = $1
+          GROUP BY l.product_id
+       ),
+       short AS (
+         SELECT n.product_id, p.name, p.stock_quantity, n.qty
+           FROM need AS n
+           JOIN products AS p ON p.id = n.product_id
+          WHERE p.stock_quantity < n.qty
+       ),
+       claim AS (
+         UPDATE orders
+            SET exit_approved_at = $2,
+                inventory_finalised_at = COALESCE(inventory_finalised_at, $2),
+                verified_by = COALESCE(verified_by, $3)
+          WHERE id = $1
+            AND exit_approved_at IS NULL
+            AND exit_denied_at IS NULL
+            AND NOT EXISTS (SELECT 1 FROM short)
+          RETURNING id
+       ),
+       deduct AS (
+         UPDATE products AS p
+            SET stock_quantity = p.stock_quantity - n.qty
+           FROM need AS n
+          WHERE p.id = n.product_id
+            AND p.stock_quantity >= n.qty
+            AND EXISTS (SELECT 1 FROM claim)
+          RETURNING p.id
+       )
+       SELECT (SELECT count(*) FROM claim)::int  AS claimed,
+              (SELECT count(*) FROM deduct)::int AS deducted,
+              (SELECT count(*) FROM need)::int   AS lines,
+              COALESCE(
+                (SELECT json_agg(json_build_object(
+                   'name', s.name, 'wanted', s.qty, 'available', s.stock_quantity))
+                   FROM short AS s),
+                '[]'::json
+              ) AS short_items`,
       [orderId, at, staffId]
-    )) as OrderRow[];
+    )) as {
+      claimed: number;
+      deducted: number;
+      lines: number;
+      short_items: { name: string; wanted: number; available: number }[];
+    }[];
 
-    // Lost the race, already authorised, or previously denied. Either way this call must
-    // not move stock.
-    if (rows.length === 0) return null;
+    const outcome = result[0];
 
-    // Section 7: the product master is never deleted, only its count reduced, and only
-    // here — at Proceed, not at payment. `GREATEST(...,0)` keeps a miscounted shelf from
-    // producing a negative quantity that would then read as a phantom restock.
-    await sql(
-      `UPDATE products AS p
-          SET stock_quantity = GREATEST(p.stock_quantity - l.quantity, 0)
-         FROM order_lines AS l
-        WHERE l.order_id = $1
-          AND l.product_id = p.id`,
-      [orderId]
-    );
+    // Not enough on the shelf. Nothing above ran, so there is nothing to undo — the caller
+    // gets the shortfall to put in front of the staff member.
+    if (outcome && outcome.short_items.length > 0) {
+      throw new InsufficientStockError(outcome.short_items);
+    }
+
+    // Lost the race, already authorised, or previously denied. Either way this call moved
+    // no stock, and `findById` reports whatever the winning call left behind.
+    if (!outcome || outcome.claimed === 0) return null;
 
     return this.findById(orderId);
   }

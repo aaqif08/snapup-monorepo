@@ -275,3 +275,30 @@ export const NOT_YET_AT_THE_EXIT = {
   exitDenialReason: null,
   inventoryFinalisedAt: null,
 } as const;
+
+
+/** One catalogue line the shelf cannot cover at approval time. */
+export interface StockShortfall {
+  name: string;
+  wanted: number;
+  available: number;
+}
+
+/**
+ * Thrown when a basket is approved that the shop cannot actually fulfil.
+ *
+ * A refusal, not a warning: no approval, no bill and no stock movement have happened by the
+ * time this is raised, because the statement that would have done all three declined to run.
+ * The named items are for the staff member to look at, since only they can see whether the
+ * shelf or the count is wrong.
+ */
+export class InsufficientStockError extends Error {
+  constructor(readonly shortfalls: StockShortfall[]) {
+    super(
+      `Not enough stock for: ${shortfalls
+        .map((s) => `${s.name} (want ${s.wanted}, have ${s.available})`)
+        .join('; ')}`
+    );
+    this.name = 'InsufficientStockError';
+  }
+}

@@ -11,6 +11,7 @@ import {
 } from '@/server/orders/weightExplain';
 import { requireRole } from '@/server/accounts/session';
 import { orderRepository } from '@/server/orders';
+import { InsufficientStockError } from '@/server/orders/types';
 import { mayExit } from '@/server/orders/paymentPolicy';
 import { issueExitToken } from '@/server/orders';
 import {
@@ -280,9 +281,30 @@ export async function POST(request: NextRequest, { params }: Params) {
   // rather than at payment. `approveExit` returns null when the order was already
   // authorised, which is how a replayed exit QR is refused: the second scan finalises no
   // inventory and issues no token.
-  const authorised = mayExit(verified.status, verified.payment.confirmation)
-    ? await orderRepository.approveExit(verified.id, actor.id, Date.now())
-    : null;
+  let authorised: Awaited<ReturnType<typeof orderRepository.approveExit>> = null;
+  if (mayExit(verified.status, verified.payment.confirmation)) {
+    try {
+      authorised = await orderRepository.approveExit(verified.id, actor.id, Date.now());
+    } catch (error) {
+      // The shelf cannot cover the basket. Nothing was approved and no stock moved — the
+      // approval statement declined to run rather than flooring the count at zero — so
+      // this is a clean refusal the staff member can act on, naming the items so they can
+      // check whether the shelf is empty or the count is wrong.
+      if (error instanceof InsufficientStockError) {
+        return NextResponse.json(
+          {
+            error: {
+              code: 'insufficient_stock',
+              message: error.message,
+              shortfalls: error.shortfalls,
+            },
+          },
+          { status: 409, headers: { 'cache-control': 'no-store' } }
+        );
+      }
+      throw error;
+    }
+  }
 
   if (mayExit(verified.status, verified.payment.confirmation) && !authorised) {
     return fail(

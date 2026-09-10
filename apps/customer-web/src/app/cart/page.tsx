@@ -114,7 +114,6 @@ export default function CartPage() {
                       ? remove(item.id)
                       : updateQuantity(item.id, item.quantity - 1)
                   }
-                  onIncrease={() => updateQuantity(item.id, item.quantity + 1)}
                 />
               </li>
             ))}
@@ -211,15 +210,27 @@ function EmptyCart({ hasSession }: { hasSession: boolean }) {
   );
 }
 
+/**
+ * Quantity, and one way to lower it.
+ *
+ * ## Why there is no plus button
+ *
+ * The count in this cart is a claim about what is physically in the basket, and the only
+ * evidence for that claim is a barcode having been read. A plus button lets the number rise
+ * without anything being picked up, which puts the cart and the basket out of step in the
+ * one direction the exit scale is there to catch — and the customer, who tapped a button the
+ * app offered them, gets treated as though they were hiding something.
+ *
+ * Decrease stays: taking an item out of the basket has no scan to record it, so the app has
+ * to be told. It moves nothing in the shop's stock — nothing does until staff approve.
+ */
 function Stepper({
   quantity,
   onDecrease,
-  onIncrease,
   label,
 }: {
   quantity: number;
   onDecrease: () => void;
-  onIncrease: () => void;
   label: string;
 }) {
   return (
@@ -233,18 +244,9 @@ function Stepper({
           <path d="M6 12h12" />
         </svg>
       </button>
-      <span aria-live="polite" className="min-w-[1.25rem] text-center text-sm font-extrabold text-ink">
+      <span aria-live="polite" className="min-w-[1.5rem] pr-2 text-center text-sm font-extrabold text-ink">
         {quantity}
       </span>
-      <button
-        onClick={onIncrease}
-        aria-label={`Add another ${label}`}
-        className="flex h-7 w-7 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/15"
-      >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden>
-          <path d="M12 6v12M6 12h12" />
-        </svg>
-      </button>
     </div>
   );
 }
