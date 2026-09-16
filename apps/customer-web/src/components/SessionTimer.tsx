@@ -61,7 +61,7 @@ export default function SessionTimer({
         // `tabular-nums` stops the width jittering as digits change, which on a 1 Hz
         // countdown is otherwise a constant twitch in the middle of the screen.
         className={`font-mono text-2xl font-extrabold tabular-nums ${
-          expired ? 'text-danger' : warning ? 'text-ink' : 'text-ink'
+          warning || expired ? 'text-ink' : 'text-ink'
         }`}
         // The number is the status; announce it only when it changes meaningfully rather
         // than every second, which would make a screen reader unusable.
@@ -71,9 +71,12 @@ export default function SessionTimer({
       </p>
 
       {expired ? (
-        <Pill tone="danger">
-          Session <strong className="font-extrabold">Expired</strong>, Scan again to continue
-        </Pill>
+        // This timer only renders while the session is still `active`, so zero here means
+        // the server is being asked whether the customer is still in the shop — not that
+        // it said no. If it does say no, `status` flips, this unmounts, and the scan page
+        // shows the real expired state. Saying "expired" now would announce a verdict
+        // that has not been reached, to someone standing in the aisle with a full trolley.
+        <Pill tone="warning">Checking you’re still in the shop…</Pill>
       ) : warning ? (
         <Pill tone="warning">{Math.ceil(remaining / 60)} mins left</Pill>
       ) : null}

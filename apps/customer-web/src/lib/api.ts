@@ -267,6 +267,88 @@ export async function renewSession(): Promise<RenewalResult> {
   return renewalInFlight;
 }
 
+/** Renew this close to expiry. Comfortably before the last heartbeat that could refuse. */
+export const RENEW_AT_SECONDS_LEFT = 60;
+/**
+ * How long past expiry the client still asks. Matches `RENEWAL_GRACE_SECONDS` on the
+ * server; beyond it the answer is known to be no, and asking is a wasted round trip.
+ */
+export const RENEWAL_GRACE_SECONDS = 5 * 60;
+/** After a renewal that failed for a transient reason, wait this long before asking again. */
+const RENEWAL_BACKOFF_MS = 30_000;
+
+let lastRenewalAttemptAt = 0;
+
+export type KeepAliveOutcome = 'renewed' | 'kept' | 'ended';
+
+/**
+ * The moment the clock runs out is not the moment the session ends.
+ *
+ * Called on a timer from every screen, on the phone waking, and by the scan page's own
+ * clock hitting zero. Within the last minute — or within the grace after expiry — it asks
+ * the server to renew, and the server decides on presence alone. The session ends only
+ * when the server says the customer is no longer in the shop, or when the token is too old
+ * for the grace. It is never ended here on the strength of the browser's clock.
+ *
+ * The cart is not touched by any of this. It lives in its own store and survives expiry,
+ * renewal and re-entry alike; a customer who stepped out and came back finds the trolley
+ * exactly as they left it.
+ */
+export async function keepSessionAlive(
+  options: {
+    /**
+     * Ask regardless of what the local clock says. The server has already said the token
+     * is expired — a phone whose clock runs behind would otherwise see time left, decline
+     * to renew, and be told the same thing by every heartbeat until the grace ran out.
+     */
+    force?: boolean;
+  } = {}
+): Promise<KeepAliveOutcome> {
+  const { status, expiresAtMs, invalidate } = useSessionStore.getState();
+  if (status !== 'active' || !expiresAtMs) return 'kept';
+
+  const secondsLeft = (expiresAtMs - Date.now()) / 1000;
+  if (!options.force && secondsLeft > RENEW_AT_SECONDS_LEFT) return 'kept';
+
+  // Too old for the server to consider. Nothing to ask; the answer is known.
+  if (secondsLeft < -RENEWAL_GRACE_SECONDS) {
+    invalidate('expired');
+    return 'ended';
+  }
+
+  if (Date.now() - lastRenewalAttemptAt < RENEWAL_BACKOFF_MS && !renewalInFlight) {
+    return 'kept';
+  }
+  lastRenewalAttemptAt = Date.now();
+
+  const result = await renewSession();
+  if (result.renewed) return 'renewed';
+
+  switch (result.reason) {
+    // The one answer that ends a session: the server checked, and the customer has left.
+    case 'presence_not_verified':
+    case 'presence_lost':
+      invalidate('presence_lost');
+      return 'ended';
+    // The token itself is no longer acceptable. Re-entry is by the entrance code.
+    case 'expired':
+    case 'revoked':
+    case 'unknown_store':
+    case 'store_unavailable':
+    case 'missing_token':
+    case 'malformed':
+    case 'bad_signature':
+    case 'unknown_version':
+    case 'no_session':
+      invalidate(result.reason === 'expired' ? 'expired' : 'ended');
+      return 'ended';
+    // Rate-limited, unreachable, or a server error: says nothing about where the customer
+    // is standing. Keep the session and ask again after the backoff.
+    default:
+      return 'kept';
+  }
+}
+
 export interface HeartbeatResult {
   active: boolean;
   expiresInSeconds?: number;
@@ -325,7 +407,15 @@ export async function sendHeartbeat(): Promise<HeartbeatResult> {
   if (!body) return { active: true, unknown: true };
 
   if (!body.active) {
-    // The one branch that ends a session: the server checked and said no.
+    // Expiry is not the heartbeat's call. The clock running out is the cue to re-check
+    // presence, and `keepSessionAlive` does that — ending the session only if the server
+    // refuses to renew. Ending it here first would pre-empt that check and throw away a
+    // customer who is still standing in the aisle.
+    if (body.reason === 'expired') {
+      const outcome = await keepSessionAlive({ force: true });
+      return { active: outcome !== 'ended' };
+    }
+    // Every other refusal is the server having checked and said no.
     const status = statusForCode(body.reason) ?? 'ended';
     useSessionStore.getState().invalidate(status);
     return { active: false };

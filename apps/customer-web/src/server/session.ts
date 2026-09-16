@@ -74,6 +74,24 @@ export type SessionValidation =
   | { valid: true; payload: SessionPayload; expiresInSeconds: number }
   | { valid: false; reason: SessionFailure };
 
+export interface ValidateOptions {
+  /**
+   * Accept a token that expired no more than this many seconds ago.
+   *
+   * For renewal only. The 30-minute cap is a presence control, and the presence check
+   * below still runs in full — a customer who left the shop is refused whatever the
+   * clock says. What the grace changes is only whether a *recently* admitted device may
+   * continue without walking back to the entrance code: a phone that slept in a pocket
+   * through the renewal window is still the phone that scanned in, and still on the
+   * shop's network, and making it re-enter proves nothing the network check has not.
+   *
+   * Bounded, because the token is also the record of having been admitted through the
+   * entrance QR. An unbounded grace would let last week's token re-enter on Wi-Fi alone,
+   * and that would quietly reduce two presence factors to one.
+   */
+  graceSeconds?: number;
+}
+
 /**
  * Continuous presence validation. Run on every authenticated request, not just on a
  * heartbeat — a heartbeat alone would leave a window in which a customer who has left
@@ -81,7 +99,8 @@ export type SessionValidation =
  */
 export async function validateSession(
   request: NextRequest,
-  token: string | null
+  token: string | null,
+  options: ValidateOptions = {}
 ): Promise<SessionValidation> {
   if (!token) return { valid: false, reason: 'missing_token' };
 
@@ -92,7 +111,8 @@ export async function validateSession(
   if (payload.v !== SESSION_TOKEN_VERSION) return { valid: false, reason: 'unknown_version' };
 
   const now = Math.floor(Date.now() / 1000);
-  if (typeof payload.exp !== 'number' || payload.exp <= now) {
+  const grace = options.graceSeconds ?? 0;
+  if (typeof payload.exp !== 'number' || payload.exp + grace <= now) {
     return { valid: false, reason: 'expired' };
   }
 

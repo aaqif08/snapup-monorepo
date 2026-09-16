@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import BottomNav from '@/components/BottomNav';
+import SessionKeeper from '@/components/SessionKeeper';
 
 /**
  * Decides whether a route gets the app chrome.
@@ -26,6 +27,9 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      {/* On every route, bare or not: a session's last minute can pass on any screen, and
+          the check that keeps it alive must not depend on which one is open. */}
+      <SessionKeeper />
       {/* `pb-20` reserves the bar's height so a page's last element is never trapped
           under it — the bar is fixed, so it takes no space in the flow of its own. */}
       <main className={`flex-1 ${bare ? '' : 'pb-20'}`}>{children}</main>

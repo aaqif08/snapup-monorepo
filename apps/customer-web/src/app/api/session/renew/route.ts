@@ -31,18 +31,27 @@ export const dynamic = 'force-dynamic';
  * find the entrance QR again to prove it is a queue at the door for no security gain — the
  * check that matters, the network, is re-run here in full.
  *
- * ## What it will not do
+ * ## The moment the clock runs out
  *
- * Extend a session that has already expired. At that point presence has not been confirmed
- * for an unknown interval, and quietly reviving it would turn a 30-minute window into an
- * indefinite one for anyone who closed their phone in the car park.
+ * A session is not over because thirty minutes passed; it is over because the customer is
+ * no longer in the shop. So a token that expired within the last few minutes is still
+ * accepted *here* — and only here — provided the presence check below passes right now.
+ * That covers the phone that slept in a pocket through the renewal window: it is the same
+ * device that scanned in, and it is demonstrably still on the shop's network.
+ *
+ * The grace is short and the presence check is not relaxed. Someone who closed their
+ * phone in the car park is off the shop's Wi-Fi, and is refused the same as before.
  */
+const RENEWAL_GRACE_SECONDS = 5 * 60;
+
 export async function POST(request: NextRequest) {
-  const validation = await validateSession(request, extractBearerToken(request));
+  const validation = await validateSession(request, extractBearerToken(request), {
+    graceSeconds: RENEWAL_GRACE_SECONDS,
+  });
 
   if (!validation.valid) {
-    // Includes the expired case. A dead session is re-established by scanning the entrance
-    // code, not by asking again.
+    // Expired beyond the grace, or never valid. A dead session is re-established by
+    // scanning the entrance code, not by asking again.
     return NextResponse.json(
       { renewed: false, reason: validation.reason },
       { status: 200, headers: NO_STORE }

@@ -11,8 +11,8 @@ import { useCartStore, type Product } from '@/store/useCartStore';
 import { classifyScannedEntry, WIFI_CODE_MESSAGE } from '@/lib/entryCode';
 import { useSessionStore } from '@/store/useSessionStore';
 import {
+  keepSessionAlive,
   lookupBarcode,
-  renewSession,
   sendHeartbeat,
   startSession,
   GatewayError,
@@ -24,16 +24,6 @@ import {
  * customer sees the session end. Enforcement is per-request regardless — see session.ts.
  */
 const HEARTBEAT_INTERVAL_MS = 20_000;
-
-/**
- * Renew once the session has this long left.
- *
- * Sixty seconds, per the specification. Wide enough that a slow round trip on shop Wi-Fi
- * still lands before expiry, narrow enough that a customer who has already walked out
- * does not get another half hour on their way to the car.
- */
-const RENEW_AT_SECONDS_LEFT = 60;
-const RENEWAL_CHECK_INTERVAL_MS = 10_000;
 
 /**
  * The scanner.
@@ -78,7 +68,6 @@ export default function ScanPage() {
   const status = useSessionStore((state) => state.status);
   const storeName = useSessionStore((state) => state.storeName);
   const expiresAtMs = useSessionStore((state) => state.expiresAtMs);
-  const invalidate = useSessionStore((state) => state.invalidate);
 
   // Rehydrate before deciding anything, or the first client render always looks like "no
   // session" and flashes the wrong screen at someone mid-shop.
@@ -121,30 +110,9 @@ export default function ScanPage() {
     return () => clearInterval(timer);
   }, [active]);
 
-  /**
-   * Renew silently in the last minute.
-   *
-   * The timer only decides *when* to ask — the server re-checks presence and refuses if
-   * the customer has left, so moving the device clock forward buys nothing. Nothing is
-   * shown on success: a modal interrupting someone mid-scan to tell them their session
-   * continues is the interruption this feature exists to remove.
-   *
-   * Checked on an interval rather than scheduled with a single timeout, because a phone
-   * that sleeps in a pocket does not fire timers on schedule, and waking to find the
-   * moment missed should still renew.
-   */
-  useEffect(() => {
-    if (!active || !expiresAtMs) return;
-
-    const check = () => {
-      const secondsLeft = Math.floor((expiresAtMs - Date.now()) / 1000);
-      if (secondsLeft <= RENEW_AT_SECONDS_LEFT && secondsLeft > 0) void renewSession();
-    };
-
-    check();
-    const timer = setInterval(check, RENEWAL_CHECK_INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [active, expiresAtMs]);
+  // Renewal is no longer this page's job. `SessionKeeper`, mounted in the app chrome,
+  // renews in the last minute from whichever screen is open — the scanner had been the
+  // only place it happened, and a session that ran out in the cart came back here dead.
 
   const prevCount = useRef(itemCount);
   useEffect(() => {
@@ -264,10 +232,11 @@ export default function ScanPage() {
         {active && expiresAtMs && (
           <SessionTimer
             expiresAtMs={expiresAtMs}
-            onExpire={() => {
-              invalidate('expired');
-              setIsScanning(false);
-            }}
+            // Zero on the clock is a question, not a verdict. The server is asked whether
+            // the customer is still on the shop's network; the session ends only if it
+            // says no, and `status` flipping is what stops the scanner. Renewed, the new
+            // expiry restarts this clock and scanning never paused.
+            onExpire={() => void keepSessionAlive()}
           />
         )}
 
