@@ -19,7 +19,7 @@ import 'server-only';
  *
  * A phone inside a concrete supermarket routinely reports a position 20–50 metres from
  * where it is standing, and says so: `coords.accuracy` is a radius in metres at 95%
- * confidence. Comparing a reading with ±80 m of error against a 50 m fence is comparing
+ * confidence. Comparing a reading with ±180 m of error against a 100 m fence is comparing
  * noise against a threshold — it would refuse customers standing at the till.
  *
  * So a reading whose own accuracy is worse than the fence is treated as **unknown**, not as
@@ -27,8 +27,12 @@ import 'server-only';
  * the only defensible reading of a measurement that admits it cannot answer the question.
  */
 
-/** Metres. Roughly a supermarket floor plus its entrance. */
-export const DEFAULT_GEOFENCE_RADIUS_M = 50;
+/**
+ * Metres. A supermarket floor, its entrance, and the forecourt the customer Wi-Fi
+ * actually reaches — a customer already associated to the shop's access point should not
+ * be refused for standing at the far end of the car park.
+ */
+export const DEFAULT_GEOFENCE_RADIUS_M = 100;
 
 export type GeofenceVerdict =
   | { inside: true; distanceM: number }

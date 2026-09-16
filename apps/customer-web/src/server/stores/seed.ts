@@ -18,7 +18,7 @@ import { NO_GEOFENCE, NO_STATED_HOURS, NO_WIFI_CREDENTIALS, NO_STORED_API_KEY, t
  *
  * The retailer publishes addresses, not coordinates. A street address is not a position:
  * geocoding "332, Nageswaran North, Kumbakonam" lands somewhere on that street, which is
- * good enough to drive to and useless for a 50 m presence check at the entrance.
+ * good enough to drive to and useless for a 100 m presence check at the entrance.
  *
  * Seeding a plausible-looking guess would be the worst option available. It boots, it
  * sorts, it looks surveyed, and it is silently wrong — and once committed there is
@@ -84,7 +84,7 @@ export const STORE_SEED: StoreRecord[] = [
     // different ISP lease, and a hard-coded pair would quietly point their fence at the
     // last person's address.
     //
-    // A surveyed bench does run a real 50 m fence, the same as the shop. That is safe to
+    // A surveyed bench does run a real 100 m fence, the same as the shop. That is safe to
     // test against because `checkGeofence` defers rather than refuses whenever it cannot
     // answer: no position offered, or a reading whose own accuracy is worse than the
     // fence. The case it will refuse is a browser that reports a confident position that

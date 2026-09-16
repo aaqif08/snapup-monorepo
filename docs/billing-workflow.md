@@ -12,7 +12,8 @@ built; both are **inert until two values arrive**, and neither can be finished w
 | 1 | The payment gateway, and its key id / key secret / webhook secret | A webhook signature is verified against a secret. Without it, "the gateway says this was paid" and "a stranger says this was paid" are the same sentence. |
 | 2 | The original shop database: connection string, inventory table, its SKU and quantity columns, and the conflict policy | This job writes to somebody else's production database. A guessed column name does not fail cleanly — it either errors after a partial write, or updates a column that exists and means something else. |
 
-Everything else is done. When those arrive, sections 2 and 7 are configuration, not code.
+When those arrive, sections 2 and 7 become configuration rather than code — but they are
+not the only things outstanding. See **What is not built** at the end.
 
 ---
 
@@ -87,7 +88,34 @@ would mean three concurrent syncs every half hour.
     curl -X POST -H "authorization: Bearer $SNAPUP_ADMIN_API_TOKEN" \
          https://<host>/api/admin/sync/run
 
-Overlapping calls are safe regardless: the run claims rows `FOR UPDATE SKIP LOCKED`.
+**Nothing currently calls it on a schedule.** The endpoint is the half that belongs in the
+codebase; the half-hourly trigger is a Railway cron (or any external pinger) that still has
+to be created, and section 7 is not met until it is.
+
+### Overlapping runs
+
+A run **claims** its events by writing its run id onto the row, in the same statement that
+selects them.
+
+This was previously `SELECT ... FOR UPDATE SKIP LOCKED`, which does not work on this driver
+and quietly did nothing: there is no session, so each statement is its own transaction and
+the lock was released the moment the `SELECT` returned. Two runs would read the same rows
+and send the same deltas, and the original would apply each one twice. A written claim
+outlives the statement that took it; a lock does not.
+
+A claim expires after ten minutes, so a run that dies mid-flight does not strand its events.
+
+### One SKU per event
+
+A sale of five lines becomes five outbox rows, not one row carrying five lines. An event has
+to be dischargeable in a single statement, because a single statement is the only thing that
+is atomic here — a five-line event failing on the third would leave two lines applied to
+the original, the event unmarked, and the retry would apply those two again.
+
+What remains is a one-statement window: the `UPDATE` lands and the process dies before
+`synced_at` is written. Closing it needs a ledger in the *original* database keyed by event
+id, which is one of the things section 7 says to ask for rather than guess. Worth asking
+for — it is the difference between at-least-once and exactly-once.
 
 ### Deltas, never absolute counts
 
@@ -105,6 +133,26 @@ a log line.
 `applyToOrigin` returns only once the original has acknowledged the write, and only then is
 `synced_at` set. The reverse order is the classic way to lose a sale: the event is marked
 done, the write rolls back, nothing looks at it again.
+
+An event with nothing to send — a payment state change, under an inventory-only mapping —
+is recorded as `skipped_at` with a reason rather than `synced_at`. "We wrote this to the
+original" and "there was nothing here for the original to know" must not look the same to
+whoever reads the table after an incident.
+
+### Reconciliation
+
+Each run compares the SKUs it moved against the original's own counts and records the
+disagreements on `sync_runs.reconciliation`.
+
+Scoped to what the run touched, not the whole catalogue: sweeping 547 SKUs against someone
+else's production database every half hour is load they have not agreed to, and the rows
+that just changed are where a fault would be new.
+
+**Mismatches are reported, never corrected.** Their till selling something we have not seen
+is a legitimate difference under `origin_wins`, and a job that "fixed" it would be
+overwriting newer original data — exactly what section 7 forbids. Reconciliation failing
+does not fail the run: the events were already applied and acknowledged, and losing the
+comparison afterwards must not make a good sync look broken.
 
 ---
 
@@ -139,7 +187,50 @@ writer detects the missing table and warns once rather than throwing.
 
 ---
 
+## Section 8 — importing stock
+
+`stock` in a product sheet is a **delivery, added** to what is on the shelf. It used to be
+assigned — `stock_quantity = EXCLUDED.stock_quantity` — so re-importing a sheet to correct
+one price silently reset every count on it to whatever the sheet said, discarding every sale
+since it was exported. The import reported success either way, which is what made it worth
+fixing before anything else in this file.
+
+    npm run db:import -- products.csv                     # 40 in the sheet  →  shelf + 40
+    npm run db:import -- products.csv --stock-take        # 40 in the sheet  →  shelf = 40
+    npm run db:import -- products.csv --actor=priya
+
+`--stock-take` is section 8's "explicitly approved stock-take/import mode": it has to be
+typed, it is named in the audit row, and the script prints which mode it is in before it
+writes anything.
+
+Every movement writes a `stock_imports` row — actor, mode, before and after counts, source
+file — and an outbox event carrying **the delta that actually happened**. Under
+`--stock-take` those differ: a sheet declaring 40 against a shelf of 55 is a delta of `-15`,
+and that is the number the original database needs to reach the same answer.
+
+---
+
 ## Acceptance tests
 
-A–D, F and G are exercised today and pass. E's duplicate-webhook case and I's sync run
-cannot be tested until the two values above arrive.
+A–D, F and G are exercised today and pass. H passes. E's duplicate-webhook case and I's
+sync run cannot be tested until the two values above arrive — though I's *duplicate*
+concern is now testable in isolation and does hold: two overlapping runs claim disjoint
+event sets.
+
+There is still **no automated test suite**, which section 9 asks for and section 10 wants a
+report from. The checks above were run by hand against the embedded database.
+
+---
+
+## What is not built
+
+Named here so this document stops implying the brief is met.
+
+| Section | Missing |
+| --- | --- |
+| 5, 6 | **Bill generation.** `bill_items` and `bill_number` exist in `schema.sql`; nothing writes them. Approval sets `exit_approved_at`, moves stock and advances `payment_state`, but never mints a bill number or a bill-items row. "Exactly one bill number and final bill, inserted into bill history" is not implemented. |
+| 2 | **Payment initiation.** `razorpay.ts` implements `createPayment` and nothing calls it. No route creates a gateway order, so `gateway_order_id` and `idempotency_key` are never written and a customer cannot start a gateway payment. The webhook half is built and verified. |
+| 3, 6 | **`inventory.available_qty` vs `products.stock_quantity`.** The brief names `inventory.available_qty` as the authoritative field for all 547 SKUs. This schema has no `inventory` table and no `last_updated`; stock lives on `products.stock_quantity`. One of the two is wrong and it needs the owner, not a guess. |
+| 7 | **The 30-minute trigger.** The endpoint exists; nothing calls it on a schedule. |
+| 7 | **Outbox not in the approval transaction.** Unchanged and still deliberate — see above. |
+| 9, 10 | **Automated tests and the final report.** |

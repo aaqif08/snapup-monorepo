@@ -669,13 +669,20 @@ END $$;
 -- Stores: how close a customer must be
 -- ---------------------------------------------------------------------------
 --
--- Metres from the surveyed coordinates. 50 by default, which is roughly the footprint of
--- a supermarket floor plus its entrance.
+-- Metres from the surveyed coordinates. 100 by default: a supermarket floor, its
+-- entrance, and the forecourt the customer Wi-Fi actually reaches.
 --
 -- Null means no geofence — the branch relies on the network check alone, which is the
 -- right behaviour for a shop that has not been surveyed. A radius around coordinates that
 -- do not exist would refuse everybody.
-ALTER TABLE stores ADD COLUMN IF NOT EXISTS geofence_radius_m integer DEFAULT 50;
+ALTER TABLE stores ADD COLUMN IF NOT EXISTS geofence_radius_m integer DEFAULT 100;
+
+-- `ADD COLUMN IF NOT EXISTS` is a no-op once the column exists, so the default above never
+-- reaches a database migrated while it was still 50. Set it explicitly, and lift the rows
+-- still sitting on the old default. A branch deliberately surveyed to some other radius is
+-- left alone — only the value that was never chosen is changed.
+ALTER TABLE stores ALTER COLUMN geofence_radius_m SET DEFAULT 100;
+UPDATE stores SET geofence_radius_m = 100 WHERE geofence_radius_m = 50;
 
 DO $$ BEGIN
   ALTER TABLE stores DROP CONSTRAINT IF EXISTS stores_geofence_sane;
@@ -782,6 +789,27 @@ CREATE TABLE IF NOT EXISTS outbox (
 CREATE INDEX IF NOT EXISTS outbox_pending_idx
   ON outbox (created_at) WHERE synced_at IS NULL;
 
+-- Which run currently owns this event.
+--
+-- `SELECT … FOR UPDATE SKIP LOCKED` cannot do this job here. The HTTP driver has no
+-- session, so every statement is its own transaction (see the note in `db/client.ts`) and
+-- the row lock is released the instant the SELECT returns — two overlapping runs would
+-- both "claim" the same events and both send them, and because every event is a relative
+-- delta the original would apply each one twice.
+--
+-- A claim written to the row survives the statement that took it. `claimed_at` doubles as
+-- the expiry: a run that dies mid-flight leaves its claim behind, and the next run takes
+-- events back once the claim is older than `CLAIM_TTL_MS`.
+ALTER TABLE outbox ADD COLUMN IF NOT EXISTS claimed_at bigint;
+ALTER TABLE outbox ADD COLUMN IF NOT EXISTS claimed_by text;
+
+-- Events with nothing to send — a payment state change, under an inventory-only origin
+-- mapping. Distinct from `synced_at` on purpose: "we wrote this to the original" and
+-- "there was nothing about this for the original to know" must not look the same to
+-- whoever reads this table after an incident.
+ALTER TABLE outbox ADD COLUMN IF NOT EXISTS skipped_at     bigint;
+ALTER TABLE outbox ADD COLUMN IF NOT EXISTS skipped_reason text;
+
 -- One row per run, so a failure has somewhere to be seen from.
 CREATE TABLE IF NOT EXISTS sync_runs (
   id            text PRIMARY KEY,
@@ -792,3 +820,37 @@ CREATE TABLE IF NOT EXISTS sync_runs (
   outcome       text,
   detail        jsonb
 );
+
+ALTER TABLE sync_runs ADD COLUMN IF NOT EXISTS events_skipped integer NOT NULL DEFAULT 0;
+-- Section 7's reconciliation: what was compared, and what disagreed.
+ALTER TABLE sync_runs ADD COLUMN IF NOT EXISTS reconciliation jsonb;
+
+-- ---------------------------------------------------------------------------
+-- Section 8: who increased stock, and when
+-- ---------------------------------------------------------------------------
+--
+-- An import moves real stock. "The count is wrong" is answerable only if each movement
+-- names its source, its actor and its mode — an import that added 40 and a stock-take that
+-- declared 40 are different events that leave the column looking identical.
+CREATE TABLE IF NOT EXISTS stock_imports (
+  id          bigserial PRIMARY KEY,
+  store_id    text NOT NULL,
+  product_id  text NOT NULL,
+  internal_sku text NOT NULL,
+  barcode     text NOT NULL,
+
+  -- `increase` adds to the shelf; `stock_take` declares an absolute count. Section 8 makes
+  -- the first the default and the second something someone has to ask for.
+  mode        text NOT NULL CHECK (mode IN ('increase', 'stock_take')),
+  quantity    integer NOT NULL,
+  qty_before  integer NOT NULL,
+  qty_after   integer NOT NULL,
+
+  -- Free text: a console user id, or whoever ran the importer. Never blank.
+  imported_by text NOT NULL,
+  source      text NOT NULL,
+  imported_at bigint NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS stock_imports_store_idx
+  ON stock_imports (store_id, imported_at DESC);

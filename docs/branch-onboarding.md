@@ -20,7 +20,7 @@ truth, and the two Thanjavur shops in particular were worth verifying.
 
 ## The test bench, and what its geofence proves
 
-`store_2` is surveyed at a house near Kelambakkam and runs the same 50 m fence as the shop,
+`store_2` is surveyed at a house near Kelambakkam and runs the same 100 m fence as the shop,
 so the bench rehearses the real thing rather than a relaxed version of it. Measured against
 the live deployment:
 

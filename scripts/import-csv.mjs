@@ -19,6 +19,29 @@
  *
  * Products upsert on `(store_id, barcode)`. Re-importing a corrected sheet updates rows
  * rather than duplicating them, so fixing one price does not mean rebuilding the database.
+ *
+ * ## Stock is added, not assigned
+ *
+ * Section 8 of the billing brief: "Product imports must increase inventory.available_qty,
+ * not overwrite it accidentally, unless an explicitly approved stock-take/import mode says
+ * otherwise."
+ *
+ * This used to assign it — `stock_quantity = EXCLUDED.stock_quantity`. Re-importing a
+ * sheet to correct one price silently reset every count on it to whatever the sheet
+ * happened to say, discarding every sale since it was exported. The failure is invisible:
+ * the import reports success and the shelf counts are simply wrong afterwards.
+ *
+ * So `stock` is a **delivery**, added to what is already there. To declare an absolute
+ * count instead, pass `--stock-take`, which is the "explicitly approved mode" the brief
+ * asks for — it has to be typed, it is named in the audit row, and the script says out
+ * loud what it is about to do.
+ *
+ *   npm run db:import -- data/products.csv                 # 40 in the sheet  →  shelf + 40
+ *   npm run db:import -- data/products.csv --stock-take    # 40 in the sheet  →  shelf = 40
+ *
+ * Every movement writes a `stock_imports` row naming the actor, the mode and the before and
+ * after counts, and an outbox event so the 30-minute sync carries the delta to the original
+ * shop database.
  */
 
 import { readFile } from 'node:fs/promises';
@@ -142,11 +165,84 @@ async function connect(url) {
   return async (statement, values) => (await database.query(statement, values)).rows;
 }
 
-async function importProducts(sql, file) {
+/**
+ * Appends the audit row and the sync event for one stock movement.
+ *
+ * Tolerant of an unmigrated database for the same reason `appendOutbox` is: these tables
+ * are in `schema.sql` and unapplied pending the owner's approval, and a catalogue import
+ * that refuses to run because the audit table is absent helps nobody. The movement itself
+ * has already been written; this is the record of it, and a missing record is recoverable
+ * where a failed import at eleven at night is not.
+ */
+async function recordStockMovement(sql, movement) {
+  try {
+    await sql(
+      `INSERT INTO stock_imports (
+         store_id, product_id, internal_sku, barcode,
+         mode, quantity, qty_before, qty_after, imported_by, source, imported_at
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        movement.storeId,
+        movement.productId,
+        movement.sku,
+        movement.barcode,
+        movement.mode,
+        movement.quantity,
+        movement.qtyBefore,
+        movement.qtyAfter,
+        movement.actor,
+        movement.source,
+        movement.at,
+      ]
+    );
+
+    // One event per SKU, matching what the sync expects — see `server/sync/outbox.ts` for
+    // why a movement is never batched into a single multi-line event.
+    //
+    // The delta is what actually changed, not what the sheet said. Under `--stock-take`
+    // those differ: a sheet declaring 40 against a shelf of 55 is a delta of -15, and that
+    // is the number the original database has to apply to reach the same answer.
+    const delta = movement.qtyAfter - movement.qtyBefore;
+    if (delta === 0) return;
+
+    await sql(
+      `INSERT INTO outbox (event_type, store_id, subject_id, payload, created_at)
+       VALUES ('stock.imported', $1, $2, $3::jsonb, $4)`,
+      [
+        movement.storeId,
+        movement.productId,
+        JSON.stringify({
+          sku: movement.sku,
+          barcode: movement.barcode,
+          delta,
+          mode: movement.mode,
+          imported_by: movement.actor,
+          source: movement.source,
+        }),
+        movement.at,
+      ]
+    );
+  } catch (error) {
+    if (/relation "(stock_imports|outbox)" does not exist/i.test(error.message ?? '')) {
+      stockAuditSkipped += 1;
+      return;
+    }
+    throw error;
+  }
+}
+
+/** Counted rather than logged per row, so an unmigrated database says one thing, not 547. */
+let stockAuditSkipped = 0;
+
+async function importProducts(sql, file, options) {
   const rows = parseCsv(await readFile(file, 'utf8'));
   requireHeaders(rows, ['barcode', 'name', 'price_rupees'], file);
 
+  const mode = options.stockTake ? 'stock_take' : 'increase';
+  const at = Date.now();
+
   let count = 0;
+  let moved = 0;
   for (const [index, row] of rows.entries()) {
     const line = index + 2; // +1 for the header, +1 because humans count from one
     const storeId = row.store_id || process.env.SNAPUP_IMPORT_STORE || 'store_1';
@@ -162,35 +258,53 @@ async function importProducts(sql, file) {
     const cost = row.cost_rupees ? toPaise(row.cost_rupees, 'cost_rupees', line) : price;
     const margin = price > 0 ? Number((((price - cost) / price) * 100).toFixed(2)) : 0;
 
-    await sql(
-      `INSERT INTO products (
-         id, store_id, barcode, name, category, aisle, image_url,
-         unit_price, expected_weight_grams, is_active,
-         cost_price, profit_margin_pct, supplier_name, supplier_contact,
-         stock_quantity, internal_sku, purchase_history,
-         brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
-       ) VALUES (
-         'prod_' || nextval('product_id_seq'), $1, $2, $3, $4, NULLIF($5, ''), $6,
-         $7, $8, true, $9, $10, $11, '', $12, $13, '[]'::jsonb,
-         NULLIF($14, ''), $15, $16, $17, $18
+    // `before` is read in the same statement as the write, so it sees the row as it was:
+    // a CTE observes the snapshot the statement started from, whatever the upsert then
+    // does to it. Reading it separately would race any concurrent movement.
+    const [result] = await sql(
+      `WITH before AS (
+         SELECT stock_quantity FROM products WHERE store_id = $1 AND barcode = $2
+       ),
+       upserted AS (
+         INSERT INTO products (
+           id, store_id, barcode, name, category, aisle, image_url,
+           unit_price, expected_weight_grams, is_active,
+           cost_price, profit_margin_pct, supplier_name, supplier_contact,
+           stock_quantity, internal_sku, purchase_history,
+           brand, mrp_paise, discount_paise, gst_amount_paise, gst_rate_bp
+         ) VALUES (
+           'prod_' || nextval('product_id_seq'), $1, $2, $3, $4, NULLIF($5, ''), $6,
+           $7, $8, true, $9, $10, $11, '', $12, $13, '[]'::jsonb,
+           NULLIF($14, ''), $15, $16, $17, $18
+         )
+         ON CONFLICT (store_id, barcode) DO UPDATE SET
+           name = EXCLUDED.name,
+           category = EXCLUDED.category,
+           aisle = EXCLUDED.aisle,
+           unit_price = EXCLUDED.unit_price,
+           expected_weight_grams = EXCLUDED.expected_weight_grams,
+           cost_price = EXCLUDED.cost_price,
+           profit_margin_pct = EXCLUDED.profit_margin_pct,
+           supplier_name = EXCLUDED.supplier_name,
+           -- Section 8. The sheet's figure is a delivery to be added, unless someone
+           -- explicitly asked for a stock-take, in which case it is the count itself.
+           stock_quantity = CASE
+             WHEN $19 THEN EXCLUDED.stock_quantity
+             ELSE products.stock_quantity + EXCLUDED.stock_quantity
+           END,
+           internal_sku = EXCLUDED.internal_sku,
+           brand = EXCLUDED.brand,
+           mrp_paise = EXCLUDED.mrp_paise,
+           discount_paise = EXCLUDED.discount_paise,
+           gst_amount_paise = EXCLUDED.gst_amount_paise,
+           gst_rate_bp = EXCLUDED.gst_rate_bp,
+           is_active = true
+         RETURNING id, internal_sku, barcode, stock_quantity
        )
-       ON CONFLICT (store_id, barcode) DO UPDATE SET
-         name = EXCLUDED.name,
-         category = EXCLUDED.category,
-         aisle = EXCLUDED.aisle,
-         unit_price = EXCLUDED.unit_price,
-         expected_weight_grams = EXCLUDED.expected_weight_grams,
-         cost_price = EXCLUDED.cost_price,
-         profit_margin_pct = EXCLUDED.profit_margin_pct,
-         supplier_name = EXCLUDED.supplier_name,
-         stock_quantity = EXCLUDED.stock_quantity,
-         internal_sku = EXCLUDED.internal_sku,
-         brand = EXCLUDED.brand,
-         mrp_paise = EXCLUDED.mrp_paise,
-         discount_paise = EXCLUDED.discount_paise,
-         gst_amount_paise = EXCLUDED.gst_amount_paise,
-         gst_rate_bp = EXCLUDED.gst_rate_bp,
-         is_active = true`,
+       SELECT u.id, u.internal_sku, u.barcode,
+              u.stock_quantity AS qty_after,
+              COALESCE((SELECT stock_quantity FROM before), 0) AS qty_before
+         FROM upserted AS u`,
       [
         storeId,
         row.barcode,
@@ -217,12 +331,36 @@ async function importProducts(sql, file) {
         row.gst_amount_rupees ? toPaise(row.gst_amount_rupees, 'gst_amount_rupees', line) : 0,
         // Basis points, so 18.00% is 1800 and no float ever reaches the column.
         row.gst_rate ? Math.round(Number(row.gst_rate) * 100) : null,
+        options.stockTake,
       ]
     );
     count += 1;
+
+    const qtyBefore = Number(result.qty_before);
+    const qtyAfter = Number(result.qty_after);
+
+    if (qtyAfter !== qtyBefore) {
+      moved += 1;
+      await recordStockMovement(sql, {
+        storeId,
+        productId: result.id,
+        sku: result.internal_sku || '',
+        barcode: result.barcode,
+        mode,
+        quantity: Number(row.stock || 0),
+        qtyBefore,
+        qtyAfter,
+        actor: options.actor,
+        source: options.source,
+        at,
+      });
+    }
   }
 
   console.log(`  products: ${count} rows imported or updated`);
+  console.log(
+    `  stock:    ${moved} row(s) changed count, ${mode === 'stock_take' ? 'assigned as a stock-take' : 'added to what was on the shelf'}`
+  );
 
   const noWeight = rows.filter((r) => !r.weight_grams || Number(r.weight_grams) === 0).length;
   if (noWeight > 0) {
@@ -310,12 +448,43 @@ async function importStores(sql, file) {
 }
 
 async function main() {
-  const files = process.argv.slice(2);
+  const args = process.argv.slice(2);
+
+  // Section 8's "explicitly approved stock-take/import mode". It is a flag rather than a
+  // config value because it has to be a decision someone takes on the day, for one sheet.
+  const stockTake = args.includes('--stock-take');
+
+  // Who moved the stock. A script has no signed-in user, so it is asked for and only
+  // guessed at as a last resort - an audit row reading "unknown" is worth less than one
+  // reading a name, and --actor is how it gets one.
+  const actorArg = args.find((a) => a.startsWith('--actor='));
+  const actor =
+    actorArg?.slice('--actor='.length).trim() ||
+    process.env.SNAPUP_IMPORT_ACTOR?.trim() ||
+    process.env.USER ||
+    process.env.USERNAME ||
+    'unattributed-import';
+
+  const files = args.filter((a) => !a.startsWith('--'));
   if (files.length === 0) {
-    console.error('Usage: npm run db:import -- <products.csv> [stores.csv]\n');
+    console.error('Usage: npm run db:import -- <products.csv> [stores.csv] [--stock-take] [--actor=name]\n');
     console.error('Templates are in data/. Copy them, fill them in, and pass the copies.');
+    console.error('');
+    console.error('  stock in the sheet is ADDED to the shelf count by default.');
+    console.error('  --stock-take  treats it as an absolute count instead, replacing what is there.');
+    console.error('  --actor=name  names who moved the stock, for the audit row.');
     process.exit(1);
   }
+
+  // Said out loud before anything is written. A stock-take discards counts, and the
+  // difference between the two modes is invisible once the import has finished.
+  if (stockTake) {
+    console.log('MODE: stock-take - the sheet REPLACES shelf counts rather than adding to them.');
+  } else {
+    console.log('MODE: increase - the sheet is a delivery, ADDED to the shelf counts.');
+    console.log('      Pass --stock-take to declare absolute counts instead.');
+  }
+  console.log(`Stock movements recorded against "${actor}".\n`);
 
   const sql = await connect(process.env.DATABASE_URL ?? DEFAULT_URL);
   console.log('Importing…\n');
@@ -345,7 +514,14 @@ async function main() {
     await importStores(sql, entry.path);
   }
   for (const entry of classified.filter((f) => f.kind === 'products')) {
-    await importProducts(sql, entry.path);
+    await importProducts(sql, entry.path, { stockTake, actor, source: entry.path });
+  }
+
+  if (stockAuditSkipped > 0) {
+    console.log(`\n  NOTE: ${stockAuditSkipped} stock movement(s) were not audited.`);
+    console.log('  stock_imports/outbox are in schema.sql and not yet applied here, so those');
+    console.log('  movements reached the shelf count but not the log the 30-minute sync reads.');
+    console.log('  Run npm run db:migrate to close that gap.');
   }
 
   const counts = await sql(

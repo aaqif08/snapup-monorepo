@@ -5,7 +5,7 @@ import { confirmationStrength, statusForConfirmation } from './paymentPolicy';
 import type { OrderLine, OrderRecord, OrderRepository, PaymentConfirmation } from './types';
 // A class, so a value import: it is thrown, not just described.
 import { InsufficientStockError } from './types';
-import { appendOutbox } from '@/server/sync/outbox';
+import { appendStockOutbox } from '@/server/sync/outbox';
 
 /**
  * The order book, durable.
@@ -325,7 +325,15 @@ class PostgresOrderRepository implements OrderRepository {
          UPDATE orders
             SET exit_approved_at = $2,
                 inventory_finalised_at = COALESCE(inventory_finalised_at, $2),
-                verified_by = COALESCE(verified_by, $3)
+                verified_by = COALESCE(verified_by, $3),
+                -- Section 2's state machine, advanced by the thing that completes the sale.
+                -- Only from PAYMENT_RECEIVED_PENDING_STAFF: an order on the pilot's UPI
+                -- path has no gateway state at all, and inventing an APPROVED_COMPLETED
+                -- for it would claim a gateway settled money that never went near one.
+                payment_state = CASE
+                  WHEN payment_state = 'PAYMENT_RECEIVED_PENDING_STAFF' THEN 'APPROVED_COMPLETED'
+                  ELSE payment_state
+                END
           WHERE id = $1
             AND exit_approved_at IS NULL
             AND exit_denied_at IS NULL
@@ -387,21 +395,22 @@ class PostgresOrderRepository implements OrderRepository {
       )) as { id: string; internal_sku: string; barcode: string }[];
       const skuFor = new Map(skus.map((row) => [row.id, row]));
 
-      await appendOutbox({
+      // One event per line, not one event carrying every line. `appendStockOutbox`
+      // explains why: an event that needs several statements to discharge cannot be
+      // discharged atomically on this driver, and a retry after a partial failure would
+      // re-apply the lines that already landed.
+      await appendStockOutbox({
         eventType: 'sale.approved',
         storeId: order.storeId,
         subjectId: order.id,
-        payload: {
-          bill_total_paise: order.totalPaise,
-          approved_by: staffId,
-          lines: order.lines.map((line) => ({
-            sku: skuFor.get(line.productId)?.internal_sku ?? '',
-            barcode: line.barcode,
-            // Negative: a sale takes stock off the shelf. A delta rather than an absolute
-            // count, so the original's own till sales between runs are not overwritten.
-            delta: -line.quantity,
-          })),
-        },
+        context: { bill_total_paise: order.totalPaise, approved_by: staffId },
+        lines: order.lines.map((line) => ({
+          sku: skuFor.get(line.productId)?.internal_sku ?? '',
+          barcode: line.barcode,
+          // Negative: a sale takes stock off the shelf. A delta rather than an absolute
+          // count, so the original's own till sales between runs are not overwritten.
+          delta: -line.quantity,
+        })),
         at,
       });
     }
