@@ -222,7 +222,14 @@ export default function ScanPage() {
         // A beat before the cart add, so the scanner's own detect-flash plays before the
         // UI shifts underneath it.
         setTimeout(() => {
-          addProduct(result.product);
+          // The trolley can refuse while checkout is pricing it. That used to be invisible:
+          // the "added" toast showed regardless, and the customer walked to the till with
+          // an item the basket had quietly declined.
+          if (!addProduct(result.product)) {
+            setScanError('Your basket is being priced at checkout — finish or go back to add more.');
+            setIsScanning(true);
+            return;
+          }
           setLastScanned(result.product);
           setLastTiming(result);
         }, 180);

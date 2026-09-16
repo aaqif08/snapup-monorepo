@@ -64,12 +64,17 @@ export default function CheckoutPage() {
 
   /** Prices the basket server-side. One order per attempt; reused once it exists. */
   async function ensureOrder(): Promise<ServerOrder | null> {
+    // Already priced: nothing is in flight, so there is nothing to freeze. This check used
+    // to sit *after* `setLocked(true)` and return before the `finally` below, which left the
+    // basket locked for good on any second tap — switch UPI app, retry, "I've paid" — and,
+    // because the lock was persisted, on every later visit too. Scans then landed in a
+    // trolley that refused them without saying so.
+    if (order) return order;
+
     // Frozen while the server prices it. The server prices what it was sent, so an item
     // scanned between the request and the response is an item in the trolley and not on
     // the bill.
     setLocked(true);
-    if (order) return order;
-
     setBusy(true);
     setError(null);
     try {

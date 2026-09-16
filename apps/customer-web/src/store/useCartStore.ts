@@ -32,7 +32,11 @@ interface CartState {
   locked: boolean;
   setLocked: (locked: boolean) => void;
 
-  addProduct: (product: Product) => void;
+  /**
+   * Returns false when the basket is locked and the product was refused. Callers must
+   * check it: a scan the trolley declined must not be shown to the customer as added.
+   */
+  addProduct: (product: Product) => boolean;
   updateQuantity: (productId: string, quantity: number) => void;
   removeProduct: (productId: string) => void;
   /** Re-inserts a previously removed item at its original index, preserving
@@ -84,7 +88,7 @@ export const useCartStore = create<CartState>()(
       addProduct: (product) => {
         // Refused rather than queued. A scan that silently lands after checkout has
         // priced the basket would put an item in the trolley that nobody charged for.
-        if (get().locked) return;
+        if (get().locked) return false;
         set((state) => {
           const existingIndex = state.items.findIndex((item) => item.id === product.id);
           const updatedItems = [...state.items];
@@ -101,6 +105,7 @@ export const useCartStore = create<CartState>()(
           const { totalPrice, totalExpectedWeight } = recalcTotals(updatedItems);
           return { items: updatedItems, totalPrice, totalExpectedWeight };
         });
+        return true;
       },
 
       updateQuantity: (productId, quantity) => {
@@ -144,12 +149,32 @@ export const useCartStore = create<CartState>()(
         });
       },
 
-      clearCart: () => set({ items: [], totalPrice: 0, totalExpectedWeight: 0 }),
+      // A finished checkout releases the lock with the basket. The next session starts
+      // able to scan, whatever state the last one ended in.
+      clearCart: () =>
+        set({ items: [], totalPrice: 0, totalExpectedWeight: 0, locked: false }),
     }),
     {
       name: 'snapup-cart-storage',
       // Avoid attempting to touch localStorage during SSR.
       skipHydration: typeof window === 'undefined',
+      // `locked` is deliberately not persisted. It means "a pricing request is in flight
+      // right now", and no request survives a page reload — so a lock read back from
+      // storage is always stale, and a stale lock is a trolley that refuses every scan
+      // with no explanation. That is precisely the fault this once caused.
+      partialize: (state) => ({
+        items: state.items,
+        totalPrice: state.totalPrice,
+        totalExpectedWeight: state.totalExpectedWeight,
+        guestSessionId: state.guestSessionId,
+      }),
+      // Phones that hit the bug still have `locked: true` in storage from before it was
+      // excluded. Whatever comes back from disk, the lock starts released.
+      merge: (persisted, current) => ({
+        ...current,
+        ...(persisted as Partial<CartState>),
+        locked: false,
+      }),
     }
   )
 );
