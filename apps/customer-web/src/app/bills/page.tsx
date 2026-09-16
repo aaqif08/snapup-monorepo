@@ -15,6 +15,13 @@ import TaxInvoice, { type Bill } from '@/components/TaxInvoice';
  */
 export default function BillsPage() {
   const [bills, setBills] = useState<Bill[] | null>(null);
+  /**
+   * Paid, but not yet cleared to leave. The bill for these does not exist yet — it is
+   * released when staff approve the exit — and this page used to say nothing about them,
+   * so a customer who had just paid opened My Bills, read "No bills yet", and concluded
+   * their purchase was lost. The count is what the API sends instead of the bill.
+   */
+  const [awaitingExit, setAwaitingExit] = useState(0);
   const [signedIn, setSignedIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState<Bill | null>(null);
@@ -25,6 +32,7 @@ export default function BillsPage() {
         const response = await fetch('/api/bills', { credentials: 'same-origin', cache: 'no-store' });
         const body = await response.json();
         setSignedIn(Boolean(body.signed_in));
+        setAwaitingExit(Number(body.awaiting_exit ?? 0));
         setBills(body.bills ?? []);
       } catch {
         setError('Could not load your bills. Check your connection.');
@@ -54,13 +62,16 @@ export default function BillsPage() {
             body="Bills are saved to your account, so they follow you to a new phone. Guest receipts stay on the device that made them."
             action={{ href: '/login?redirect=/bills', label: 'Sign in with your mobile' }}
           />
-        ) : bills.length === 0 ? (
+        ) : bills.length === 0 && awaitingExit === 0 ? (
           <Empty
             title="No bills yet"
             body="Every shop you complete through SnapUp is saved here as a GST invoice."
             action={{ href: '/scan', label: 'Start shopping' }}
           />
         ) : (
+          <>
+            {awaitingExit > 0 && <AwaitingExit count={awaitingExit} />}
+            {bills.length > 0 && (
           <ul className="space-y-2.5 pt-2">
             {bills.map((bill) => (
               <li key={bill.id}>
@@ -95,6 +106,8 @@ export default function BillsPage() {
               </li>
             ))}
           </ul>
+            )}
+          </>
         )}
       </div>
 
@@ -124,6 +137,25 @@ function StatusChip({ status }: { status: Bill['status'] }) {
     <span className={`rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${style}`}>
       {label}
     </span>
+  );
+}
+
+/**
+ * The purchase is real and the money may well have arrived; what has not happened is the
+ * exit check. Said in those words, because "pending" on its own reads as "something went
+ * wrong" to someone standing at the door.
+ */
+function AwaitingExit({ count }: { count: number }) {
+  return (
+    <div className="mt-2 rounded-2xl border border-primary/40 bg-tint px-4 py-3.5">
+      <p className="text-sm font-extrabold text-ink">
+        {count === 1 ? '1 purchase' : `${count} purchases`} waiting for the exit check
+      </p>
+      <p className="mt-1 text-xs leading-relaxed text-muted">
+        Show your exit code to a member of staff on the way out. Your bill appears here the
+        moment they approve it.
+      </p>
+    </div>
   );
 }
 

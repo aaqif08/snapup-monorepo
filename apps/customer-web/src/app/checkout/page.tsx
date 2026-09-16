@@ -233,10 +233,19 @@ export default function CheckoutPage() {
 
           <div className="mx-auto mt-6 w-full rounded-2xl border border-border bg-surface p-4 text-left">
             <Row label="Store" value={storeName ?? 'This shop'} />
-            <Row label="Payment method" value={methodLabel(settled.method)} />
+            <Row
+              label={settled.verified ? 'Payment method' : 'Payment claimed via'}
+              value={methodLabel(settled.method)}
+            />
             <Row label="Transaction ID" value={order.payment.transaction_ref} mono />
             <Row label="Expected basket weight" value={`${order.expected_weight_grams} g`} />
-            <Row label="Amount paid" value={`₹${(order.total / 100).toFixed(2)}`} strong />
+            {/* "Amount paid" is a statement of fact this screen is not entitled to make until
+                someone has checked. The figure is the same; the label says what is known. */}
+            <Row
+              label={settled.verified ? 'Amount paid' : 'Amount to verify at exit'}
+              value={`₹${(order.total / 100).toFixed(2)}`}
+              strong
+            />
           </div>
 
           <button
@@ -333,15 +342,39 @@ export default function CheckoutPage() {
         )}
 
         {/* Only offered once a UPI hand-off has actually happened. Showing "I've paid"
-            before the customer has been sent anywhere invites tapping it by mistake. */}
+            before the customer has been sent anywhere invites tapping it by mistake.
+
+            Asked as a question with two answers, not offered as one button. Coming back
+            from a UPI app is the same gesture whether the payment went through, was
+            cancelled, or never loaded, and the app cannot tell which — money goes to the
+            shop's own account and no provider reports back. A lone "I've paid" under
+            that uncertainty was being read as the app *saying* it was paid. */}
         {(pendingUpiQr || redirecting) && (
-          <button
-            onClick={() => void confirm('upi_attested')}
-            disabled={busy}
-            className="mt-4 w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition hover:opacity-90 disabled:opacity-50"
-          >
-            {busy ? 'Please wait…' : 'I’ve paid'}
-          </button>
+          <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+            <p className="text-sm font-extrabold text-ink">Did the payment go through?</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">
+              Check your UPI app for a success message before answering. Staff will match
+              it against the shop’s records at the exit.
+            </p>
+            <button
+              onClick={() => void confirm('upi_attested')}
+              disabled={busy}
+              className="mt-3 w-full rounded-2xl bg-primary py-3.5 text-base font-extrabold text-onPrimary transition hover:opacity-90 disabled:opacity-50"
+            >
+              {busy ? 'Please wait…' : 'Yes, it went through'}
+            </button>
+            <button
+              onClick={() => {
+                setRedirecting(null);
+                setPendingUpiQr(null);
+                setError(null);
+              }}
+              disabled={busy}
+              className="mt-2 w-full rounded-2xl border border-border py-3 text-sm font-extrabold text-ink transition hover:bg-bg disabled:opacity-50"
+            >
+              No, it didn’t — try again
+            </button>
+          </div>
         )}
 
         <p className="mt-4 px-1 text-[11px] leading-relaxed text-muted">

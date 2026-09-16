@@ -2,7 +2,7 @@ import 'server-only';
 import { neon } from '@neondatabase/serverless';
 import { processSingleton } from '../singleton';
 import { embeddedClient, embeddedDataDir } from './embedded';
-import type { SqlClient } from './sql';
+import type { LazyQuery, SqlClient, SqlRows } from './sql';
 
 /**
  * The database connection, and the switch that decides whether there is one at all.
@@ -46,8 +46,95 @@ export function db(): SqlClient {
     const dataDir = embeddedDataDir(url);
     if (dataDir) return embeddedClient(dataDir);
 
-    return neon(url) as unknown as SqlClient;
+    return withConnectRetry(neon(url));
   });
+}
+
+/**
+ * How many times a statement is re-sent after the database could not be reached at all.
+ *
+ * Neon suspends its compute when the shop has been quiet for a few minutes, and the first
+ * request after that has to wake it. Waking takes longer than the driver waits for a
+ * connection, so that request fails with `Error connecting to database: fetch failed`
+ * before Postgres ever sees it — the customer gets a 500, taps again, and the second
+ * attempt lands on a compute that is now awake. That was the "first click errors, second
+ * goes through" report from the pilot.
+ *
+ * Two retries with a pause between them cover the wake-up. Only a *connection* failure is
+ * retried: the statement never reached the server, so sending it again cannot double
+ * anything. A statement that reached Postgres and failed there is not retried, whatever
+ * the error, because the caller cannot tell whether it partly happened.
+ */
+const CONNECT_RETRIES = 2;
+const CONNECT_RETRY_DELAYS_MS = [400, 1200];
+
+function isConnectFailure(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false;
+  const message = String((error as { message?: unknown }).message ?? '');
+  return /error connecting to database/i.test(message);
+}
+
+async function retryingConnect<T>(attempt: () => Promise<T>): Promise<T> {
+  for (let tries = 0; ; tries += 1) {
+    try {
+      return await attempt();
+    } catch (error) {
+      if (!isConnectFailure(error) || tries >= CONNECT_RETRIES) throw error;
+      const delay = CONNECT_RETRY_DELAYS_MS[tries] ?? CONNECT_RETRY_DELAYS_MS.at(-1)!;
+      console.warn(
+        `[db] could not reach the database (attempt ${tries + 1}); retrying in ${delay} ms`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+}
+
+/** Mirrors `toStatement` in `embedded.ts`, so a LazyQuery reads the same on both engines. */
+function toStatement(strings: TemplateStringsArray, values: unknown[]): string {
+  return strings.reduce((acc, part, i) => acc + part + (i < values.length ? `$${i + 1}` : ''), '');
+}
+
+type NeonClient = ReturnType<typeof neon>;
+
+/**
+ * Wraps Neon's HTTP client so every execution path — tagged template, plain statement,
+ * and `transaction` — survives a compute wake-up.
+ *
+ * The tagged form has to stay lazy: `transaction([...])` collects several of these and
+ * sends them as one request, so building the underlying Neon query is deferred until the
+ * moment it is awaited or batched. A wrapped query carries a `build` that produces a fresh
+ * Neon query per attempt, which is what makes retrying it sound.
+ */
+function withConnectRetry(raw: NeonClient): SqlClient {
+  type Wrapped = LazyQuery & { build: () => PromiseLike<SqlRows> };
+
+  const client = ((first: TemplateStringsArray | string, ...rest: unknown[]) => {
+    if (typeof first === 'string') {
+      const values = Array.isArray(rest[0]) ? (rest[0] as unknown[]) : [];
+      return retryingConnect(
+        () => (raw as unknown as (q: string, p?: unknown[]) => Promise<SqlRows>)(first, values)
+      );
+    }
+
+    const build = () => raw(first, ...rest) as unknown as PromiseLike<SqlRows>;
+    const lazy: Wrapped = {
+      statement: toStatement(first, rest),
+      values: rest,
+      build,
+      then: (onFulfilled, onRejected) =>
+        retryingConnect(() => Promise.resolve(build())).then(onFulfilled, onRejected),
+    };
+    return lazy;
+  }) as SqlClient;
+
+  client.transaction = (queries: LazyQuery[]) =>
+    retryingConnect(() =>
+      (raw as unknown as { transaction: (q: unknown[]) => Promise<SqlRows[]> }).transaction(
+        queries.map((query) => (query as Wrapped).build())
+      )
+    );
+
+  return client;
 }
 
 /** Which engine is in use, for the health endpoint and the console's setup warning. */
