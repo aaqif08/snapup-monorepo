@@ -2,6 +2,8 @@ import 'server-only';
 import { db, databaseKind } from '@/server/db/client';
 import type { WebhookEvent } from './gateway';
 import { appendOutbox } from '@/server/sync/outbox';
+import { recordEvent } from '@/server/analytics';
+import { orderRepository } from '@/server/orders';
 
 export type RecordOutcome = 'recorded' | 'duplicate' | 'unknown_order' | 'amount_mismatch';
 
@@ -80,6 +82,33 @@ export async function recordGatewayOutcome(
   )) as { id: string }[];
 
   if (updated.length === 0) return 'duplicate';
+
+  // The sale is booked at the first moment the money is known to exist. For a gateway
+  // payment that is now: the signed webhook, recorded once (the guard above refused any
+  // duplicate). The exit desk knows not to book it a second time. `failed` and `refunded`
+  // book nothing; a refund's reversal of takings is an open decision for the owner.
+  if (event.outcome === 'captured') {
+    const paid = await orderRepository.findById(order.id);
+    if (paid) {
+      recordEvent({
+        storeId: paid.storeId,
+        sessionId: paid.sessionId,
+        kind: 'order_placed',
+        occurredAt: paid.paidAt ?? now,
+        orderId: paid.id,
+        grossPaise: paid.totalPaise,
+        feePaise: paid.platformFeePaise,
+        costPaise: paid.totalCostPaise,
+        itemCount: paid.lines.reduce((acc, line) => acc + line.quantity, 0),
+        lines: paid.lines.map((line) => ({
+          productId: line.productId,
+          name: line.name,
+          quantity: line.quantity,
+          linePaise: line.linePaise,
+        })),
+      });
+    }
+  }
 
   await appendOutbox({
     eventType: `payment.${event.outcome}`,

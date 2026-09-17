@@ -212,25 +212,38 @@ and that is the number the original database needs to reach the same answer.
 
 ## Acceptance tests
 
-A–D, F and G are exercised today and pass. H passes. E's duplicate-webhook case and I's
-sync run cannot be tested until the two values above arrive — though I's *duplicate*
-concern is now testable in isolation and does hold: two overlapping runs claim disjoint
-event sets.
+    npm run validate:billing
 
-There is still **no automated test suite**, which section 9 asks for and section 10 wants a
-report from. The checks above were run by hand against the embedded database.
+`scripts/validate-billing.mjs` runs the nine scenarios of section 9 against a production
+build: real presence check, real webhook signature check, real sync — all against two
+throwaway embedded databases (ours, and a stand-in for the shop's original). The gateway is
+Razorpay with harness credentials; the webhook is signed by the suite with the same secret
+the server is started with, exactly as the gateway would sign it. No real gateway is called.
+
+| | Scenario | Checked |
+| --- | --- | --- |
+| A | Same SKU twice | one line, quantity 2; stock unchanged before approval |
+| B | Second session after a completed checkout | scans and prices |
+| C | Paid, not approved | `psp_webhook`, no bill number, stock unchanged |
+| D | Staff approve | one `SU`-numbered bill, stock down by the bill quantity, customer sees it |
+| E | Duplicate webhook; staff double-click | still one bill and one deduction; `409 already_authorised` |
+| F | Insufficient stock | `409 insufficient_stock`; no bill; stock unchanged |
+| G | Staff rejection; payment failure | no bill; no deduction |
+| H | Import a delivery | count increases; audit row; `stock.imported` event with the delta |
+| I | The sync | stock events reach the original once; payment events skipped, not failed; rerun sends nothing; reconciliation clean; both databases agree |
+
+The CTO requirements harness (`npm run validate`, 88 cases) provisions the same fixture
+database and is what proves the presence, projection and pricing rules the scenarios stand
+on.
 
 ---
 
 ## What is not built
 
-Named here so this document stops implying the brief is met.
-
 | Section | Missing |
 | --- | --- |
-| 5, 6 | **Bill generation.** `bill_items` and `bill_number` exist in `schema.sql`; nothing writes them. Approval sets `exit_approved_at`, moves stock and advances `payment_state`, but never mints a bill number or a bill-items row. "Exactly one bill number and final bill, inserted into bill history" is not implemented. |
-| 2 | **Payment initiation.** `razorpay.ts` implements `createPayment` and nothing calls it. No route creates a gateway order, so `gateway_order_id` and `idempotency_key` are never written and a customer cannot start a gateway payment. The webhook half is built and verified. |
-| 3, 6 | **`inventory.available_qty` vs `products.stock_quantity`.** The brief names `inventory.available_qty` as the authoritative field for all 547 SKUs. This schema has no `inventory` table and no `last_updated`; stock lives on `products.stock_quantity`. One of the two is wrong and it needs the owner, not a guess. |
-| 7 | **The 30-minute trigger.** The endpoint exists; nothing calls it on a schedule. |
+| 2 | **A real gateway.** The initiation route, the webhook and the checkout widget are built and exercised by the suite with harness credentials. Live keys, and the gateway's own webhook pointed at `/api/payments/webhook`, are the owner's to provide. |
+| 7 | **The 30-minute trigger.** `POST /api/admin/sync/run` exists and is proven by scenario I; nothing calls it on a schedule yet. |
+| 7 | **The original shop database.** The sync is proven against a stand-in. The real connection, table map and conflict policy are still to be obtained in writing. |
 | 7 | **Outbox not in the approval transaction.** Unchanged and still deliberate — see above. |
-| 9, 10 | **Automated tests and the final report.** |
+| 3, 6 | **`inventory.available_qty` vs `products.stock_quantity`.** The brief names the former; this schema keeps stock on `products`. Needs the owner, not a guess. |

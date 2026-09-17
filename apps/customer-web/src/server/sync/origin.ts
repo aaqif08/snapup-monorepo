@@ -1,6 +1,23 @@
 import 'server-only';
 import { neon } from '@neondatabase/serverless';
+import { embeddedClient, embeddedDataDir } from '@/server/db/embedded';
 import type { OutboxEvent } from './outbox';
+
+type OriginSql = (statement: string, values?: unknown[]) => Promise<Record<string, unknown>[]>;
+
+/**
+ * A connection to the original database.
+ *
+ * `file:` and `pglite://` select the embedded engine, exactly as `DATABASE_URL` does for
+ * our own database. That is what lets the acceptance suite run section 7 end to end
+ * against a second throwaway database on the same machine, rather than leaving the sync
+ * as the one path that can only be exercised against somebody's production Postgres.
+ */
+function originSql(url: string): OriginSql {
+  const dataDir = embeddedDataDir(url);
+  if (dataDir) return embeddedClient(dataDir) as unknown as OriginSql;
+  return neon(url) as unknown as OriginSql;
+}
 
 /**
  * The original shop database — the one the duplicate is a copy of.
@@ -133,7 +150,7 @@ export async function applyToOrigin(
         );
       }
 
-      const sql = neon(config.url);
+      const sql = originSql(config.url);
       const step = delta as number;
 
       // A relative delta, not an absolute value. Writing our count over theirs would
@@ -228,7 +245,7 @@ export async function readOriginQuantities(
   const found = new Map<string, number>();
   if (skus.length === 0) return found;
 
-  const sql = neon(config.url);
+  const sql = originSql(config.url);
   const rows = (await sql(
     `SELECT ${ident(config.inventorySkuColumn)} AS sku,
             ${ident(config.inventoryQtyColumn)} AS qty

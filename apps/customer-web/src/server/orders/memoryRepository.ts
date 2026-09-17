@@ -77,11 +77,10 @@ class InMemoryOrderRepository implements OrderRepository {
     for (const order of this.byId.values()) {
       if (order.storeId !== storeId) continue;
       if (order.verificationCode !== code) continue;
-      // Only orders still waiting. Resolving a `paid` one would let staff verify the same
-      // basket twice; an `abandoned` one belongs to nobody standing at the gate.
-      if (order.status !== 'awaiting_payment' && order.status !== 'awaiting_verification') {
-        continue;
-      }
+      // Not abandoned, not yet cleared. A gateway payment is `paid` before the desk has
+      // seen it, so payment status cannot be the filter; `exitApprovedAt` is what stops a
+      // basket being verified twice.
+      if (order.status === 'abandoned' || order.exitApprovedAt !== null) continue;
       return { ...order };
     }
     return null;
@@ -140,6 +139,16 @@ class InMemoryOrderRepository implements OrderRepository {
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, limit)
       .map((order) => ({ ...order }));
+  }
+
+  async findClearedByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null> {
+    let latest: OrderRecord | null = null;
+    for (const order of this.byId.values()) {
+      if (order.storeId !== storeId || order.verificationCode !== code) continue;
+      if (order.exitApprovedAt === null) continue;
+      if (!latest || order.exitApprovedAt > (latest.exitApprovedAt ?? 0)) latest = order;
+    }
+    return latest ? { ...latest } : null;
   }
 
   async markVerified(id: string, verifiedBy: string, at: number): Promise<OrderRecord | null> {

@@ -117,6 +117,12 @@ class ApiOrderRepository implements OrderRepository {
    * Not supported against a retailer order book: their schema has no concept of a Snap Up
    * exit authorisation, and silently succeeding would release a bill nothing had cleared.
    */
+  async findClearedByVerificationCode(): Promise<OrderRecord | null> {
+    // Exit authorisation is SnapUp-owned state (see approveExit); a retailer's order book
+    // has no record of it to search.
+    return null;
+  }
+
   async approveExit(): Promise<OrderRecord | null> {
     throw new Error(
       'Exit authorisation requires SnapUp-owned orders. Leave SNAPUP_STORE_API_BASE unset.'

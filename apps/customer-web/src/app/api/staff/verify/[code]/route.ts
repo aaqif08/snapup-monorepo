@@ -67,7 +67,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     // Deliberately one message for "no such code", "already verified" and "wrong branch".
     // Staff act identically on all three — look again, ask the customer — and separating
     // them would let anyone with a till enumerate live baskets.
-    return fail(404, 'not_found', 'No basket is waiting on that code at this branch.');
+    return notWaiting(storeId, normalised);
   }
 
   const store = await getStore(order.storeId);
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest, { params }: Params) {
   if (!storeId) return fail(400, 'store_required', 'Choose which branch you are verifying for.');
 
   const found = await orderRepository.findByVerificationCode(storeId, normalised);
-  if (!found) return fail(404, 'not_found', 'No basket is waiting on that code at this branch.');
+  if (!found) return notWaiting(storeId, normalised);
 
   // ---- the scale check ----
   //
@@ -248,15 +248,26 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   const overrode = comparison !== null && !comparison.matches;
 
-  const verified = await orderRepository.markVerified(found.id, actor.id, Date.now());
+  // Two ways money becomes known. Under the UPI-attestation model this desk is the first
+  // to know, and its verification is what moves the order to `paid` and books the sale.
+  // Under a gateway the signed webhook already did both, and the desk's job is only the
+  // approval below — marking it verified again would be refused by the status guard, and
+  // booking it again would count the sale twice.
+  const paidBeforeTheDesk = found.status === 'paid';
+
+  const verified = paidBeforeTheDesk
+    ? found
+    : await orderRepository.markVerified(found.id, actor.id, Date.now());
   if (!verified) {
     // Lost the race, or the order moved on between the lookup and the write.
     return fail(409, 'already_settled', 'That basket has just been settled by someone else.');
   }
 
-  // Revenue is counted here and nowhere else, because this is the first moment the money is
-  // known to exist. Counting at "I've paid" would put unpaid baskets in the owner's takings.
-  recordEvent({
+  // Revenue is counted at the first moment the money is known to exist, and nowhere else.
+  // For an attested payment that moment is this verification. For a gateway payment it was
+  // the webhook, which booked it then (payments/record.ts). Counting at "I've paid" would
+  // put unpaid baskets in the owner's takings.
+  if (!paidBeforeTheDesk) recordEvent({
     storeId: verified.storeId,
     sessionId: verified.sessionId,
     kind: 'order_placed',
@@ -361,6 +372,34 @@ export async function POST(request: NextRequest, { params }: Params) {
 }
 
 const NO_STORE = { 'cache-control': 'no-store' };
+
+/**
+ * Nothing is waiting on this code — but was something just cleared on it?
+ *
+ * A second tap on Proceed, or a customer showing a code the desk already handled, used to
+ * get the same "no basket is waiting" as a mistyped code. That sends staff looking for a
+ * basket that does not exist. Answering with what actually happened, and the bill it went
+ * out under, is the difference between a glance and a search.
+ */
+async function notWaiting(storeId: string, code: string) {
+  const cleared = await orderRepository.findClearedByVerificationCode(storeId, code);
+  if (cleared) {
+    return NextResponse.json(
+      {
+        error: {
+          code: 'already_authorised',
+          message: `That basket was already cleared to leave${
+            cleared.billNumber ? ` under bill ${cleared.billNumber}` : ''
+          }.`,
+          bill_number: cleared.billNumber,
+          cleared_at: cleared.exitApprovedAt,
+        },
+      },
+      { status: 409, headers: NO_STORE }
+    );
+  }
+  return fail(404, 'not_found', 'No basket is waiting on that code at this branch.');
+}
 
 function forbidden() {
   return fail(403, 'forbidden', 'Sign in with a staff account to verify payments.');

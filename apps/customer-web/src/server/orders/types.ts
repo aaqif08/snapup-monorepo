@@ -208,6 +208,16 @@ export interface OrderRepository {
   findByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null>;
 
   /**
+   * The most recently cleared basket that carried this code at this branch, if any.
+   *
+   * So the desk can tell a second tap apart from a wrong code: "cleared two minutes ago,
+   * bill SU260917-0000041" is an answer a member of staff can act on, and "no basket is
+   * waiting" is not. Codes are short enough to recur across a shop's history, hence the
+   * most recent rather than the only.
+   */
+  findClearedByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null>;
+
+  /**
    * Records a staff confirmation. Returns null if the order moved on in the meantime.
    *
    * `verifiedBy` is a user id rather than a name, so "who opened the gate for an order that

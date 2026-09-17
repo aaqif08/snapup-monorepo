@@ -242,9 +242,31 @@ class PostgresOrderRepository implements OrderRepository {
    */
   async findByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null> {
     const sql = db();
+    // Any basket at this branch that is not abandoned and has not been cleared to leave.
+    //
+    // This used to admit only `awaiting_payment` and `awaiting_verification` — the states
+    // a UPI attestation passes through — on the reasoning that a `paid` order had already
+    // been dealt with. A gateway payment lands as `paid` *before* anyone at the desk has
+    // looked at it, and that is precisely the basket the desk exists to look at. The
+    // guard against verifying twice is `exit_approved_at`, not the payment status.
+    //
+    // A denied basket stays findable: a customer who fixes what was wrong presents the
+    // same code again, and the denial is retained alongside a later approval.
     const rows = (await sql(
       `${ORDER_SELECT} WHERE o.store_id = $1 AND o.verification_code = $2
-         AND o.status IN ('awaiting_payment', 'awaiting_verification')`,
+         AND o.status <> 'abandoned'
+         AND o.exit_approved_at IS NULL`,
+      [storeId, code]
+    )) as OrderRow[];
+    return rows.length > 0 ? toOrder(rows[0]) : null;
+  }
+
+  async findClearedByVerificationCode(storeId: string, code: string): Promise<OrderRecord | null> {
+    const sql = db();
+    const rows = (await sql(
+      `${ORDER_SELECT} WHERE o.store_id = $1 AND o.verification_code = $2
+         AND o.exit_approved_at IS NOT NULL
+       ORDER BY o.exit_approved_at DESC LIMIT 1`,
       [storeId, code]
     )) as OrderRow[];
     return rows.length > 0 ? toOrder(rows[0]) : null;

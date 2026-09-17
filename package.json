@@ -18,6 +18,7 @@
     "start:customer": "npm run start --workspace=@snapup/customer-web",
     "start:admin": "npm run start --workspace=@snapup/admin-web",
     "validate": "node scripts/validate-requirements.mjs",
+    "validate:billing": "node scripts/validate-billing.mjs",
     "db:migrate": "node scripts/db-migrate.mjs",
     "db:import": "node scripts/import-csv.mjs"
   }
