@@ -27,6 +27,10 @@ import { createHmac } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import {
+  provisionValidationDatabase,
+  VALIDATION_DATABASE_URL_FROM_APP,
+} from './validation-fixtures.mjs';
 
 const require = createRequire(import.meta.url);
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,20 +52,26 @@ const ATTACKER_SECRET = 'a-secret-the-attacker-guessed-wrong';
 const ADMIN_TOKEN = 'validation-harness-admin-token-do-not-deploy';
 const EXIT_TOKEN_SECRET = 'validation-harness-exit-token-secret-do-not-deploy';
 
-/** Registered egress IPs from src/server/stores.ts. */
+/** Registered egress IPs, from the fixtures in validation-fixtures.mjs. */
 const STORE_1 = { id: 'store_1', ip: '198.51.100.24' };
 const STORE_2 = { id: 'store_2', ip: '198.51.100.25' };
 /** Outside every registered range — a customer sitting at home. */
 const HOME_IP = '203.0.113.200';
 
-/** Present in store_1 only (see products/seed.ts). */
+/** Present in store_1 only (see validation-fixtures.mjs). */
 const STORE_1_ONLY_BARCODE = '8901725110016'; // Aashirvaad Atta 5kg
 /** Stocked by both stores at deliberately different prices. */
 const SHARED_BARCODE = '012000000133'; // Diet Pepsi 12oz
 const STORE_1_PRICE = 4000;
 const STORE_2_PRICE = 4200;
 
-/** The complete set of fields a customer is allowed to see (projection.ts). */
+/**
+ * The complete set of fields a customer is allowed to see (products/projection.ts).
+ *
+ * Grew from six to eleven when the receipt gained brand, MRP, the shop's discount and the
+ * GST already inside the price. Still an allowlist, and still checked as an exact set: a
+ * field appearing here that is not on that list is a leak, whatever it is called.
+ */
 const PERMITTED_FIELDS = [
   'id',
   'barcode',
@@ -69,6 +79,11 @@ const PERMITTED_FIELDS = [
   'unit_price',
   'image_url',
   'expected_weight_grams',
+  'brand',
+  'mrp_paise',
+  'discount_paise',
+  'gst_amount_paise',
+  'gst_rate_bp',
 ].sort();
 
 /** Internal columns that must never cross the wire, plus sample values of each. */
@@ -452,7 +467,9 @@ async function validateRequirement2(state) {
   });
 
   await check('R2.10', 'Malformed barcode is rejected before the lookup', async () => {
-    const response = await api('/api/products/barcode/not-a-barcode', {
+    // Letters and hyphens are legal — the pilot's own SKUs carry them — so "malformed"
+    // has to mean malformed: too short, and punctuation no barcode symbology has.
+    const response = await api('/api/products/barcode/no!', {
       ip: STORE_1.ip,
       token: state.sessionToken,
     });
@@ -646,7 +663,10 @@ async function validateRequirement4(state) {
  * dropped — which is the behaviour findNearbyStores() documents.
  */
 const AT_THE_SHOP = { lat: 10.960012, lng: 79.379673 }; // store_1 sits here
-const FAR_AWAY = { lat: 13.0827, lng: 80.2707 }; // Chennai
+// Salem: ~160 km from the shop, inside the directory's 200 km radius cap. Chennai, which
+// this used to be, is ~250 km away and fell outside it — the distance was not "lost", the
+// store was correctly out of range.
+const FAR_AWAY = { lat: 11.6643, lng: 78.146 };
 
 async function validateStoreDirectory(state) {
   section('Store directory — device location');
@@ -699,7 +719,7 @@ async function validateStoreDirectory(state) {
   await check('R5.3', 'Ordering actually tracks the device position', async () => {
     // Same catalogue, different vantage point. With one surveyed branch the ordering
     // cannot change, so the thing that proves the distance is computed rather than
-    // stored is that it *moves* — ~0 km at the shop, hundreds of km from Chennai.
+    // stored is that it *moves* — ~0 km at the shop, well over 100 km from Salem.
     const here = await api(
       `/api/stores/nearby?lat=${AT_THE_SHOP.lat}&lng=${AT_THE_SHOP.lng}&radius_km=1000`,
       { ip: STORE_1.ip }
@@ -715,8 +735,8 @@ async function validateStoreDirectory(state) {
     const farKm = far.json.stores.find((s) => s.id === 'store_1')?.distanceKm;
     expect(typeof nearKm === 'number' && typeof farKm === 'number', 'store_1 lost its distance');
     expect(nearKm < 1, `expected ~0km standing at the shop, got ${nearKm}`);
-    expect(farKm > 150, `expected a long way from Chennai, got ${farKm}`);
-    return `store_1: ${nearKm}km at the shop, ${farKm}km from Chennai`;
+    expect(farKm > 100, `expected a long way from Salem, got ${farKm}`);
+    return `store_1: ${nearKm}km at the shop, ${farKm}km from Salem`;
   });
 
   await check('R5.4', 'Radius filters the directory', async () => {
@@ -1398,9 +1418,15 @@ async function validateOrders(state) {
       `unexpected confirmation ${paid.json.order.payment.confirmation}`
     );
 
-    const payload = JSON.parse(Buffer.from(paid.json.exit_token.split('.')[0], 'base64url').toString('utf8'));
-    expect(payload.conf === 'customer_attested', 'confirmation level absent from the exit token');
-    return 'payment_verified false, conf=customer_attested in token';
+    // The gate opens on evidence. An attested payment gets no exit token at all — one the
+    // terminal would refuse only moves the argument to the door — and a verification code
+    // for the desk instead. This used to expect a token carrying conf=customer_attested.
+    expect(paid.json.exit_token === null, 'an unverified payment was issued an exit token');
+    expect(
+      typeof paid.json.verification_code === 'string' && paid.json.verification_code.length >= 6,
+      'no verification code for the exit desk'
+    );
+    return `payment_verified false, no exit token, code ${paid.json.verification_code}`;
   });
 
   await check('R8.12', "One customer cannot pay another customer's order", async () => {
@@ -1526,7 +1552,8 @@ async function validateAnalytics(state) {
   // Derived from the pricing rules in orders/pricing.ts, restated here on purpose: if the
   // harness recomputed them by importing the module, a change to both would cancel out.
   const SUBTOTAL = PRODUCT.unitPrice * QUANTITY; // 10000
-  const PLATFORM_FEE = 200;
+  // One tenth of the item total, charged to a guest (SERVICE_FEE_RATE). Was a flat 200.
+  const PLATFORM_FEE = Math.round(SUBTOTAL * 0.1); // 1000
   const TOTAL = SUBTOTAL + PLATFORM_FEE; // no discount — identity is unverifiable
   const COST = PRODUCT.costPrice * QUANTITY; // 6000
   const GROSS_PROFIT = TOTAL - COST;
@@ -1902,9 +1929,21 @@ async function main() {
   const externalBaseUrl = args.find((arg) => arg.startsWith('--base-url='))?.split('=')[1];
   const port = Number(process.env.PORT ?? 3117);
 
+  // A fresh database with the fixtures every case assumes, thrown away afterwards. The
+  // harness used to run against whatever DATABASE_URL pointed at — the dev database, with
+  // the real pilot store and none of the fixture network ranges — and failed on presence
+  // before reaching anything it was meant to test. See validation-fixtures.mjs.
+  if (!externalBaseUrl) {
+    console.log('Provisioning validation database...');
+    await provisionValidationDatabase();
+  }
+
   const serverEnv = {
     ...process.env,
     NODE_ENV: 'production',
+    // Non-empty, so it takes precedence over the app's .env.local. Relative to the app
+    // directory, which is the server's cwd.
+    ...(externalBaseUrl ? {} : { DATABASE_URL: VALIDATION_DATABASE_URL_FROM_APP }),
     SNAPUP_QR_SECRET: QR_SECRET,
     SNAPUP_SESSION_SECRET: SESSION_SECRET,
     SNAPUP_ADMIN_API_TOKEN: ADMIN_TOKEN,
