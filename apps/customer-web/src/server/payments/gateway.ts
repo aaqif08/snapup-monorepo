@@ -60,6 +60,14 @@ export interface PaymentGateway {
   readonly name: string;
   createPayment(input: CreatePaymentInput): Promise<CreatedPayment>;
   /**
+   * The client payload for a payment created earlier, rebuilt from what was stored.
+   *
+   * A customer who closed the checkout widget and tapped Pay again must be sent back into
+   * the *same* gateway order, not a second one against the same basket. The gateway order
+   * id is persisted; the widget payload is not, so it is derived here on demand.
+   */
+  clientPayloadFor(gatewayOrderId: string, amountPaise: number): Record<string, unknown>;
+  /**
    * Verifies the signature and returns the event, or `null` if the signature does not
    * verify. Returning null rather than throwing keeps "not from the gateway" and "the
    * gateway is broken" as different outcomes at the call site.

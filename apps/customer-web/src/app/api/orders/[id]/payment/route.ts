@@ -34,6 +34,17 @@ const ACCEPTED_METHODS: Record<string, PaymentConfirmation> = {
   upi_attested: 'customer_attested',
   /** Cash or card at the counter — the till is the record, not us. */
   in_store: 'in_store_tender',
+  /**
+   * The customer's phone says the gateway widget reported success.
+   *
+   * Deliberately mapped to the *weakest* confirmation, not to `psp_webhook`. The phone
+   * cannot be allowed to assert what the gateway said. What makes this work is the
+   * no-downgrade rule in `markPaid`: by the time the phone calls this, the gateway's own
+   * signed webhook has normally already recorded `psp_webhook`, and this claim is a no-op
+   * that returns the verified record and its exit token. If the webhook has *not* landed,
+   * the order is exactly as unverified as a UPI attestation, and is treated as one.
+   */
+  gateway: 'customer_attested',
 };
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {

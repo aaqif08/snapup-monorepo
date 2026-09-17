@@ -9,7 +9,15 @@ import ScreenHeader from '@/components/ScreenHeader';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
 import { useSessionStore } from '@/store/useSessionStore';
-import { confirmPayment, createOrder, fetchOrder, GatewayError, type ServerOrder } from '@/lib/api';
+import {
+  confirmPayment,
+  createOrder,
+  fetchOrder,
+  startGatewayPayment,
+  GatewayError,
+  type ServerOrder,
+} from '@/lib/api';
+import { openGatewayCheckout } from '@/lib/gatewayCheckout';
 import { attemptUpiRedirect, buildUpiLink, isLikelyMobileDevice } from '@/lib/upi';
 
 type UpiApp = 'gpay' | 'phonepe' | 'paytm' | 'bhim';
@@ -52,6 +60,15 @@ export default function CheckoutPage() {
   const [redirecting, setRedirecting] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /**
+   * The gateway widget has closed and the server has not yet heard from the gateway.
+   *
+   * This is the honest middle: the phone has seen a success screen it is not allowed to
+   * believe, and the signed webhook that *is* believed takes a few seconds to arrive.
+   * `'late'` is that wait exceeding what a customer will stand for, with the option to
+   * keep waiting or to pay another way.
+   */
+  const [awaitingGateway, setAwaitingGateway] = useState<'no' | 'waiting' | 'late'>('no');
 
   useEffect(() => {
     useCartStore.persist.rehydrate();
@@ -86,6 +103,41 @@ export default function CheckoutPage() {
       window.clearInterval(timer);
     };
   }, [settled, order?.id, released, denied]);
+
+  /**
+   * Wait for the gateway's webhook.
+   *
+   * The widget said "paid"; the server has not. Poll until `payment.confirmation` is
+   * `psp_webhook` — set only by the gateway's signed notification — then claim the exit
+   * token. Two minutes without it is reported as late, not as failure: the money may well
+   * have moved and the notification be stuck, and that needs a person, not a retry.
+   */
+  useEffect(() => {
+    if (awaitingGateway !== 'waiting' || !order) return;
+    let stopped = false;
+    const startedAt = Date.now();
+    const poll = async () => {
+      const latest = await fetchOrder(order.id);
+      if (stopped) return;
+      if (latest?.payment.confirmation === 'psp_webhook') {
+        stopped = true;
+        setOrder(latest);
+        setAwaitingGateway('no');
+        void confirm('gateway');
+        return;
+      }
+      if (Date.now() - startedAt > 120_000) setAwaitingGateway('late');
+    };
+    const timer = window.setInterval(() => void poll(), 3000);
+    void poll();
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+    // `confirm` is a stable function declaration in this component; listing it would only
+    // restart the interval on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [awaitingGateway, order?.id]);
 
   useEffect(() => {
     if (items.length === 0 && !settled) router.replace('/cart');
@@ -132,6 +184,36 @@ export default function CheckoutPage() {
     const priced = await ensureOrder();
     if (!priced) return;
 
+    // A configured gateway takes precedence over the UPI deep link, because it is the one
+    // path on which the server can actually *know* the money arrived. Not configured is
+    // the pilot's normal state and falls through to the deep link below.
+    try {
+      const gateway = await startGatewayPayment(priced.id);
+      if (gateway) {
+        setBusy(true);
+        setError(null);
+        try {
+          const outcome = await openGatewayCheckout({
+            gateway: gateway.gateway,
+            client: gateway.client,
+            storeName: storeName ?? 'SnapUp',
+            description: `Order ${priced.payment.transaction_ref}`,
+          });
+          if (outcome === 'closed') setAwaitingGateway('waiting');
+        } finally {
+          setBusy(false);
+        }
+        return;
+      }
+    } catch (exc) {
+      setError(
+        exc instanceof GatewayError
+          ? exc.message
+          : 'Could not start the payment. Please try again or pay at the counter.'
+      );
+      return;
+    }
+
     // No VPA registered means there is no account to send money to. Better to say so than
     // to open a UPI app pre-filled with a payee that does not exist.
     if (!priced.payment.payee_vpa) {
@@ -161,7 +243,7 @@ export default function CheckoutPage() {
     });
   }
 
-  async function confirm(method: 'upi_attested' | 'in_store') {
+  async function confirm(method: 'upi_attested' | 'in_store' | 'gateway') {
     // §3: no second attempt while the first result is unknown. `busy` already disables
     // the buttons, but a double tap can land two calls before React re-renders, and the
     // second would be a second payment against the same basket.
@@ -409,7 +491,7 @@ export default function CheckoutPage() {
               Choose a different method
             </button>
           </div>
-        ) : (
+        ) : awaitingGateway === 'waiting' ? null : (
           <div className="mt-5 overflow-hidden rounded-2xl border border-border bg-surface">
             <MethodRow
               icon={<UpiMark />}
@@ -434,6 +516,29 @@ export default function CheckoutPage() {
               onClick={() => void confirm('in_store')}
               last
             />
+          </div>
+        )}
+
+        {awaitingGateway !== 'no' && (
+          <div className="mt-4 rounded-2xl border border-border bg-surface p-4 text-center">
+            <p className="text-sm font-extrabold text-ink">
+              {awaitingGateway === 'waiting'
+                ? 'Confirming your payment…'
+                : 'Still waiting to hear from the bank'}
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted">
+              {awaitingGateway === 'waiting'
+                ? 'The payment provider is telling us the result. This usually takes a few seconds.'
+                : 'If money left your account it will be matched to this order. You can keep waiting, or ask a member of staff.'}
+            </p>
+            {awaitingGateway === 'late' && (
+              <button
+                onClick={() => setAwaitingGateway('waiting')}
+                className="mt-3 w-full rounded-2xl border border-border py-3 text-sm font-extrabold text-ink transition hover:bg-bg"
+              >
+                Keep waiting
+              </button>
+            )}
           </div>
         )}
 
@@ -586,6 +691,7 @@ function CashMark() {
 function methodLabel(method: string): string {
   if (method === 'upi_attested') return 'UPI';
   if (method === 'in_store') return 'At the counter';
+  if (method === 'gateway') return 'Card / UPI (online)';
   return method;
 }
 

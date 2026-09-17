@@ -83,6 +83,11 @@ export function razorpayGateway(): PaymentGateway {
       };
     },
 
+    clientPayloadFor(gatewayOrderId: string, amountPaise: number) {
+      const { keyId } = credentials();
+      return { key: keyId, order_id: gatewayOrderId, amount: amountPaise, currency: 'INR' };
+    },
+
     verifyWebhook(rawBody: string, headers: Headers): WebhookEvent | null {
       const { webhookSecret } = credentials();
 

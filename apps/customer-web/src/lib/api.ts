@@ -628,9 +628,43 @@ export interface PaymentResult {
   verificationCode: string | null;
 }
 
+export interface GatewayPayment {
+  gateway: string;
+  gatewayOrderId: string;
+  /** Whatever the gateway's checkout widget takes. Opaque to us. */
+  client: Record<string, unknown>;
+}
+
+/**
+ * Opens a gateway payment for the order, or returns null when no gateway is configured —
+ * which is the pilot's normal state, and the cue to fall back to the UPI deep link.
+ */
+export async function startGatewayPayment(orderId: string): Promise<GatewayPayment | null> {
+  const response = await authedFetch(`/api/orders/${encodeURIComponent(orderId)}/gateway`, {
+    method: 'POST',
+  });
+
+  if (response.status === 404) {
+    const error = await parseError(response);
+    if (error.code === 'gateway_not_configured') return null;
+    throw new GatewayError(error.code, error.message, response.status, error);
+  }
+  if (!response.ok) {
+    const error = await parseError(response);
+    throw new GatewayError(error.code, error.message, response.status, error);
+  }
+
+  const body = await response.json();
+  return {
+    gateway: body.gateway as string,
+    gatewayOrderId: body.gateway_order_id as string,
+    client: (body.client ?? {}) as Record<string, unknown>,
+  };
+}
+
 export async function confirmPayment(
   orderId: string,
-  method: 'upi_attested' | 'in_store'
+  method: 'upi_attested' | 'in_store' | 'gateway'
 ): Promise<PaymentResult> {
   const response = await authedFetch(`/api/orders/${encodeURIComponent(orderId)}/payment`, {
     method: 'POST',
