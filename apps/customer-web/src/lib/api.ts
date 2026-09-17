@@ -560,6 +560,11 @@ export interface ServerOrder {
     confirmation: string;
   };
   created_at: number;
+  exit: {
+    approved_at: number | null;
+    bill_number: string | null;
+    denied: boolean;
+  };
 }
 
 export interface CreatedOrder {
@@ -645,6 +650,26 @@ export async function confirmPayment(
     paymentVerified: Boolean(body.payment_verified),
     verificationCode: (body.verification_code as string | null) ?? null,
   };
+}
+
+/**
+ * The order as it stands now. Polled by the checkout screen while it waits for the exit
+ * desk; `null` when the session can no longer read it, which the caller treats as "stop
+ * asking" rather than as an error the customer needs to see.
+ */
+export async function fetchOrder(orderId: string): Promise<ServerOrder | null> {
+  let response: Response;
+  try {
+    response = await authedFetch(`/api/orders/${encodeURIComponent(orderId)}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    return null;
+  }
+  if (!response.ok) return null;
+  const body = await response.json().catch(() => null);
+  return (body?.order as ServerOrder | undefined) ?? null;
 }
 
 export { GatewayError };

@@ -738,6 +738,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS orders_gateway_payment_key
 CREATE UNIQUE INDEX IF NOT EXISTS orders_idempotency_key
   ON orders (idempotency_key) WHERE idempotency_key IS NOT NULL;
 
+-- Section 5: exactly one bill number per approved sale.
+--
+-- Advanced only by the UPDATE that completes the sale, for the one row it matches, so a
+-- refused or replayed approval never consumes a number. The format is SU<yymmdd>-<serial>,
+-- sixteen characters, which is the ceiling a GST invoice serial is allowed. The date is the
+-- shop's, not the server's: the pilot is in Tamil Nadu and a bill approved at 00:30 IST
+-- carries that day, whatever UTC says.
+CREATE SEQUENCE IF NOT EXISTS bill_number_seq AS bigint START 1;
+
 -- Section 6: the bill as it was, not as the catalogue is now.
 --
 -- Deliberately a copy rather than a join. A bill is a statement about a moment —

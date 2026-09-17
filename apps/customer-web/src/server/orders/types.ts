@@ -151,6 +151,14 @@ export interface OrderRecord {
   /** Set once stock has been moved for this order. The guard against decrementing twice. */
   inventoryFinalisedAt: number | null;
 
+  /**
+   * Minted by the approval that released the bill, in the same statement that moved the
+   * stock. Null until then: before staff approve, there is no bill and so no number for
+   * one. Unique across every store, so a customer's history and the shop's records agree
+   * on what a bill is called.
+   */
+  billNumber: string | null;
+
   payment: {
     /** Merchant VPA money was directed to. Per-store under the phase-1 model. */
     payeeVpa: string | null;
@@ -274,6 +282,7 @@ export const NOT_YET_AT_THE_EXIT = {
   exitDeniedBy: null,
   exitDenialReason: null,
   inventoryFinalisedAt: null,
+  billNumber: null,
 } as const;
 
 

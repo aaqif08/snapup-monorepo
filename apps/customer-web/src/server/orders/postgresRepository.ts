@@ -80,6 +80,7 @@ function toOrder(row: OrderRow): OrderRecord {
     exitDeniedBy: (row.exit_denied_by as string | null) ?? null,
     exitDenialReason: (row.exit_denial_reason as string | null) ?? null,
     inventoryFinalisedAt: readTimestamp(row.inventory_finalised_at),
+    billNumber: (row.bill_number as string | null) ?? null,
 
     subtotalPaise: Number(row.subtotal_paise),
     productSavingsPaise: Number(row.product_savings_paise ?? 0),
@@ -333,12 +334,21 @@ class PostgresOrderRepository implements OrderRepository {
                 payment_state = CASE
                   WHEN payment_state = 'PAYMENT_RECEIVED_PENDING_STAFF' THEN 'APPROVED_COMPLETED'
                   ELSE payment_state
-                END
+                END,
+                -- Section 5: exactly one bill number, minted here and nowhere else. COALESCE
+                -- short-circuits, so the sequence advances only for a row this UPDATE
+                -- matches that has no number yet — a refused or replayed approval never
+                -- consumes one. IST, because the bill's date is the shop's date.
+                bill_number = COALESCE(
+                  bill_number,
+                  'SU' || to_char(timezone('Asia/Kolkata', now()), 'YYMMDD') || '-'
+                       || lpad(nextval('bill_number_seq')::text, 7, '0')
+                )
           WHERE id = $1
             AND exit_approved_at IS NULL
             AND exit_denied_at IS NULL
             AND NOT EXISTS (SELECT 1 FROM short)
-          RETURNING id
+          RETURNING id, bill_number
        ),
        deduct AS (
          UPDATE products AS p
@@ -348,9 +358,32 @@ class PostgresOrderRepository implements OrderRepository {
             AND p.stock_quantity >= n.qty
             AND EXISTS (SELECT 1 FROM claim)
           RETURNING p.id
+       ),
+       -- Section 6: the bill as it was. Copied from the order lines, which froze name and
+       -- price when the basket was priced — the customer paid *that* total, and a price
+       -- edited between paying and approval must not restate it. SKU and GST come from the
+       -- catalogue row as it stands now, because the order line never carried them; the
+       -- product id is kept for analysis but a delisted item cannot orphan its bill line.
+       -- Runs only if the claim matched, so a refused approval writes no bill.
+       bill AS (
+         INSERT INTO bill_items (
+           order_id, line_no, product_id, internal_sku, barcode, label,
+           quantity, unit_price_paise, line_total_paise, gst_amount_paise, gst_rate_bp
+         )
+         SELECT l.order_id, l.line_no, l.product_id, COALESCE(p.internal_sku, ''), l.barcode, l.name,
+                l.quantity, l.unit_price_paise, l.line_paise,
+                COALESCE(p.gst_amount_paise, 0) * l.quantity, p.gst_rate_bp
+           FROM order_lines AS l
+           LEFT JOIN products AS p ON p.id = l.product_id
+          WHERE l.order_id = $1
+            AND EXISTS (SELECT 1 FROM claim)
+         ON CONFLICT (order_id, line_no) DO NOTHING
+         RETURNING order_id
        )
        SELECT (SELECT count(*) FROM claim)::int  AS claimed,
               (SELECT count(*) FROM deduct)::int AS deducted,
+              (SELECT count(*) FROM bill)::int   AS billed,
+              (SELECT bill_number FROM claim)    AS bill_number,
               (SELECT count(*) FROM need)::int   AS lines,
               COALESCE(
                 (SELECT json_agg(json_build_object(
@@ -362,6 +395,8 @@ class PostgresOrderRepository implements OrderRepository {
     )) as {
       claimed: number;
       deducted: number;
+      billed: number;
+      bill_number: string | null;
       lines: number;
       short_items: { name: string; wanted: number; available: number }[];
     }[];
@@ -377,6 +412,16 @@ class PostgresOrderRepository implements OrderRepository {
     // Lost the race, already authorised, or previously denied. Either way this call moved
     // no stock, and `findById` reports whatever the winning call left behind.
     if (!outcome || outcome.claimed === 0) return null;
+
+    // Loud rather than silent. The statement above is atomic, so this cannot happen
+    // without a schema problem — but a sale that moved stock and produced no bill lines
+    // is exactly the state section 5 forbids, and it must not pass unremarked.
+    if (outcome.billed !== outcome.lines) {
+      console.error(
+        `[exit] order ${orderId}: approved with ${outcome.billed} bill line(s) for ${outcome.lines} order line(s)`
+      );
+    }
+    console.info(`[exit] order ${orderId}: bill ${outcome.bill_number} released`);
 
     const order = await this.findById(orderId);
 
@@ -403,7 +448,11 @@ class PostgresOrderRepository implements OrderRepository {
         eventType: 'sale.approved',
         storeId: order.storeId,
         subjectId: order.id,
-        context: { bill_total_paise: order.totalPaise, approved_by: staffId },
+        context: {
+          bill_number: order.billNumber,
+          bill_total_paise: order.totalPaise,
+          approved_by: staffId,
+        },
         lines: order.lines.map((line) => ({
           sku: skuFor.get(line.productId)?.internal_sku ?? '',
           barcode: line.barcode,

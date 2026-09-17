@@ -41,6 +41,18 @@ export interface CustomerOrder {
     confirmation: PaymentConfirmation;
   };
   created_at: number;
+  /**
+   * The exit, as the customer is allowed to see it.
+   *
+   * `bill_number` is null until staff approve — before that there is no bill, and the
+   * screen must not pretend otherwise. `denied` carries no reason: that conversation
+   * happens at the gate, with a person, not through a field on a phone.
+   */
+  exit: {
+    approved_at: number | null;
+    bill_number: string | null;
+    denied: boolean;
+  };
 }
 
 export function toCustomerOrder(order: OrderRecord): CustomerOrder {
@@ -70,6 +82,11 @@ export function toCustomerOrder(order: OrderRecord): CustomerOrder {
       confirmation: order.payment.confirmation,
     },
     created_at: order.createdAt,
+    exit: {
+      approved_at: order.exitApprovedAt,
+      bill_number: order.billNumber,
+      denied: order.exitDeniedAt !== null,
+    },
   };
 }
 

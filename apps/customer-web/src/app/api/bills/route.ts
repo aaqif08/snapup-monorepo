@@ -60,6 +60,8 @@ export async function GET(request: NextRequest) {
       awaiting_exit: awaitingExit,
       bills: orders.map((order) => ({
         id: order.id,
+        // Never null here: only approved orders reach this list, and approval mints it.
+        bill_number: order.billNumber,
         store_id: order.storeId,
         store_name: storeNames.get(order.storeId) ?? order.storeId,
         status: order.status,

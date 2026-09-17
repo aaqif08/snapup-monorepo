@@ -344,6 +344,9 @@ export async function POST(request: NextRequest, { params }: Params) {
       // Only true once the exit is authorised. The customer's bill appears in their
       // history at this moment and not before.
       bill_released: authorised !== null,
+      // The number the bill was released under, so the desk can read it to the customer
+      // and the shop's own records can be matched to it. Null when nothing was released.
+      bill_number: authorised?.billNumber ?? null,
       inventory_finalised: authorised?.inventoryFinalisedAt !== null && authorised !== null,
       order_id: verified.id,
       total_rupees: (verified.totalPaise / 100).toFixed(2),

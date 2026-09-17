@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -8,7 +9,7 @@ import ScreenHeader from '@/components/ScreenHeader';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
 import { useSessionStore } from '@/store/useSessionStore';
-import { confirmPayment, createOrder, GatewayError, type ServerOrder } from '@/lib/api';
+import { confirmPayment, createOrder, fetchOrder, GatewayError, type ServerOrder } from '@/lib/api';
 import { attemptUpiRedirect, buildUpiLink, isLikelyMobileDevice } from '@/lib/upi';
 
 type UpiApp = 'gpay' | 'phonepe' | 'paytm' | 'bhim';
@@ -55,6 +56,36 @@ export default function CheckoutPage() {
   useEffect(() => {
     useCartStore.persist.rehydrate();
   }, []);
+
+  /**
+   * Wait for the exit desk.
+   *
+   * Approval happens on a different device. The brief asks that the customer's phone be
+   * told and move to the bill; without this it sat on "show this code" indefinitely,
+   * and the customer's first sight of their bill was My Bills, later, if they looked.
+   * Polled rather than pushed because a phone on shop Wi-Fi at the door is the worst
+   * possible WebSocket client, and five seconds is well inside how long the walk from
+   * the desk to the exit takes.
+   */
+  const released = order?.exit?.approved_at != null;
+  const denied = order?.exit?.denied === true;
+  useEffect(() => {
+    if (!settled || !order || released || denied) return;
+    let stopped = false;
+    const poll = async () => {
+      const latest = await fetchOrder(order.id);
+      if (stopped) return;
+      // Null means the session can no longer read it — ended, or the customer walked out
+      // of range. Nothing to show; the bill is in My Bills once staff approve.
+      if (latest) setOrder(latest);
+    };
+    const timer = window.setInterval(() => void poll(), 5000);
+    void poll();
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+    };
+  }, [settled, order?.id, released, denied]);
 
   useEffect(() => {
     if (items.length === 0 && !settled) router.replace('/cart');
@@ -162,6 +193,66 @@ export default function CheckoutPage() {
     }
   }
 
+  // ---------------------------------------------------------------- bill ----
+  // Staff have approved the exit. This is the moment the bill exists — section 5 — and
+  // it is shown here, on the screen the customer is already holding, rather than left
+  // for them to find later.
+  if (settled && order && released) {
+    return (
+      <div className="mx-auto max-w-lg">
+        <ScreenHeader title="" onBack={() => router.push('/')} />
+        <CheckoutStepper current="pay" />
+
+        <div className="px-4 pb-6 text-center">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary" aria-hidden>
+            <svg viewBox="0 0 24 24" className="h-10 w-10 text-onPrimary" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+
+          <h1 className="text-2xl font-extrabold text-ink">You’re all done</h1>
+          <p className="mt-2 text-4xl font-extrabold tabular-nums text-ink">
+            ₹{(order.total / 100).toFixed(2)}
+          </p>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted">
+            A member of staff has checked your basket and released your bill. Thanks for
+            shopping with {storeName ?? 'us'}.
+          </p>
+
+          {order.exit.bill_number && (
+            <div className="mx-auto mt-6 w-full max-w-xs rounded-3xl border-2 border-primary/50 bg-tint px-6 py-6">
+              <p className="text-[11px] font-extrabold uppercase tracking-wide text-muted">Bill number</p>
+              <p className="mt-2 font-mono text-2xl font-extrabold tracking-wider text-ink">
+                {order.exit.bill_number}
+              </p>
+            </div>
+          )}
+
+          <div className="mx-auto mt-6 w-full rounded-2xl border border-border bg-surface p-4 text-left">
+            <Row label="Store" value={storeName ?? 'This shop'} />
+            <Row label="Payment method" value={methodLabel(settled.method)} />
+            <Row label="Transaction ID" value={order.payment.transaction_ref} mono />
+            <Row label="Items" value={String(order.lines.reduce((n, l) => n + l.quantity, 0))} />
+            <Row label="Amount paid" value={`₹${(order.total / 100).toFixed(2)}`} strong />
+          </div>
+
+          <Link
+            href="/bills"
+            className="mt-6 block w-full rounded-2xl bg-primary py-4 text-base font-extrabold text-onPrimary transition hover:opacity-90"
+          >
+            View your bill
+          </Link>
+          <button
+            onClick={() => router.push('/')}
+            className="mt-3 w-full rounded-2xl border border-border py-3.5 text-sm font-extrabold text-ink transition hover:bg-bg"
+          >
+            Back to home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ---------------------------------------------------------------- done ----
   if (settled && order) {
     return (
@@ -170,6 +261,11 @@ export default function CheckoutPage() {
         <CheckoutStepper current="pay" />
 
         <div className="px-4 pb-6 text-center">
+          {denied && (
+            <p className="mb-4 rounded-2xl border border-danger/40 bg-danger/5 px-4 py-3 text-sm font-semibold text-danger">
+              Staff could not clear this basket. Please speak to a member of staff at the exit.
+            </p>
+          )}
           {/* The design's success mark. Shown only when the payment is actually confirmed —
               a green tick over an unverified basket would tell the customer the money
               arrived when nothing has checked, which is the one claim this screen must

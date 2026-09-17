@@ -31,6 +31,7 @@ import type { OrderRecord, OrderRepository, PaymentConfirmation } from './types'
  */
 class InMemoryOrderRepository implements OrderRepository {
   private readonly byId = new Map<string, OrderRecord>();
+  private billsIssued = 0;
 
   async create(draft: Omit<OrderRecord, 'id'>): Promise<OrderRecord> {
     const order: OrderRecord = { ...draft, id: `ord_${randomNonce(9)}` };
@@ -95,6 +96,10 @@ class InMemoryOrderRepository implements OrderRepository {
     order.exitApprovedAt = at;
     order.inventoryFinalisedAt = at;
     order.verifiedBy ??= staffId;
+    // Same shape as the database mints, so a bill looks the same whichever engine made
+    // it; uniqueness here is per process, which is all an in-memory book can promise.
+    this.billsIssued += 1;
+    order.billNumber ??= `SU${istDateStamp(at)}-${String(this.billsIssued).padStart(7, '0')}`;
     return { ...order };
   }
 
@@ -166,3 +171,12 @@ export const memoryOrderRepository: OrderRepository = processSingleton(
   'orders.repository',
   () => new InMemoryOrderRepository()
 );
+
+/** `yymmdd` in IST, matching the database's `to_char(timezone('Asia/Kolkata', now()), 'YYMMDD')`. */
+function istDateStamp(epochMs: number): string {
+  const ist = new Date(epochMs + 5.5 * 60 * 60 * 1000);
+  const yy = String(ist.getUTCFullYear()).slice(-2);
+  const mm = String(ist.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(ist.getUTCDate()).padStart(2, '0');
+  return `${yy}${mm}${dd}`;
+}

@@ -2,6 +2,8 @@
 
 export interface Bill {
   id: string;
+  /** Minted at staff approval. Null only for a record that predates bill numbering. */
+  bill_number: string | null;
   store_id: string;
   store_name: string;
   status: 'awaiting_payment' | 'awaiting_verification' | 'paid' | 'abandoned';
@@ -60,7 +62,9 @@ export default function TaxInvoice({ bill, onClose }: { bill: Bill; onClose: () 
             <p className="mt-0.5 text-[11px] text-muted">
               {formatDateTime(bill.paid_at ?? bill.created_at)}
             </p>
-            <p className="mt-0.5 font-mono text-[10px] text-muted">Ref {bill.transaction_ref}</p>
+            <p className="mt-0.5 font-mono text-[10px] text-muted">
+              {bill.bill_number ? `Bill ${bill.bill_number}` : `Ref ${bill.transaction_ref}`}
+            </p>
           </div>
           <button
             onClick={onClose}
