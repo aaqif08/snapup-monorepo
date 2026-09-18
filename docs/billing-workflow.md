@@ -156,22 +156,15 @@ comparison afterwards must not make a good sync look broken.
 
 ---
 
-## The one place this knowingly departs from the brief
+## The outbox row is written by the approval itself
 
-Section 7 asks for the outbox row to be written **in the same transaction** as the change it
-describes. It is not: `appendOutbox` runs after the approval statement and swallows its own
-failures.
+Section 7 asks for the outbox row to be written **in the same transaction** as the change
+it describes. It is: `approveExit` queues one `sale.approved` row per line inside the same
+CTE that claims the order, mints the bill and moves the stock. No outbox row, no approval.
 
-That is deliberate, and it is a compromise. The outbox table does not exist on the pilot
-database — the migration is written and unapplied, pending approval — so a hard dependency
-would mean every exit approval failing today. A shop that cannot clear a customer is worse
-than a log with a gap, because the gap is recoverable by reconciliation and the customer is
-standing at the door.
-
-**When the migration is approved, this should be closed**: the outbox insert belongs inside
-the same CTE statement as the approval in `postgresRepository.approveExit`, which already
-writes the order and the stock atomically. It is a small change, and it removes the window
-in which an approved sale is never synced.
+This was a deliberate compromise until the migration reached the pilot database — the
+table did not exist there, and a hard dependency would have refused every customer at the
+door. The migration is applied, and the compromise is closed.
 
 ---
 
@@ -245,5 +238,4 @@ on.
 | 2 | **A real gateway.** The initiation route, the webhook and the checkout widget are built and exercised by the suite with harness credentials. Live keys, and the gateway's own webhook pointed at `/api/payments/webhook`, are the owner's to provide. |
 | 7 | **The 30-minute trigger.** `POST /api/admin/sync/run` exists and is proven by scenario I; nothing calls it on a schedule yet. |
 | 7 | **The original shop database.** The sync is proven against a stand-in. The real connection, table map and conflict policy are still to be obtained in writing. |
-| 7 | **Outbox not in the approval transaction.** Unchanged and still deliberate — see above. |
 | 3, 6 | **`inventory.available_qty` vs `products.stock_quantity`.** The brief names the former; this schema keeps stock on `products`. Needs the owner, not a guess. |

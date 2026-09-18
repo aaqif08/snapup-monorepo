@@ -5,7 +5,6 @@ import { confirmationStrength, statusForConfirmation } from './paymentPolicy';
 import type { OrderLine, OrderRecord, OrderRepository, PaymentConfirmation } from './types';
 // A class, so a value import: it is thrown, not just described.
 import { InsufficientStockError } from './types';
-import { appendStockOutbox } from '@/server/sync/outbox';
 
 /**
  * The order book, durable.
@@ -401,10 +400,41 @@ class PostgresOrderRepository implements OrderRepository {
             AND EXISTS (SELECT 1 FROM claim)
          ON CONFLICT (order_id, line_no) DO NOTHING
          RETURNING order_id
+       ),
+       -- Section 7: the stock this approval moved, as one event per line, written by the
+       -- same statement that moved it. This used to run afterwards and swallow its own
+       -- failures, so an approved sale could exist with no record for the sync to carry;
+       -- the outbox table did not yet exist on the pilot database and a hard dependency
+       -- would have refused every customer at the door. It exists now, and the honest
+       -- version is this: no outbox row, no approval.
+       --
+       -- Deltas, negative, one per line: a sale takes stock off the shelf, and the
+       -- original applies each line in a single statement. Both SKU and barcode travel
+       -- because only the retailer knows which their inventory is keyed by.
+       outbox AS (
+         INSERT INTO outbox (event_type, store_id, subject_id, payload, created_at)
+         SELECT 'sale.approved', o.store_id, l.order_id,
+                jsonb_build_object(
+                  'sku', COALESCE(p.internal_sku, ''),
+                  'barcode', l.barcode,
+                  'delta', -l.quantity,
+                  'line_no', l.line_no,
+                  'bill_number', (SELECT c.bill_number FROM claim AS c),
+                  'bill_total_paise', o.total_paise,
+                  'approved_by', $3::text
+                ),
+                $2
+           FROM order_lines AS l
+           JOIN orders AS o ON o.id = l.order_id
+           LEFT JOIN products AS p ON p.id = l.product_id
+          WHERE l.order_id = $1
+            AND EXISTS (SELECT 1 FROM claim)
+         RETURNING id
        )
        SELECT (SELECT count(*) FROM claim)::int  AS claimed,
               (SELECT count(*) FROM deduct)::int AS deducted,
               (SELECT count(*) FROM bill)::int   AS billed,
+              (SELECT count(*) FROM outbox)::int AS queued,
               (SELECT bill_number FROM claim)    AS bill_number,
               (SELECT count(*) FROM need)::int   AS lines,
               COALESCE(
@@ -418,6 +448,7 @@ class PostgresOrderRepository implements OrderRepository {
       claimed: number;
       deducted: number;
       billed: number;
+      queued: number;
       bill_number: string | null;
       lines: number;
       short_items: { name: string; wanted: number; available: number }[];
@@ -443,50 +474,11 @@ class PostgresOrderRepository implements OrderRepository {
         `[exit] order ${orderId}: approved with ${outcome.billed} bill line(s) for ${outcome.lines} order line(s)`
       );
     }
-    console.info(`[exit] order ${orderId}: bill ${outcome.bill_number} released`);
+    console.info(
+      `[exit] order ${orderId}: bill ${outcome.bill_number} released, ${outcome.queued} line(s) queued for sync`
+    );
 
-    const order = await this.findById(orderId);
-
-    // Section 7: the stock this approval just moved, as deltas the original database can
-    // apply once. Negative, because a sale takes stock off the shelf. Emitted after the
-    // approval rather than inside it — see the note in `appendOutbox` about why that is a
-    // knowing compromise, and what the honest version costs.
-    if (order) {
-      // Both identifiers, because only the retailer knows which one their inventory is
-      // keyed by. `internal_sku` is their SKU code as it came from the catalogue; the
-      // barcode is what is physically on the packet. The origin mapping picks the column,
-      // and this refuses to decide on their behalf.
-      const skus = (await sql(
-        `SELECT id, internal_sku, barcode FROM products WHERE id = ANY($1)`,
-        [order.lines.map((line) => line.productId)]
-      )) as { id: string; internal_sku: string; barcode: string }[];
-      const skuFor = new Map(skus.map((row) => [row.id, row]));
-
-      // One event per line, not one event carrying every line. `appendStockOutbox`
-      // explains why: an event that needs several statements to discharge cannot be
-      // discharged atomically on this driver, and a retry after a partial failure would
-      // re-apply the lines that already landed.
-      await appendStockOutbox({
-        eventType: 'sale.approved',
-        storeId: order.storeId,
-        subjectId: order.id,
-        context: {
-          bill_number: order.billNumber,
-          bill_total_paise: order.totalPaise,
-          approved_by: staffId,
-        },
-        lines: order.lines.map((line) => ({
-          sku: skuFor.get(line.productId)?.internal_sku ?? '',
-          barcode: line.barcode,
-          // Negative: a sale takes stock off the shelf. A delta rather than an absolute
-          // count, so the original's own till sales between runs are not overwritten.
-          delta: -line.quantity,
-        })),
-        at,
-      });
-    }
-
-    return order;
+    return this.findById(orderId);
   }
 
   async denyExit(
