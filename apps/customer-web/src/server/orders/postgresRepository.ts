@@ -80,6 +80,7 @@ function toOrder(row: OrderRow): OrderRecord {
     exitDenialReason: (row.exit_denial_reason as string | null) ?? null,
     inventoryFinalisedAt: readTimestamp(row.inventory_finalised_at),
     billNumber: (row.bill_number as string | null) ?? null,
+    paymentState: (row.payment_state as string | null) ?? null,
 
     subtotalPaise: Number(row.subtotal_paise),
     productSavingsPaise: Number(row.product_savings_paise ?? 0),

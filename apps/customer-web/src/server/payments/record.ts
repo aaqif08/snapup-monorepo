@@ -59,13 +59,23 @@ export async function recordGatewayOutcome(
         ? 'REFUNDED'
         : 'DECLINED_OR_CANCELLED';
 
-  // `gateway_payment_id IS NULL` is the idempotency guard, backed by the unique index: the
-  // second delivery matches no row and changes nothing.
+  // The guard is on *state*, not on whether a payment id is already present. A declined
+  // attempt used to write its id and then block the customer's successful retry for ever:
+  // the second webhook matched no row and was reported as a duplicate. Now a capture or a
+  // failure may land on any order not yet settled, and a refund only on one that was. The
+  // exact-replay case — same payment id — was refused above, and the unique index on
+  // (gateway, gateway_payment_id) refuses it under a race.
   //
   // `confirmation` becomes `psp_webhook`, which `mayExit` already ranks above
   // `customer_attested` — a payment the gateway vouches for is stronger evidence than the
   // customer's word, and the exit desk treats it accordingly. It still does not open the
   // gate on its own; staff approval is what moves stock.
+  const settled = `('PAYMENT_RECEIVED_PENDING_STAFF', 'APPROVED_COMPLETED', 'REFUNDED')`;
+  const admissible =
+    event.outcome === 'refunded'
+      ? `COALESCE(payment_state, '') IN ('PAYMENT_RECEIVED_PENDING_STAFF', 'APPROVED_COMPLETED')`
+      : `COALESCE(payment_state, '') NOT IN ${settled}`;
+
   const updated = (await sql(
     `UPDATE orders
         SET payment_state       = $2,
@@ -76,10 +86,17 @@ export async function recordGatewayOutcome(
             confirmation        = CASE WHEN $2 = 'PAYMENT_RECEIVED_PENDING_STAFF' THEN 'psp_webhook' ELSE confirmation END,
             failure_reason      = $6
       WHERE id = $1
-        AND gateway_payment_id IS NULL
+        AND ${admissible}
       RETURNING id`,
     [order.id, state, gatewayName, event.gatewayPaymentId, now, event.failureReason ?? null]
   )) as { id: string }[];
+
+  // A refund is recorded and nothing else. Whether it restores stock or reverses takings
+  // is an open decision for the owner (brief, "Open decisions"); until then it is visible
+  // in the log and in payment_state, and acted on by a person.
+  if (updated.length > 0 && event.outcome === 'refunded') {
+    console.warn(`[payments] order ${order.id} refunded (${event.gatewayPaymentId}); stock and takings untouched`);
+  }
 
   if (updated.length === 0) return 'duplicate';
 

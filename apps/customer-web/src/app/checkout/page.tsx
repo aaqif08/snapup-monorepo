@@ -126,6 +126,15 @@ export default function CheckoutPage() {
         void confirm('gateway');
         return;
       }
+      // The gateway said no. Stop waiting and say so; the basket is untouched and every
+      // other way to pay is still on the table.
+      if (latest?.payment.gateway_state === 'DECLINED_OR_CANCELLED') {
+        stopped = true;
+        setOrder(latest);
+        setAwaitingGateway('no');
+        setError('The payment did not go through. Try again, or pay at the counter.');
+        return;
+      }
       if (Date.now() - startedAt > 120_000) setAwaitingGateway('late');
     };
     const timer = window.setInterval(() => void poll(), 3000);

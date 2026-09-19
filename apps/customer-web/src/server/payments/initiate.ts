@@ -41,7 +41,11 @@ export async function initiateGatewayPayment(
   const read = async () =>
     (
       (await sql(
-        `SELECT id, status, total_paise, gateway, gateway_order_id FROM orders WHERE id = $1`,
+        `SELECT o.id, o.status, o.total_paise, o.gateway, o.gateway_order_id,
+                o.session_id, o.user_id, u.phone AS user_phone, u.name AS user_name
+           FROM orders AS o
+           LEFT JOIN users AS u ON u.id = o.user_id
+          WHERE o.id = $1`,
         [orderId]
       )) as {
         id: string;
@@ -49,6 +53,10 @@ export async function initiateGatewayPayment(
         total_paise: number;
         gateway: string | null;
         gateway_order_id: string | null;
+        session_id: string;
+        user_id: string | null;
+        user_phone: string | null;
+        user_name: string | null;
       }[]
     )[0];
 
@@ -63,7 +71,11 @@ export async function initiateGatewayPayment(
       ok: true,
       gateway: gateway.name,
       gatewayOrderId: order.gateway_order_id,
-      client: gateway.clientPayloadFor(order.gateway_order_id, Number(order.total_paise)),
+      client: await gateway.clientPayloadFor({
+        gatewayOrderId: order.gateway_order_id,
+        orderId,
+        amountPaise: Number(order.total_paise),
+      }),
     };
   }
 
@@ -73,6 +85,13 @@ export async function initiateGatewayPayment(
     amountPaise: Number(order.total_paise),
     idempotencyKey,
     storeName,
+    // A signed-in customer is known by account; a guest only by the shopping session,
+    // which is as much identity as they have chosen to give.
+    customer: {
+      id: order.user_id ?? order.session_id,
+      phone: order.user_phone,
+      name: order.user_name,
+    },
   });
 
   const written = (await sql(
@@ -96,7 +115,11 @@ export async function initiateGatewayPayment(
         ok: true,
         gateway: gateway.name,
         gatewayOrderId: current.gateway_order_id,
-        client: gateway.clientPayloadFor(current.gateway_order_id, Number(current.total_paise)),
+        client: await gateway.clientPayloadFor({
+          gatewayOrderId: current.gateway_order_id,
+          orderId,
+          amountPaise: Number(current.total_paise),
+        }),
       };
     }
   }

@@ -1,10 +1,10 @@
 /**
  * Opens a gateway's hosted checkout on the customer's phone.
  *
- * Only Razorpay is wired, because only Razorpay has a server adapter; a second gateway is
- * a second `case` here and a second adapter there. The widget's script is loaded on first
- * use rather than on every page — the pilot runs on UPI deep links until a gateway is
- * configured, and a script for a gateway nobody has chosen has no business on the scanner.
+ * Razorpay and Cashfree are wired, each a `case` here and an adapter server-side. The
+ * widget's script is loaded on first use rather than on every page — the pilot runs on UPI
+ * deep links until a gateway is configured, and a script for a gateway nobody has chosen
+ * has no business on the scanner.
  *
  * What the widget says on success is **not** treated as payment. The promise resolves
  * `'closed'` either way, and the caller then waits for the server to have heard from the
@@ -16,10 +16,18 @@ type Outcome = 'closed' | 'dismissed';
 declare global {
   interface Window {
     Razorpay?: new (options: Record<string, unknown>) => { open(): void };
+    Cashfree?: (options: { mode: 'sandbox' | 'production' }) => {
+      checkout(options: { paymentSessionId: string; redirectTarget: '_modal' }): Promise<{
+        error?: unknown;
+        redirect?: boolean;
+        paymentDetails?: unknown;
+      }>;
+    };
   }
 }
 
 const RAZORPAY_SCRIPT = 'https://checkout.razorpay.com/v1/checkout.js';
+const CASHFREE_SCRIPT = 'https://sdk.cashfree.com/js/v3/cashfree.js';
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -58,6 +66,21 @@ export async function openGatewayCheckout(input: {
         });
         widget.open();
       });
+    }
+    case 'cashfree': {
+      await loadScript(CASHFREE_SCRIPT);
+      if (!window.Cashfree) throw new Error('Cashfree checkout did not initialise.');
+
+      const sessionId = input.client.payment_session_id;
+      const mode = input.client.mode === 'production' ? 'production' : 'sandbox';
+      if (typeof sessionId !== 'string') throw new Error('Cashfree session missing.');
+
+      // `_modal` keeps the customer on this page and resolves when the modal closes —
+      // paid, failed, or dismissed. Which of those it was is not taken from here: the
+      // server hears it from Cashfree's signed webhook, and the caller polls for that.
+      const cashfree = window.Cashfree({ mode });
+      const result = await cashfree.checkout({ paymentSessionId: sessionId, redirectTarget: '_modal' });
+      return result.paymentDetails ? 'closed' : 'dismissed';
     }
     default:
       throw new Error(`No checkout widget for gateway "${input.gateway}".`);

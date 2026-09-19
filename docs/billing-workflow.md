@@ -30,20 +30,28 @@ reading a single field out of it.
 
 ### Configuration
 
-    SNAPUP_PAYMENT_GATEWAY=razorpay
-    SNAPUP_RAZORPAY_KEY_ID=...
-    SNAPUP_RAZORPAY_KEY_SECRET=...
-    SNAPUP_RAZORPAY_WEBHOOK_SECRET=...
+    SNAPUP_PAYMENT_GATEWAY=cashfree
+    SNAPUP_CASHFREE_APP_ID=...            x-client-id
+    SNAPUP_CASHFREE_SECRET_KEY=...        x-client-secret; also signs every webhook
+    SNAPUP_CASHFREE_ENV=sandbox           or production
+
+In the Cashfree dashboard (Developers → Webhooks), point the payment webhook at
+`https://<host>/api/payments/webhook` and enable `PAYMENT_SUCCESS_WEBHOOK`,
+`PAYMENT_FAILED_WEBHOOK` and `REFUND_STATUS_WEBHOOK`. Cashfree signs with the secret key,
+so there is no separate webhook secret.
 
 Unset, the app behaves exactly as it does today: a UPI deep link to the merchant VPA, a
 customer attestation, and the exit desk as the thing that actually checks. That fallback is
 deliberate — it is what the pilot runs on now, and it must not break while a gateway is
-being chosen.
+being switched.
 
-**Razorpay is a default, not a decision.** It was chosen because the pilot collects UPI to an
-Indian merchant VPA. Cashfree and PayU differ only in field names and which header carries
-the signature: `server/payments/gateway.ts` is the interface, `razorpay.ts` is the whole of
-the implementation, and a second adapter is one file and one `case`.
+**Cashfree is the chosen gateway.** Razorpay's adapter remains (`SNAPUP_PAYMENT_GATEWAY=razorpay`
+with `SNAPUP_RAZORPAY_KEY_ID`, `_KEY_SECRET`, `_WEBHOOK_SECRET`); the two differ only in field
+names and which header carries the signature. `server/payments/gateway.ts` is the interface,
+each adapter is one file, and a third is one file and one `case`.
+
+Cashfree requires a customer phone on every order. A signed-in customer's is used; a guest
+gets a placeholder that Cashfree accepts and never dials.
 
 ### The webhook answers 200 to a bad signature
 
@@ -235,7 +243,7 @@ on.
 
 | Section | Missing |
 | --- | --- |
-| 2 | **A real gateway.** The initiation route, the webhook and the checkout widget are built and exercised by the suite with harness credentials. Live keys, and the gateway's own webhook pointed at `/api/payments/webhook`, are the owner's to provide. |
+| 2 | **Cashfree keys.** Adapter, initiation route, webhook and checkout widget are built and exercised by the suite with harness credentials. App id, secret key, and the dashboard webhook pointed at `/api/payments/webhook` are the owner's to provide. |
 | 7 | **The 30-minute trigger.** `POST /api/admin/sync/run` exists and is proven by scenario I; nothing calls it on a schedule yet. |
 | 7 | **The original shop database.** The sync is proven against a stand-in. The real connection, table map and conflict policy are still to be obtained in writing. |
 | 3, 6 | **`inventory.available_qty` vs `products.stock_quantity`.** The brief names the former; this schema keeps stock on `products`. Needs the owner, not a guess. |

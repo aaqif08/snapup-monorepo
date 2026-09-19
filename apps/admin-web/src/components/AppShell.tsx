@@ -74,7 +74,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="hidden w-64 flex-col border-r border-border bg-surface lg:flex">
         <div className="flex items-center gap-2 border-b border-border px-5 py-5">
-          <Image src="/logo-mark.png" alt="" width={28} height={28} className="h-7 w-auto" />
+          <Link href="/" aria-label="Dashboard" className="shrink-0 rounded-lg transition-opacity hover:opacity-80">
+            <Image src="/logo-mark.png" alt="" width={28} height={28} className="h-7 w-auto" />
+          </Link>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-extrabold text-ink">SnapUp Business</p>
             <p className="truncate text-xs text-muted">{email}</p>
@@ -126,10 +128,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile top bar */}
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-border bg-surface/85 px-4 py-3 backdrop-blur-md lg:hidden">
-          <div className="flex items-center gap-2">
+          <Link href="/" aria-label="Dashboard" className="flex items-center gap-2 rounded-lg transition-opacity hover:opacity-80">
             <Image src="/logo-mark.png" alt="" width={24} height={24} className="h-6 w-auto" />
             <span className="text-sm font-extrabold text-ink">SnapUp Business</span>
-          </div>
+          </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <button

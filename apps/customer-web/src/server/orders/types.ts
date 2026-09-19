@@ -159,6 +159,12 @@ export interface OrderRecord {
    */
   billNumber: string | null;
 
+  /**
+   * Section 2's state machine, as the gateway path moves it. Null on the pilot's UPI
+   * path, which has no gateway. Separate from `status`, which is the shopper's view.
+   */
+  paymentState: string | null;
+
   payment: {
     /** Merchant VPA money was directed to. Per-store under the phase-1 model. */
     payeeVpa: string | null;
@@ -293,6 +299,7 @@ export const NOT_YET_AT_THE_EXIT = {
   exitDenialReason: null,
   inventoryFinalisedAt: null,
   billNumber: null,
+  paymentState: null,
 } as const;
 
 

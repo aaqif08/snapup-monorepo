@@ -39,6 +39,8 @@ export interface CustomerOrder {
     payee_name: string | null;
     transaction_ref: string;
     confirmation: PaymentConfirmation;
+    /** The gateway's view: PAYMENT_PENDING, PAYMENT_RECEIVED_PENDING_STAFF, DECLINED_OR_CANCELLED… Null without a gateway. */
+    gateway_state: string | null;
   };
   created_at: number;
   /**
@@ -80,6 +82,7 @@ export function toCustomerOrder(order: OrderRecord): CustomerOrder {
       payee_name: order.payment.payeeName,
       transaction_ref: order.payment.transactionRef,
       confirmation: order.payment.confirmation,
+      gateway_state: order.paymentState,
     },
     created_at: order.createdAt,
     exit: {

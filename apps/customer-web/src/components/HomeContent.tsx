@@ -77,10 +77,10 @@ export default function HomeContent() {
     <div className="mx-auto max-w-lg pb-24">
       {/* ---- Brand bar ---- */}
       <header className="flex items-center justify-between px-4 pb-2 pt-4">
-        <div className="flex items-center gap-2">
+        <Link href="/" aria-label="SnapUp home" className="flex items-center gap-2 rounded-xl transition-opacity hover:opacity-80">
           <Image src="/logo-mark.png" alt="" width={32} height={32} className="h-8 w-auto" priority />
           <span className="text-xl font-extrabold tracking-tight text-ink">SnapUp</span>
-        </div>
+        </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           <Link

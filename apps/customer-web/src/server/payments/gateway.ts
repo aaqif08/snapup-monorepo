@@ -37,6 +37,11 @@ export interface CreatePaymentInput {
   /** Sent to the gateway so a retried create cannot open a second payment. */
   idempotencyKey: string;
   storeName: string;
+  /**
+   * Who is paying, as far as we know. Some gateways require a customer record on every
+   * order; a guest has none, and the adapter decides what to do about that.
+   */
+  customer: { id: string; phone: string | null; name: string | null };
 }
 
 export interface CreatedPayment {
@@ -66,7 +71,12 @@ export interface PaymentGateway {
    * the *same* gateway order, not a second one against the same basket. The gateway order
    * id is persisted; the widget payload is not, so it is derived here on demand.
    */
-  clientPayloadFor(gatewayOrderId: string, amountPaise: number): Record<string, unknown>;
+  clientPayloadFor(ref: {
+    gatewayOrderId: string;
+    /** Our id. Some gateways key the order by it and need nothing else. */
+    orderId: string;
+    amountPaise: number;
+  }): Promise<Record<string, unknown>>;
   /**
    * Verifies the signature and returns the event, or `null` if the signature does not
    * verify. Returning null rather than throwing keeps "not from the gateway" and "the
@@ -95,6 +105,10 @@ export async function activeGateway(): Promise<PaymentGateway | null> {
     case 'razorpay': {
       const { razorpayGateway } = await import('./razorpay');
       return razorpayGateway();
+    }
+    case 'cashfree': {
+      const { cashfreeGateway } = await import('./cashfree');
+      return cashfreeGateway();
     }
     default:
       // Loud, because the alternative is a shop that silently accepts no payments.

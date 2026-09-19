@@ -558,6 +558,7 @@ export interface ServerOrder {
     payee_name: string | null;
     transaction_ref: string;
     confirmation: string;
+    gateway_state: string | null;
   };
   created_at: number;
   exit: {

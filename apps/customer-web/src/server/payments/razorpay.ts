@@ -83,7 +83,7 @@ export function razorpayGateway(): PaymentGateway {
       };
     },
 
-    clientPayloadFor(gatewayOrderId: string, amountPaise: number) {
+    async clientPayloadFor({ gatewayOrderId, amountPaise }) {
       const { keyId } = credentials();
       return { key: keyId, order_id: gatewayOrderId, amount: amountPaise, currency: 'INR' };
     },

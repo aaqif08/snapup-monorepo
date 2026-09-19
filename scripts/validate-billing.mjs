@@ -15,9 +15,10 @@
  *
  * Runs against a production build with the real presence check, the real webhook
  * signature check, and the real sync — all pointed at throwaway databases. The payment
- * gateway is Razorpay with harness credentials: the webhook is signed here with the same
- * secret the server is started with, exactly as the gateway would sign it. No real
- * gateway is ever called; the suite never asks the server to *open* a payment.
+ * gateway is Cashfree with harness credentials: the webhook is signed here with the same
+ * secret key the server is started with, exactly as Cashfree signs it (base64 HMAC-SHA256
+ * over timestamp + raw body). No real gateway is ever called; the suite never asks the
+ * server to *open* a payment.
  *
  * Usage:
  *   node scripts/validate-billing.mjs              # build, provision, start, test, tear down
@@ -48,7 +49,7 @@ const QR_SECRET = 'billing-suite-qr-secret-do-not-deploy';
 const SESSION_SECRET = 'billing-suite-session-secret-do-not-deploy';
 const ADMIN_TOKEN = 'billing-suite-admin-token-do-not-deploy';
 const EXIT_TOKEN_SECRET = 'billing-suite-exit-token-secret-do-not-deploy';
-const WEBHOOK_SECRET = 'billing-suite-webhook-secret-do-not-deploy';
+const CASHFREE_SECRET = 'billing-suite-cashfree-secret-do-not-deploy';
 
 const STORE = { id: 'store_1', ip: '198.51.100.24' };
 const OWNER = { email: 'owner@billing-suite.test', password: 'correct-horse-battery', name: 'Suite Owner' };
@@ -154,26 +155,29 @@ async function readOrder(token, orderId) {
   return response.json.order;
 }
 
-/** A gateway webhook, signed the way Razorpay signs one: HMAC-SHA256 over the raw body. */
-async function webhook(orderId, { event = 'payment.captured', paymentId, amountPaise }) {
+/**
+ * A gateway webhook, signed the way Cashfree signs one: base64 HMAC-SHA256 over
+ * `timestamp + rawBody`, keyed by the secret key, in `x-webhook-signature`.
+ */
+async function webhook(orderId, { event = 'PAYMENT_SUCCESS_WEBHOOK', paymentId, amountPaise, stale = false }) {
   const raw = JSON.stringify({
-    event,
-    payload: {
+    type: event,
+    data: {
+      order: { order_id: orderId, order_amount: amountPaise / 100 },
       payment: {
-        entity: {
-          id: paymentId,
-          amount: amountPaise,
-          notes: { snapup_order_id: orderId },
-          error_description: event === 'payment.failed' ? 'Declined by issuer' : undefined,
-        },
+        cf_payment_id: paymentId,
+        payment_status: event === 'PAYMENT_SUCCESS_WEBHOOK' ? 'SUCCESS' : 'FAILED',
+        payment_amount: amountPaise / 100,
+        payment_message: event === 'PAYMENT_FAILED_WEBHOOK' ? 'Declined by issuer' : undefined,
       },
     },
   });
-  const signature = createHmac('sha256', WEBHOOK_SECRET).update(raw).digest('hex');
+  const timestamp = String(stale ? Date.now() - 60 * 60 * 1000 : Date.now());
+  const signature = createHmac('sha256', CASHFREE_SECRET).update(timestamp + raw).digest('base64');
   return api('/api/payments/webhook', {
     method: 'POST',
     raw,
-    headers: { 'x-razorpay-signature': signature },
+    headers: { 'x-webhook-signature': signature, 'x-webhook-timestamp': timestamp },
   });
 }
 
@@ -378,13 +382,36 @@ async function runScenarios(importResult) {
   await scenario('G2', 'Payment failure: order stays unpaid; no bill, no deduction', async () => {
     const order = await placeOrder(state.token, [{ product_id: SALT.id, quantity: 1 }]);
     const before = await stockOf(SALT.id);
-    const failed = await webhook(order.id, { event: 'payment.failed', paymentId: 'pay_suite_0004', amountPaise: order.total });
+    const failed = await webhook(order.id, { event: 'PAYMENT_FAILED_WEBHOOK', paymentId: 'pay_suite_0004', amountPaise: order.total });
     expectStatus(failed, 200);
     const after = await readOrder(state.token, order.id);
     expect(after.status !== 'paid', `a failed payment marked the order ${after.status}`);
     expect(after.exit.bill_number === null, 'a failed payment got a bill');
     expect((await stockOf(SALT.id)) === before, 'stock moved on a failed payment');
     return `status ${after.status}, stock ${before}`;
+  });
+
+  await scenario('G3', 'A declined attempt does not block the retry that succeeds', async () => {
+    const order = await placeOrder(state.token, [{ product_id: SALT.id, quantity: 1 }]);
+    const declined = await webhook(order.id, { event: 'PAYMENT_FAILED_WEBHOOK', paymentId: 'pay_suite_0005a', amountPaise: order.total });
+    expectStatus(declined, 200);
+    const mid = await readOrder(state.token, order.id);
+    expect(mid.payment.gateway_state === 'DECLINED_OR_CANCELLED', `state after decline: ${mid.payment.gateway_state}`);
+    const retried = await webhook(order.id, { paymentId: 'pay_suite_0005b', amountPaise: order.total });
+    expectStatus(retried, 200);
+    const after = await readOrder(state.token, order.id);
+    expect(after.status === 'paid' && after.payment.confirmation === 'psp_webhook', `retry not recorded: ${after.status}/${after.payment.confirmation}`);
+    expect(after.payment.gateway_state === 'PAYMENT_RECEIVED_PENDING_STAFF', `state after retry: ${after.payment.gateway_state}`);
+    return 'declined -> retried -> paid';
+  });
+
+  await scenario('G4', 'A replayed webhook from an hour ago is refused', async () => {
+    const order = await placeOrder(state.token, [{ product_id: SALT.id, quantity: 1 }]);
+    const stale = await webhook(order.id, { paymentId: 'pay_suite_0006', amountPaise: order.total, stale: true });
+    expectStatus(stale, 200);
+    const after = await readOrder(state.token, order.id);
+    expect(after.status !== 'paid', 'a stale signature marked the order paid');
+    return 'dropped, order untouched';
   });
 
   await scenario('B', 'A second session after a completed checkout still scans and prices', async () => {
@@ -408,7 +435,7 @@ async function runScenarios(importResult) {
     // state change with nowhere to go under an inventory-only mapping.
     expect(r.sent === 2, `expected 2 stock events sent, got ${r.sent}`);
     expect(r.failed === 0, `${r.failed} event(s) failed`);
-    expect(r.skipped >= 4, `expected the payment events skipped, got ${r.skipped}`);
+    expect(r.skipped >= 6, `expected the payment events skipped, got ${r.skipped}`);
     expect(r.reconciliation && r.reconciliation.mismatched.length === 0,
       `reconciliation reported ${JSON.stringify(r.reconciliation?.mismatched)}`);
     state.runId = r.runId;
@@ -473,10 +500,10 @@ async function main() {
     SNAPUP_ADMIN_API_TOKEN: ADMIN_TOKEN,
     SNAPUP_EXIT_TOKEN_SECRET: EXIT_TOKEN_SECRET,
     SNAPUP_TRUSTED_PROXY_HOPS: '1',
-    SNAPUP_PAYMENT_GATEWAY: 'razorpay',
-    SNAPUP_RAZORPAY_KEY_ID: 'rzp_test_suite',
-    SNAPUP_RAZORPAY_KEY_SECRET: 'suite-key-secret',
-    SNAPUP_RAZORPAY_WEBHOOK_SECRET: WEBHOOK_SECRET,
+    SNAPUP_PAYMENT_GATEWAY: 'cashfree',
+    SNAPUP_CASHFREE_APP_ID: 'suite-app-id',
+    SNAPUP_CASHFREE_SECRET_KEY: CASHFREE_SECRET,
+    SNAPUP_CASHFREE_ENV: 'sandbox',
     SNAPUP_ORIGIN_DATABASE_URL: ORIGIN_URL_FROM_APP,
     SNAPUP_ORIGIN_TABLE_MAP: JSON.stringify({
       inventoryTable: 'inventory',
